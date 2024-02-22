@@ -13,8 +13,12 @@ func main() {
 	client := goPinotAPI.PinotAPIClient{Host: PINOT_URL}
 
 	userBody := []byte(`{
-		"liam"
-	}`)
+		"username":"liam1",
+		"password":"password",
+		"component":"Broker",
+		"role":"admin"
+	  }
+	  `)
 
 	tableBody := []byte(`{
 		"testTable"

@@ -12,8 +12,16 @@ type PinotAPIClient struct {
 	Host string
 }
 
+type User struct {
+	Username              string `json:"username"`
+	Password              string `json:"password"`
+	Component             string `json:"component"`
+	Role                  string `json:"role"`
+	UsernameWithComponent string `json:"usernameWithComponent"`
+}
+
 type GetUsersResponse struct {
-	Users []string `json:"users"`
+	Users map[string][]User `json:"users"`
 }
 
 type CreateUsersResponse struct {
