@@ -4,24 +4,52 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
+	"log"
 	"net/http"
+	"net/url"
+	"os"
+
+	"github.com/azaurus1/go-pinot-api/model"
 )
 
+type pinotHttp struct {
+	httpClient         *http.Client
+	pinotControllerUrl *url.URL
+	httpAuthWriter     httpAuthWriter
+}
+
+type httpAuthWriter func(*http.Request)
+
 type PinotAPIClient struct {
-	Host string
+	pinotControllerUrl *url.URL
+	pinotHttp          *pinotHttp
+	Host               string
 }
 
-type User struct {
-	Username              string `json:"username"`
-	Password              string `json:"password"`
-	Component             string `json:"component"`
-	Role                  string `json:"role"`
-	UsernameWithComponent string `json:"usernameWithComponent"`
-}
+func NewPinotAPIClient(pinotController string) *PinotAPIClient {
 
-type GetUsersResponse struct {
-	Users map[string][]User `json:"users"`
+	pinotUrl, err := url.Parse(pinotController)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	// handle authenticated requests
+	pinotAuthToken := os.Getenv("PINOT_AUTH_TOKEN")
+	httpAuthWriterFunc := func(req *http.Request) {
+		if pinotAuthToken != "" {
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", pinotAuthToken))
+		}
+	}
+
+	return &PinotAPIClient{
+		pinotControllerUrl: pinotUrl,
+		pinotHttp: &pinotHttp{
+			httpClient:         &http.Client{},
+			pinotControllerUrl: pinotUrl,
+			httpAuthWriter:     httpAuthWriterFunc,
+		},
+		Host: pinotController,
+	}
 }
 
 type CreateUsersResponse struct {
@@ -45,20 +73,18 @@ type GetTenantsResponse struct {
 type GetSchemaResponse []string
 
 // generic function
-func (c *PinotAPIClient) FetchData(endpoint string, result interface{}) error {
-	fullURL := fmt.Sprintf("%s%s", c.Host, endpoint)
+func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
+
+	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
+
 	resp, err := http.Get(fullURL)
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
+
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return fmt.Errorf("client: could not read response body: %w", err)
-	}
-
-	err = json.Unmarshal(body, result)
+	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
 		return fmt.Errorf("client: could not unmarshal JSON: %w", err)
 	}
@@ -67,26 +93,27 @@ func (c *PinotAPIClient) FetchData(endpoint string, result interface{}) error {
 }
 
 func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result interface{}) error {
-	fullURL := fmt.Sprintf("%s%s", c.Host, endpoint)
+
+	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
 
 	req, err := http.NewRequest("POST", fullURL, bytes.NewBuffer(body))
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
-	client := http.Client{}
-	res, err := client.Do(req)
+
+	res, err := c.pinotHttp.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
 
-	json.NewDecoder(res.Body).Decode(result)
+	json.NewDecoder(res.Body).Decode(&result)
 
 	return nil
 }
 
 // users
-func (c *PinotAPIClient) GetUsers() (*GetUsersResponse, error) {
-	var result GetUsersResponse
+func (c *PinotAPIClient) GetUsers() (*model.GetUsersResponse, error) {
+	var result model.GetUsersResponse
 	err := c.FetchData("/users", &result)
 	return &result, err
 }
@@ -122,4 +149,8 @@ func (c *PinotAPIClient) GetSchemas() (*GetSchemaResponse, error) {
 	var result GetSchemaResponse
 	err := c.FetchData("/schemas", &result)
 	return &result, err
+}
+
+func fullUrl(url *url.URL, path string) string {
+	return fmt.Sprintf("http://%s:%s%s", url.Hostname(), url.Port(), path)
 }
