@@ -33,7 +33,10 @@ func main() {
 		log.Panic(err)
 	}
 
-	client.CreateUser(userBytes)
+	_, err = client.CreateUser(userBytes)
+	if err != nil {
+		log.Panic(err)
+	}
 
 	userResp, err := client.GetUsers()
 	if err != nil {

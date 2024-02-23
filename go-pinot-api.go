@@ -106,7 +106,10 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result inter
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
 
-	json.NewDecoder(res.Body).Decode(&result)
+	err = json.NewDecoder(res.Body).Decode(&result)
+	if err != nil {
+		return fmt.Errorf("client: could not unmarshal JSON: %w", err)
+	}
 
 	return nil
 }
