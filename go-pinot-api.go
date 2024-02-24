@@ -163,6 +163,16 @@ func (c *PinotAPIClient) GetSchemas() (*GetSchemaResponse, error) {
 // if it already exists, it will nothing will happen
 func (c *PinotAPIClient) CreateSchema(schema model.Schema) (*CreateUsersResponse, error) {
 
+	// validate schema first
+	schemaResp, err := c.ValidateSchema(schema)
+	if err != nil {
+		return nil, fmt.Errorf("unable to validate schema: %w", err)
+	}
+
+	if !schemaResp.Ok {
+		return nil, fmt.Errorf("schema is invalid: %s", schemaResp.Error)
+	}
+
 	var result CreateUsersResponse
 
 	schemaBytes, err := schema.AsBytes()
