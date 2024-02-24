@@ -70,6 +70,11 @@ type GetTenantsResponse struct {
 	BrokerTenants []string `json:"BROKER_TENANTS"`
 }
 
+type ValidateSchemaResponse struct {
+	Ok    bool
+	Error string
+}
+
 type GetSchemaResponse []string
 
 // generic function
@@ -147,11 +152,101 @@ func (c *PinotAPIClient) GetTenants() (*GetTenantsResponse, error) {
 	return &result, err
 }
 
-// schemas
+// GetSchemas returns a list of schemas
 func (c *PinotAPIClient) GetSchemas() (*GetSchemaResponse, error) {
 	var result GetSchemaResponse
 	err := c.FetchData("/schemas", &result)
 	return &result, err
+}
+
+// CreateSchema creates a new schema.
+// if it already exists, it will nothing will happen
+func (c *PinotAPIClient) CreateSchema(schema model.Schema) (*CreateUsersResponse, error) {
+
+	var result CreateUsersResponse
+
+	schemaBytes, err := schema.AsBytes()
+	if err != nil {
+		return nil, fmt.Errorf("unable to marshal schema: %w", err)
+	}
+
+	err = c.CreateObject("/schemas", schemaBytes, result)
+	return &result, err
+}
+
+// CreateSchemaFromFile creates a new schema from a file and uses CreateSchema
+func (c *PinotAPIClient) CreateSchemaFromFile(schemaFilePath string) (*CreateUsersResponse, error) {
+
+	f, err := os.Open(schemaFilePath)
+	if err != nil {
+		return nil, fmt.Errorf("unable to open schema file: %w", err)
+	}
+
+	defer f.Close()
+
+	var schema model.Schema
+	err = json.NewDecoder(f).Decode(&schema)
+	if err != nil {
+		return nil, fmt.Errorf("unable to unmarshal schema: %w", err)
+	}
+
+	return c.CreateSchema(schema)
+
+}
+
+// ValidateSchema validates a schema
+func (c *PinotAPIClient) ValidateSchema(schema model.Schema) (*ValidateSchemaResponse, error) {
+
+	schemaBytes, err := schema.AsBytes()
+	if err != nil {
+		return nil, fmt.Errorf("unable to marshal schema: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", fullUrl(c.pinotControllerUrl, "/schemas/validate"), bytes.NewBuffer(schemaBytes))
+	if err != nil {
+		return nil, fmt.Errorf("client: could not create request: %w", err)
+	}
+
+	res, err := c.pinotHttp.httpClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("client: could not send request: %w", err)
+	}
+
+	if res.StatusCode == http.StatusInternalServerError {
+		return nil, fmt.Errorf("client: internal server error")
+	}
+
+	// Invalid schema in body
+	if res.StatusCode == http.StatusBadRequest {
+
+		var result map[string]string
+
+		err = json.NewDecoder(res.Body).Decode(&result)
+		if err != nil {
+			return nil, fmt.Errorf("client: could not unmarshal JSON: %w", err)
+		}
+
+		return &ValidateSchemaResponse{
+			Ok:    false,
+			Error: result["error"],
+		}, nil
+	}
+
+	return &ValidateSchemaResponse{Ok: true}, nil
+}
+
+func (c *PinotAPIClient) UpdateSchema(schema model.Schema) (*CreateUsersResponse, error) {
+
+	var result CreateUsersResponse
+
+	schemaBytes, err := schema.AsBytes()
+	if err != nil {
+		return nil, fmt.Errorf("unable to marshal schema: %w", err)
+	}
+
+	err = c.CreateObject("/schemas", schemaBytes, result)
+	return &result, err
+
 }
 
 func fullUrl(url *url.URL, path string) string {

@@ -47,4 +47,41 @@ func main() {
 		fmt.Println(userName, info)
 	}
 
+	schema := getSchema()
+
+	// Create Schema will validate the schema first anyway
+	validateResp, err := client.ValidateSchema(schema)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	if !validateResp.Ok {
+		log.Panic(validateResp.Error)
+	}
+
+	_, err = client.CreateSchema(schema)
+	if err != nil {
+		log.Panic(err)
+	}
+
+}
+
+func getSchema() pinotModel.Schema {
+
+	schemaFilePath := "./example/data-gen/block_header_schema.json"
+
+	f, err := os.Open(schemaFilePath)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	defer f.Close()
+
+	var schema pinotModel.Schema
+	err = json.NewDecoder(f).Decode(&schema)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return schema
 }
