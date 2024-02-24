@@ -1,0 +1,27 @@
+{
+  "type": "record",
+  "name": "BlockHeader",
+  "namespace": "org.hamba.avro",
+  "fields": [
+    {
+      "name": "number",
+      "type": "long"
+    },
+    {
+      "name": "hash",
+      "type": "string"
+    },
+    {
+      "name": "parent_hash",
+      "type": "string"
+    },
+    {
+      "name": "gas_used",
+      "type": "long"
+    },
+    {
+      "name": "timestamp",
+      "type": "long"
+    }
+  ]
+}
