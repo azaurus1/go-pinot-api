@@ -1,36 +1,50 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 
-	goPinotAPI "github.com/azaurus1/go-pinot-api"
+	pinot "github.com/azaurus1/go-pinot-api"
+	pinotModel "github.com/azaurus1/go-pinot-api/model"
 )
 
+var PinotUrl = "http://localhost:9000"
+
 func main() {
-	PINOT_URL := os.Getenv("PINOT_URL")
 
-	client := goPinotAPI.PinotAPIClient{Host: PINOT_URL}
+	envPinotUrl := os.Getenv("PINOT_URL")
+	if envPinotUrl != "" {
+		PinotUrl = envPinotUrl
+	}
 
-	userBody := []byte(`{
-		"username":"liam1",
-		"password":"password",
-		"component":"Broker",
-		"role":"admin"
-	  }
-	  `)
+	client := pinot.NewPinotAPIClient(PinotUrl)
 
-	tableBody := []byte(`{
-		"testTable"
-	}`)
+	user := pinotModel.User{
+		Username:  "liam1",
+		Password:  "password",
+		Component: "Broker",
+		Role:      "admin",
+	}
 
-	fmt.Println(client.GetUsers())
-	fmt.Println(client.CreateUser(userBody))
+	userBytes, err := json.Marshal(user)
+	if err != nil {
+		log.Panic(err)
+	}
 
-	fmt.Println(client.GetTenants())
+	_, err = client.CreateUser(userBytes)
+	if err != nil {
+		log.Panic(err)
+	}
 
-	fmt.Println(client.GetSchemas())
+	userResp, err := client.GetUsers()
+	if err != nil {
+		log.Panic(err)
+	}
 
-	fmt.Println(client.GetTables())
-	fmt.Println(client.CreateTable(tableBody))
+	for userName, info := range userResp.Users {
+		fmt.Println(userName, info)
+	}
+
 }
