@@ -11,9 +11,11 @@ pinot:
 	docker-compose -f docker-compose.yaml up -d pinot-controller pinot-broker pinot-server pinot-zookeeper
 
 
-.PHONY: generate-data-to-kafka
-generate-data-to-kafka:
-	go
+.PHONY: generate-data
+generate-data:
+	cd ./example/data-gen && \
+	go run generate_data.go && \
+	cd ../..
 
 
 .PHONY: consume-data
