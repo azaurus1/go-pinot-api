@@ -2,9 +2,9 @@ package integration_test
 
 import (
 	"context"
+	"github.com/azaurus1/go-pinot-api/integration-test/container"
 	"github.com/stretchr/testify/assert"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"integration-test/container"
 	"testing"
 	"time"
 )
