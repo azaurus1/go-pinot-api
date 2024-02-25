@@ -29,13 +29,14 @@ func StartPinotContainer() (*Pinot, error) {
 		ContainerRequest: testcontainers.ContainerRequest{
 			Image:        "apachepinot/pinot:latest",
 			ExposedPorts: []string{"2123/tcp", "9000/tcp", "8000/tcp", "7050/tcp", "6000/tcp"},
-			Cmd:          []string{"/bin/pinot-admin.sh", "StartController", "-configFileName config/pinot-controller.conf"},
 			Files: []testcontainers.ContainerFile{
 				{
 					HostFilePath:      absPath,
 					ContainerFilePath: "/config/pinot-controller.conf",
+					FileMode:          0o700,
 				},
 			},
+			Cmd:        []string{"/bin/pinot-admin.sh", "StartController", "-configFileName config/pinot-controller.conf"},
 			WaitingFor: wait.ForLog("You can always go to http://localhost:9000 to play around in the query console").WithStartupTimeout(4 * time.Minute),
 		},
 		Started: true,

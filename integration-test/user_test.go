@@ -9,11 +9,12 @@ import (
 	"time"
 
 	goPinotAPI "github.com/azaurus1/go-pinot-api"
+
 	"github.com/azaurus1/go-pinot-api/model"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUser(t *testing.T) {
+func TestCreateUser(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 
