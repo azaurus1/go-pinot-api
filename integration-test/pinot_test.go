@@ -3,7 +3,6 @@ package integration_test
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"integration-test/container"
 	"log"
 	"testing"
@@ -59,16 +58,14 @@ func TestUser(t *testing.T) {
 }
 
 func TestCreateUser(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-	defer cancel()
+	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	// defer cancel()
 
 	t.Run("Create User", func(t *testing.T) {
-		pinotInfo, err := container.StartPinotContainer()
+		pinot, err := container.StartPinotContainer()
 		assert.NoError(t, err)
 
-		pinotHost := fmt.Sprintf("http://localhost:%s", pinotInfo.Port)
-
-		client := goPinotAPI.NewPinotAPIClient(pinotHost)
+		client := goPinotAPI.NewPinotAPIClient(pinot.Container.Host(ctx) + ":9000")
 
 		user := model.User{
 			Username:  "testUser",
