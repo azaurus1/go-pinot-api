@@ -24,6 +24,6 @@ jobs:
           cache-dependency-path: ./
 
       - name: Run Integration Tests
-        working-directory: .
+        working-directory: integration-test
         run: |
           ls && pwd
