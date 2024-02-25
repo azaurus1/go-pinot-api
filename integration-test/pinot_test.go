@@ -70,7 +70,7 @@ func TestCreateUser(t *testing.T) {
 		user := model.User{
 			Username:  "testUser",
 			Password:  "password",
-			Component: "Broker",
+			Component: "BROKER",
 			Role:      "admin",
 		}
 
