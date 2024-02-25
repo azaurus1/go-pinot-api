@@ -138,14 +138,14 @@ func CreateTopic(ctx context.Context, client *kgo.Client, topicToCreate string) 
 		return nil
 	}
 
-	fmt.Printf("Creating topic %v\n", topicToCreate)
+	log.Printf("🚧 Creating topic %v\n", topicToCreate)
 
 	createTopicResponse, err := kadmin.CreateTopic(ctx, 1, 1, nil, topicToCreate)
 	if err != nil {
 		return fmt.Errorf("unable to create topic %v\n", err)
 	}
 
-	fmt.Printf("Successfully created topic %v\n", createTopicResponse.Topic)
+	log.Printf("✅ Successfully created topic %v\n", createTopicResponse.Topic)
 	return nil
 
 }

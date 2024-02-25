@@ -26,3 +26,10 @@ consume-data:
         -f '\nKey (%K bytes): %k\t\n%s\nTimestamp: %T\tPartition: %p\tOffset: %o\n--\n' \
         -o beginning
 
+
+.PHONY: integration-test
+integration-test:
+	cd ./integration-test && \
+	go test -v && \
+	cd ..
+

@@ -27,7 +27,7 @@ func StartRedPandaContainer() (*RedPanda, error) {
 		return nil, fmt.Errorf("failed to start container: %s", err)
 	}
 
-	log.Printf(" ✅ Redpanda took %v\n to start", time.Since(start))
+	log.Printf("✅ Redpanda took %v to start", time.Since(start))
 
 	tearDown := func() {
 		if err := redpandaContainer.Terminate(ctx); err != nil {
