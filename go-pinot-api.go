@@ -290,7 +290,7 @@ func (c *PinotAPIClient) GetSchemas() (*GetSchemaResponse, error) {
 
 // CreateSchema creates a new schema.
 // if it already exists, it will nothing will happen
-func (c *PinotAPIClient) CreateSchema(schema model.Schema) (*CreateUsersResponse, error) {
+func (c *PinotAPIClient) CreateSchema(schema model.Schema) (*model.UserActionResponse, error) {
 
 	// validate schema first
 	schemaResp, err := c.ValidateSchema(schema)
@@ -302,7 +302,7 @@ func (c *PinotAPIClient) CreateSchema(schema model.Schema) (*CreateUsersResponse
 		return nil, fmt.Errorf("schema is invalid: %s", schemaResp.Error)
 	}
 
-	var result CreateUsersResponse
+	var result model.UserActionResponse
 
 	schemaBytes, err := schema.AsBytes()
 	if err != nil {
@@ -314,7 +314,7 @@ func (c *PinotAPIClient) CreateSchema(schema model.Schema) (*CreateUsersResponse
 }
 
 // CreateSchemaFromFile creates a new schema from a file and uses CreateSchema
-func (c *PinotAPIClient) CreateSchemaFromFile(schemaFilePath string) (*CreateUsersResponse, error) {
+func (c *PinotAPIClient) CreateSchemaFromFile(schemaFilePath string) (*model.UserActionResponse, error) {
 
 	f, err := os.Open(schemaFilePath)
 	if err != nil {
@@ -374,9 +374,9 @@ func (c *PinotAPIClient) ValidateSchema(schema model.Schema) (*ValidateSchemaRes
 	return &ValidateSchemaResponse{Ok: true}, nil
 }
 
-func (c *PinotAPIClient) UpdateSchema(schema model.Schema) (*CreateUsersResponse, error) {
+func (c *PinotAPIClient) UpdateSchema(schema model.Schema) (*model.UserActionResponse, error) {
 
-	var result CreateUsersResponse
+	var result model.UserActionResponse
 
 	schemaBytes, err := schema.AsBytes()
 	if err != nil {
