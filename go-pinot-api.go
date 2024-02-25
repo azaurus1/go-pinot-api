@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 
 	"github.com/azaurus1/go-pinot-api/model"
 )
@@ -52,10 +53,6 @@ func NewPinotAPIClient(pinotController string) *PinotAPIClient {
 	}
 }
 
-type CreateUsersResponse struct {
-	Status string `json:"status"`
-}
-
 type GetTablesResponse struct {
 	Tables []string `json:"tables"`
 }
@@ -97,7 +94,7 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 	return nil
 }
 
-func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result interface{}) error {
+func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) error {
 
 	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
 
@@ -106,9 +103,23 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result inter
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
 
+	req.Header.Set("Content-Type", "application/json")
+
 	res, err := c.pinotHttp.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("client: could not send request: %w", err)
+	}
+
+	// Check the status code
+	if res.StatusCode != http.StatusOK {
+		var errMsg string
+		// From client perspective, 409 isnt a failed request
+		if res.StatusCode == 409 {
+			errMsg = "client: conflict, object exists - "
+		} else {
+			errMsg = "client: "
+		}
+		return fmt.Errorf("%srequest failed with status code: %d", errMsg, res.StatusCode)
 	}
 
 	err = json.NewDecoder(res.Body).Decode(&result)
@@ -119,6 +130,101 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result inter
 	return nil
 }
 
+func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]string, result any) error {
+	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
+
+	parsedURL, err := url.Parse(fullURL)
+	if err != nil {
+		return fmt.Errorf("client: could not parse URL: %w", err)
+	}
+
+	if len(queryParams) > 0 {
+		query := parsedURL.Query()
+		for key, value := range queryParams {
+			query.Set(key, value)
+		}
+		parsedURL.RawQuery = query.Encode()
+	}
+
+	req, err := http.NewRequest("DELETE", parsedURL.String(), nil)
+	if err != nil {
+		return fmt.Errorf("client: could not create request: %w", err)
+	}
+
+	res, err := c.pinotHttp.httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("client: could not send request: %w", err)
+	}
+
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		var errMsg string
+		// From client perspective, 409 isnt a failed request
+		if res.StatusCode == 404 {
+			errMsg = "client: object can not be found - "
+		} else {
+			errMsg = "client: "
+		}
+		return fmt.Errorf("%srequest failed with status code: %d", errMsg, res.StatusCode)
+	}
+
+	err = json.NewDecoder(res.Body).Decode(&result)
+	if err != nil {
+		return fmt.Errorf("client: could not unmarshal JSON: %w", err)
+	}
+
+	return nil
+}
+
+func (c *PinotAPIClient) UpdateObject(endpoint string, queryParams map[string]string, body []byte, result any) error {
+	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
+
+	parsedURL, err := url.Parse(fullURL)
+	if err != nil {
+		return fmt.Errorf("client: could not parse URL: %w", err)
+	}
+
+	if len(queryParams) > 0 {
+		query := parsedURL.Query()
+		for key, value := range queryParams {
+			query.Set(key, value)
+		}
+		parsedURL.RawQuery = query.Encode()
+	}
+
+	fmt.Println(parsedURL.String())
+
+	req, err := http.NewRequest("PUT", parsedURL.String(), bytes.NewBuffer(body))
+	if err != nil {
+		return fmt.Errorf("client: could not create request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := c.pinotHttp.httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("client: could not send request: %w", err)
+	}
+
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		var errMsg string
+		// From client perspective, 409 isnt a failed request
+		if res.StatusCode == 404 {
+			errMsg = "client: object can not be found - "
+		} else {
+			errMsg = "client: "
+		}
+		return fmt.Errorf("%srequest failed with status code: %d", errMsg, res.StatusCode)
+	}
+
+	err = json.NewDecoder(res.Body).Decode(&result)
+	if err != nil {
+		return fmt.Errorf("client: could not unmarshal JSON: %w", err)
+	}
+
+	return nil
+
+}
+
 // users
 func (c *PinotAPIClient) GetUsers() (*model.GetUsersResponse, error) {
 	var result model.GetUsersResponse
@@ -126,9 +232,32 @@ func (c *PinotAPIClient) GetUsers() (*model.GetUsersResponse, error) {
 	return &result, err
 }
 
-func (c *PinotAPIClient) CreateUser(body []byte) (*CreateUsersResponse, error) {
-	var result CreateUsersResponse
-	err := c.CreateObject("/users", body, result)
+func (c *PinotAPIClient) CreateUser(body []byte) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject("/users", body, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) DeleteUser(username string, component string) (*model.UserActionResponse, error) {
+	deletionQueryParams := make(map[string]string)
+	deletionQueryParams["component"] = component
+
+	endpoint := fmt.Sprintf("/users/%s", username)
+
+	var result model.UserActionResponse
+	err := c.DeleteObject(endpoint, deletionQueryParams, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) UpdateUser(username string, component string, passwordChanged bool, body []byte) (*model.UserActionResponse, error) {
+	updateQueryParams := make(map[string]string)
+	updateQueryParams["component"] = component
+	updateQueryParams["passwordChanged"] = strconv.FormatBool(passwordChanged)
+
+	var result model.UserActionResponse
+	endpoint := fmt.Sprintf("/users/%s", username)
+
+	err := c.UpdateObject(endpoint, updateQueryParams, body, &result)
 	return &result, err
 }
 
@@ -139,8 +268,8 @@ func (c *PinotAPIClient) GetTables() (*GetTablesResponse, error) {
 	return &result, err
 }
 
-func (c *PinotAPIClient) CreateTable(body []byte) (*CreateUsersResponse, error) {
-	var result CreateUsersResponse
+func (c *PinotAPIClient) CreateTable(body []byte) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
 	err := c.CreateObject("/tables", body, result)
 	return &result, err
 }
