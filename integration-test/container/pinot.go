@@ -24,12 +24,13 @@ func StartPinotContainer() (*Pinot, error) {
 			Image:        "apachepinot/pinot:latest",
 			ExposedPorts: []string{"2123/tcp", "9000/tcp", "8000/tcp", "7050/tcp", "6000/tcp"},
 			Cmd:          []string{"QuickStart", "-type", "batch"},
-			WaitingFor:   wait.ForLog("You can always go to http://localhost:9000 to play around in the query console").WithStartupTimeout(4 * time.Minute),
+
+			WaitingFor: wait.ForLog("You can always go to http://localhost:9000 to play around in the query console").WithStartupTimeout(4 * time.Minute),
 		},
 		Started: true,
 	})
 	if err != nil {
-		fmt.Errorf("failed to start container: %s", err)
+		return nil, fmt.Errorf("failed to start container: %s", err)
 	}
 
 	log.Printf(" ✅ Pinot took %v\n to start", time.Since(start))
@@ -38,7 +39,7 @@ func StartPinotContainer() (*Pinot, error) {
 
 	tearDown := func() {
 		if err := pinotContainer.Terminate(ctx); err != nil {
-			fmt.Errorf("failed to terminate container: %s", err)
+			log.Panicf("failed to terminate container: %s", err)
 		}
 	}
 
