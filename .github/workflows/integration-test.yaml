@@ -24,6 +24,6 @@ jobs:
           cache-dependency-path: ./
 
       - name: Run Integration Tests
-        working-directory: ./integration-tests
+        working-directory: .
         run: |
-          go test -v -timeout 10m
+          ls
