@@ -32,7 +32,7 @@ func StartPinotContainer() (*Pinot, error) {
 		fmt.Errorf("failed to start container: %s", err)
 	}
 
-	log.Printf(" ✅ Redpanda took %v\n to start", time.Since(start))
+	log.Printf(" ✅ Pinot took %v\n to start", time.Since(start))
 
 	defer pinotContainer.Terminate(ctx)
 
