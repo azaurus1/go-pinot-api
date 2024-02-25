@@ -58,14 +58,15 @@ func TestUser(t *testing.T) {
 }
 
 func TestCreateUser(t *testing.T) {
-	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-	// defer cancel()
+	ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Minute)
+	defer cancel()
 
 	t.Run("Create User", func(t *testing.T) {
-		pinot, err := container.StartPinotContainer()
+		pinotInfo, err := container.RunPinotContainer(ctx)
 		assert.NoError(t, err)
 
-		client := goPinotAPI.NewPinotAPIClient(pinot.Container.Host(ctx) + ":9000")
+		defer pinotInfo.TearDown()
+		client := goPinotAPI.NewPinotAPIClient("http://localhost:9000")
 
 		user := model.User{
 			Username:  "testUser",
