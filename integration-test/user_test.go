@@ -29,6 +29,13 @@ func TestCreateUser(t *testing.T) {
 			"6000/tcp", // Minion
 		},
 		Cmd:        []string{"QuickStart", "-type", "batch"},
+		Files: []ContainerFile(
+			{
+				HostFilePath: absPath,
+				ContainerFilePath: "/controller.conf",
+				FileMode: 0o700,
+			}
+		)
 		WaitingFor: wait.ForLog("You can always go to http://localhost:9000 to play around in the query console").WithStartupTimeout(4 * time.Minute),
 	}
 
