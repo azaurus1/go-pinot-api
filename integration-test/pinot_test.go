@@ -9,6 +9,8 @@ import (
 	"testing"
 	"time"
 
+	goPinotAPI "github.com/azaurus1/go-pinot-api"
+
 	"github.com/azaurus1/go-pinot-api/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/twmb/franz-go/pkg/kgo"
