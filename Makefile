@@ -3,12 +3,12 @@
 
 .PHONY: kafka
 kafka:
-	docker-compose -f docker-compose.yaml up -d kafka schema-registry
+	docker compose -f docker-compose.yaml up -d kafka schema-registry
 
 
 .PHONY: pinot
 pinot:
-	docker-compose -f docker-compose.yaml up -d pinot-controller pinot-broker pinot-server pinot-zookeeper
+	docker compose -f docker-compose.yaml up -d pinot-controller pinot-broker pinot-server pinot-zookeeper
 
 
 .PHONY: generate-data
