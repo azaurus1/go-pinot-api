@@ -24,6 +24,6 @@ jobs:
           cache-dependency-path: ./
 
       - name: Run Integration Tests
-        working-directory: ${{ github.workspace }}/integration-tests
+        working-directory: ../integration-tests
         run: |
           go test -v -timeout 10m
