@@ -1,4 +1,4 @@
-module github.com/azaurus1/go-pinot-api/integration-test
+module integration-test
 
 go 1.22.0
 
