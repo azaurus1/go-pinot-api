@@ -8,8 +8,6 @@ import (
 	"testing"
 	"time"
 
-	goPinotAPI "github.com/azaurus1/go-pinot-api"
-
 	"github.com/azaurus1/go-pinot-api/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/twmb/franz-go/pkg/kgo"
@@ -62,11 +60,9 @@ func TestCreateUser(t *testing.T) {
 	defer cancel()
 
 	t.Run("Create User", func(t *testing.T) {
-		pinotInfo, err := container.RunPinotContainer(ctx)
+		pinot, err := container.RunPinotContainer(ctx)
 		assert.NoError(t, err)
-
-		defer pinotInfo.TearDown()
-		client := goPinotAPI.NewPinotAPIClient("http://localhost:9000")
+		defer pinot.TearDown()
 
 		user := model.User{
 			Username:  "testUser",
@@ -80,12 +76,9 @@ func TestCreateUser(t *testing.T) {
 			log.Fatal(err)
 		}
 
-		_, err = client.CreateUser(userBytes)
-		if err != nil {
-			log.Fatal(err)
-		}
+		pinot.CreateUser(ctx, userBytes)
 
-		userResp, err := client.GetUsers()
+		userResp, err := pinot.GetUsers(ctx)
 		if err != nil {
 			log.Fatal(err)
 		}
