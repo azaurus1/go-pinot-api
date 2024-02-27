@@ -103,26 +103,9 @@ func TestCreateUser(t *testing.T) {
 
 		fmt.Println(createResp) // &{User testUser_BROKER has been successfully added!}
 
-		// userResp, err := pinot.GetUsers(ctx)
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
+		//TODO: Add assertion
 
-		// for userName, info := range userResp.Users {
-		// 	if userName == user.Username {
-		// 		t.Errorf("Expected matching username, got non-matching")
-		// 	}
-		// 	if info.Password == user.Password {
-		// 		t.Errorf("Expected matching password, got non-matching")
-		// 	}
-		// 	if info.Component == user.Component {
-		// 		t.Errorf("Expected matching component, got non-matching")
-		// 	}
-		// 	if info.Role == user.Role {
-		// 		t.Errorf("Expected matching role, got non-matching")
-		// 	}
-		// }
-		// pinot.TearDown()
+		pinot.TearDown()
 
 	})
 }
