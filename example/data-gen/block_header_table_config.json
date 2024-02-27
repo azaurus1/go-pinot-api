@@ -1,0 +1,74 @@
+{
+  "tableName": "ethereum_mainnet_block_headers",
+  "tableType": "REALTIME",
+  "tenants": {
+    "broker": "DefaultTenant",
+    "server": "DefaultTenant",
+    "tagOverrideConfig": {}
+  },
+  "segmentsConfig": {
+    "schemaName": "ethereum_mainnet_block_headers",
+    "timeColumnName": "timestamp",
+    "replication": "1",
+    "replicasPerPartition": "1",
+    "retentionTimeUnit": null,
+    "retentionTimeValue": null,
+    "completionConfig": null,
+    "crypterClassName": null,
+    "peerSegmentDownloadScheme": null
+  },
+  "tableIndexConfig": {
+    "loadMode": "MMAP",
+    "invertedIndexColumns": [],
+    "createInvertedIndexDuringSegmentGeneration": false,
+    "rangeIndexColumns": [],
+    "sortedColumn": [],
+    "bloomFilterColumns": [],
+    "bloomFilterConfigs": null,
+    "noDictionaryColumns": [],
+    "onHeapDictionaryColumns": [],
+    "varLengthDictionaryColumns": [],
+    "enableDefaultStarTree": false,
+    "starTreeIndexConfigs": null,
+    "enableDynamicStarTreeCreation": false,
+    "segmentPartitionConfig": null,
+    "columnMinMaxValueGeneratorMode": null,
+    "aggregateMetrics": false,
+    "nullHandlingEnabled": false,
+    "streamConfigs": {
+      "streamType": "kafka",
+      "stream.kafka.topic.name": "ethereum.mainnet.blocks",
+      "stream.kafka.broker.list": "kafka:9092",
+      "stream.kafka.consumer.type": "lowlevel",
+      "stream.kafka.consumer.prop.auto.offset.reset": "smallest",
+      "stream.kafka.consumer.factory.class.name": "org.apache.pinot.plugin.stream.kafka20.KafkaConsumerFactory",
+      "stream.kafka.decoder.class.name": "org.apache.pinot.plugin.inputformat.avro.confluent.KafkaConfluentSchemaRegistryAvroMessageDecoder",
+      "realtime.segment.flush.threshold.rows": "0",
+      "realtime.segment.flush.threshold.time": "24h",
+      "realtime.segment.flush.threshold.segment.size": "100M",
+      "stream.kafka.decoder.prop.format": "AVRO",
+      "stream.kafka.decoder.prop.schema.registry.rest.url": "http://schema-registry:8081"
+    },
+    "DictionaryColumns": []
+  },
+  "metadata": {},
+  "ingestionConfig": {
+    "filterConfig": null,
+    "transformConfigs": null
+  },
+  "quota": {
+    "storage": null,
+    "maxQueriesPerSecond": null
+  },
+  "task": null,
+  "routing": {
+    "segmentPrunerTypes": null,
+    "instanceSelectorType": null
+  },
+  "query": {
+    "timeoutMs": null
+  },
+  "fieldConfigList": [],
+  "upsertConfig": null,
+  "tierConfigs": null
+}

@@ -72,12 +72,12 @@ func main() {
 
 	// Delete User
 	delResp, err := client.DeleteUser(user.Username, user.Component)
-  if err != nil {
+	if err != nil {
 		log.Panic(err)
 	}
-  
-  fmt.Println(delResp.Status)
-  
+
+	fmt.Println(delResp.Status)
+
 	schema := getSchema()
 
 	// Create Schema will validate the schema first anyway
@@ -99,15 +99,14 @@ func main() {
 
 func getSchema() pinotModel.Schema {
 
-	schemaFilePath := "./example/data-gen/block_header_schema.json"
+	schemaFilePath := "./data-gen/block_header_schema.json"
 
 	f, err := os.Open(schemaFilePath)
 	if err != nil {
 		log.Panic(err)
 	}
 
-
-  defer f.Close()
+	defer f.Close()
 
 	var schema pinotModel.Schema
 	err = json.NewDecoder(f).Decode(&schema)
