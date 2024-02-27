@@ -11,6 +11,7 @@ import (
 	"github.com/azaurus1/go-pinot-api/model"
 
 	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/network"
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
@@ -27,19 +28,19 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 		return nil, fmt.Errorf("failed to add data: %s", err)
 	}
 
-	// newNetwork, err := network.New(ctx, network.WithCheckDuplicate())
-	// if err != nil {
-	// 	return nil, fmt.Errorf("failed to create network: %s", err)
-	// }
+	newNetwork, err := network.New(ctx, network.WithCheckDuplicate())
+	if err != nil {
+		return nil, fmt.Errorf("failed to create network: %s", err)
+	}
 
-	// networkName := newNetwork.Name
+	networkName := newNetwork.Name
 
 	pinotZkContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
-			// Networks: []string{networkName},
-			// NetworkAliases: map[string][]string{
-			// 	networkName: {"pinot-zk"},
-			// },
+			Networks: []string{networkName},
+			NetworkAliases: map[string][]string{
+				networkName: {"pinot-zk"},
+			},
 			Name:         "pinot-zk",
 			Image:        "apachepinot/pinot:latest",
 			ExposedPorts: []string{"2181/tcp"},
@@ -58,23 +59,16 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 		return nil, fmt.Errorf("failed to get mapped port: %s", err)
 	}
 
-	pinotZKHost, err := pinotZkContainer.Host(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get host: %s", err)
-	}
-
-	pinotZKURI := fmt.Sprintf("%s:%s", pinotZKHost, pinotZKMappedPort.Port())
+	pinotZKURI := fmt.Sprintf("%s:%s", "pinot-zk", pinotZKMappedPort.Port())
 
 	fmt.Println("ZK URI: ", pinotZKURI)
 
-	defer pinotZkContainer.Terminate(ctx)
-
 	pinotContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
-			// Networks: []string{networkName},
-			// NetworkAliases: map[string][]string{
-			// 	networkName: {"pinot-controller"}, // this does work btrw
-			// },
+			Networks: []string{networkName},
+			NetworkAliases: map[string][]string{
+				networkName: {"pinot-controller"}, // this does work btrw
+			},
 			Name:         "pinot-controller",
 			Image:        "apachepinot/pinot:latest",
 			ExposedPorts: []string{"2123/tcp", "9000/tcp", "8000/tcp", "7050/tcp", "6000/tcp"},
@@ -85,8 +79,8 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 					FileMode:          0o700,
 				},
 			},
-			Cmd:        []string{"StartController", "-zkAddress", pinotZKURI}, //"StartController"  "-configFileName", "/config/pinot-controller.conf"
-			WaitingFor: wait.ForLog("INFO: [HttpServer] Started.").WithStartupTimeout(4 * time.Minute),
+			Cmd:        []string{"StartController", "-zkAddress", "pinot-zk:2181"}, //"StartController"  "-configFileName", "/config/pinot-controller.conf"
+			WaitingFor: wait.ForLog("INFO [StartServiceManagerCommand] [main] Started Pinot [CONTROLLER] instance").WithStartupTimeout(4 * time.Minute),
 		},
 		Started: true,
 	})
@@ -94,8 +88,6 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to start container: %s", err)
 	}
-
-	defer pinotContainer.Terminate(ctx)
 
 	tearDown := func() {
 		if err := pinotContainer.Terminate(ctx); err != nil {
@@ -108,17 +100,17 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 		return nil, fmt.Errorf("failed to get mapped port: %s", err)
 	}
 
-	pinotControllerHost, err := pinotContainer.Host(ctx)
+	pinotContainerHost, err := pinotContainer.Host(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get host: %s", err)
+		return nil, fmt.Errorf("failed to get container host: %s", err)
 	}
 
-	pinotControllerIP := fmt.Sprintf("%s:%s", pinotControllerHost, pinotControllerMappedPort.Port())
+	pinotControllerURI := fmt.Sprintf("%s:%v", pinotContainerHost, pinotControllerMappedPort.Port())
 
 	return &Pinot{
 		Container: pinotContainer,
 		TearDown:  tearDown,
-		URI:       pinotControllerIP,
+		URI:       pinotControllerURI,
 	}, nil
 }
 
