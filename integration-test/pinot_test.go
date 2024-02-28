@@ -73,7 +73,6 @@ func TestGetUser(t *testing.T) {
 		for userName, info := range userResp.Users {
 			fmt.Println(userName, info)
 		}
-		pinot.TearDown()
 	})
 
 }
@@ -101,11 +100,8 @@ func TestCreateUser(t *testing.T) {
 
 		createResp, err := pinot.CreateUser(ctx, userBytes)
 
-		fmt.Println(createResp) // &{User testUser_BROKER has been successfully added!}
-
-		//TODO: Add assertion
-
-		pinot.TearDown()
-
+		if createResp.Status != "User testUser_BROKER has been successfully added!" {
+			t.Errorf("Expected 'User testUser_BROKER has been successfully added!', got '%s'", createResp.Status)
+		}
 	})
 }
