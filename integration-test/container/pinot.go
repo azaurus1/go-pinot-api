@@ -79,7 +79,7 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 					FileMode:          0o700,
 				},
 			},
-			Cmd:        []string{"StartController", "-zkAddress", "pinot-zk:2181"}, //"StartController"  "-configFileName", "/config/pinot-controller.conf"
+			Cmd:        []string{"StartController", "-configFileName", "/config/pinot-controller.conf"}, //"StartController"  "-configFileName", "/config/pinot-controller.conf"
 			WaitingFor: wait.ForLog("INFO [StartServiceManagerCommand] [main] Started Pinot [CONTROLLER] instance").WithStartupTimeout(4 * time.Minute),
 		},
 		Started: true,
