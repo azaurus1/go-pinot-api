@@ -2,11 +2,16 @@ package integration_test
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
-	"github.com/twmb/franz-go/pkg/kgo"
+	"encoding/json"
+	"fmt"
 	"integration-test/container"
+	"log"
 	"testing"
 	"time"
+
+	"github.com/azaurus1/go-pinot-api/model"
+	"github.com/stretchr/testify/assert"
+	"github.com/twmb/franz-go/pkg/kgo"
 )
 
 func TestUser(t *testing.T) {
@@ -49,4 +54,53 @@ func TestUser(t *testing.T) {
 
 	})
 
+}
+
+func TestGetUser(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Minute)
+	defer cancel()
+
+	t.Run("Get User", func(t *testing.T) {
+		pinot, err := container.RunPinotContainer(ctx)
+		assert.NoError(t, err)
+
+		userResp, err := pinot.GetUsers(ctx)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for userName, info := range userResp.Users {
+			fmt.Println(userName, info)
+		}
+		pinot.TearDown()
+	})
+}
+
+func TestCreateUser(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Minute)
+	defer cancel()
+
+	t.Run("Create User", func(t *testing.T) {
+		pinot, err := container.RunPinotContainer(ctx)
+		assert.NoError(t, err)
+
+		user := model.User{
+			Username:  "testUser",
+			Password:  "password",
+			Component: "BROKER",
+			Role:      "admin",
+		}
+
+		userBytes, err := json.Marshal(user)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		createResp, err := pinot.CreateUser(ctx, userBytes)
+
+		if createResp.Status != "User testUser_BROKER has been successfully added!" {
+			t.Errorf("Expected 'User testUser_BROKER has been successfully added!', got '%s'", createResp.Status)
+		}
+		pinot.TearDown()
+	})
 }

@@ -10,6 +10,10 @@ github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migc
 github.com/Microsoft/go-winio v0.6.1/go.mod h1:LRdKpFKfdobln8UmuiYcKPot9D2v6svN5+sAH+4kjUM=
 github.com/Microsoft/hcsshim v0.11.4 h1:68vKo2VN8DE9AdN4tnkWnmdhqdbpUFM8OF3Airm7fz8=
 github.com/Microsoft/hcsshim v0.11.4/go.mod h1:smjE4dvqPX9Zldna+t5FG3rnoHhaB7QYxPRqGcpAD9w=
+github.com/azaurus1/go-pinot-api v0.0.0-20240225092753-08f199eeb3c4 h1:gzjp+FMRbvzr/0xLrx22+HMfB2FhonBlZROlLPtgPLs=
+github.com/azaurus1/go-pinot-api v0.0.0-20240225092753-08f199eeb3c4/go.mod h1:12lb+347aT1gmmi7trgQ9hJdFPUyOgisxW59x5b01lQ=
+github.com/azaurus1/go-pinot-api v0.0.0-20240225103742-eef15208f812 h1:1jSWksn7QJ0tzcNnnTUejTDyCqw4xgnz2HwSTXZpdkY=
+github.com/azaurus1/go-pinot-api v0.0.0-20240225103742-eef15208f812/go.mod h1:12lb+347aT1gmmi7trgQ9hJdFPUyOgisxW59x5b01lQ=
 github.com/cenkalti/backoff/v4 v4.2.1 h1:y4OZtCnogmCPw98Zjyt5a6+QwPLGkiQsYW5oUqylYbM=
 github.com/cenkalti/backoff/v4 v4.2.1/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
 github.com/containerd/containerd v1.7.12 h1:+KQsnv4VnzyxWcfO9mlxxELaoztsDEjOuCMPAuPqgU0=
