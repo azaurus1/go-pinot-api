@@ -9,6 +9,7 @@ import (
 
 	goPinotAPI "github.com/azaurus1/go-pinot-api"
 	"github.com/azaurus1/go-pinot-api/model"
+	"github.com/google/uuid"
 
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/network"
@@ -21,13 +22,24 @@ type Pinot struct {
 	URI       string
 }
 
+func randomShortUUID() string {
+	uuid := uuid.New()
+	return uuid.String()[:8]
+}
+
+func randomisePinotURI(uri string) string {
+	return fmt.Sprintf("%s-%s", uri, randomShortUUID())
+}
+
 func RunPinotContainer(ctx context.Context) (*Pinot, error) {
+
+	zkURI := randomisePinotURI("pinot-zk")
+	pinotURI := randomisePinotURI("pinot-controller")
 
 	absPath, err := filepath.Abs(filepath.Join(".", "testdata", "pinot-controller.conf"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to add data: %s", err)
 	}
-
 	newNetwork, err := network.New(ctx, network.WithCheckDuplicate())
 	if err != nil {
 		return nil, fmt.Errorf("failed to create network: %s", err)
@@ -35,13 +47,13 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 
 	networkName := newNetwork.Name
 
-	pinotZkContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+	_, err = testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
 			Networks: []string{networkName},
 			NetworkAliases: map[string][]string{
 				networkName: {"pinot-zk"},
 			},
-			Name:         "pinot-zk",
+			Name:         zkURI,
 			Image:        "apachepinot/pinot:latest",
 			ExposedPorts: []string{"2181/tcp"},
 			Cmd:          []string{"StartZookeeper"},
@@ -54,14 +66,7 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 		return nil, fmt.Errorf("failed to start container: %s", err)
 	}
 
-	pinotZKMappedPort, err := pinotZkContainer.MappedPort(ctx, "2181")
-	if err != nil {
-		return nil, fmt.Errorf("failed to get mapped port: %s", err)
-	}
-
-	pinotZKURI := fmt.Sprintf("%s:%s", "pinot-zk", pinotZKMappedPort.Port())
-
-	fmt.Println("ZK URI: ", pinotZKURI)
+	fmt.Println("ZK URI: ", zkURI)
 
 	pinotContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
@@ -69,7 +74,7 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 			NetworkAliases: map[string][]string{
 				networkName: {"pinot-controller"}, // this does work btrw
 			},
-			Name:         "pinot-controller",
+			Name:         pinotURI,
 			Image:        "apachepinot/pinot:latest",
 			ExposedPorts: []string{"2123/tcp", "9000/tcp", "8000/tcp", "7050/tcp", "6000/tcp"},
 			Files: []testcontainers.ContainerFile{

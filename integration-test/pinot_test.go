@@ -63,7 +63,6 @@ func TestGetUser(t *testing.T) {
 	t.Run("Get User", func(t *testing.T) {
 		pinot, err := container.RunPinotContainer(ctx)
 		assert.NoError(t, err)
-		defer pinot.TearDown()
 
 		userResp, err := pinot.GetUsers(ctx)
 		if err != nil {
@@ -73,8 +72,8 @@ func TestGetUser(t *testing.T) {
 		for userName, info := range userResp.Users {
 			fmt.Println(userName, info)
 		}
+		pinot.TearDown()
 	})
-
 }
 
 func TestCreateUser(t *testing.T) {
@@ -84,7 +83,6 @@ func TestCreateUser(t *testing.T) {
 	t.Run("Create User", func(t *testing.T) {
 		pinot, err := container.RunPinotContainer(ctx)
 		assert.NoError(t, err)
-		defer pinot.TearDown()
 
 		user := model.User{
 			Username:  "testUser",
@@ -103,5 +101,6 @@ func TestCreateUser(t *testing.T) {
 		if createResp.Status != "User testUser_BROKER has been successfully added!" {
 			t.Errorf("Expected 'User testUser_BROKER has been successfully added!', got '%s'", createResp.Status)
 		}
+		pinot.TearDown()
 	})
 }
