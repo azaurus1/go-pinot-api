@@ -266,7 +266,6 @@ func (c *PinotAPIClient) UpdateUser(username string, component string, passwordC
 	return &result, err
 }
 
-
 func (c *PinotAPIClient) GetTables() (*model.GetTablesResponse, error) {
 	var result model.GetTablesResponse
 
@@ -293,7 +292,6 @@ func (c *PinotAPIClient) CreateTable(body []byte) (*model.UserActionResponse, er
 	return &result, err
 }
 
-// tenants
 func (c *PinotAPIClient) UpdateTable(tableName string, body []byte) (*model.UserActionResponse, error) {
 	var result model.UserActionResponse
 	endpoint := fmt.Sprintf("/tables/%s", tableName)
@@ -352,8 +350,7 @@ func (c *PinotAPIClient) GetSchema(schemaName string) (*model.Schema, error) {
 
 }
 
-// CreateSchema creates a new schema.
-// if it already exists, it will nothing will happen
+// CreateSchema creates a new schema. if it already exists, it will nothing will happen
 func (c *PinotAPIClient) CreateSchema(schema model.Schema) (*model.UserActionResponse, error) {
 
 	// validate schema first
@@ -450,6 +447,13 @@ func (c *PinotAPIClient) UpdateSchema(schema model.Schema) (*model.UserActionRes
 	err = c.CreateObject("/schemas", schemaBytes, result)
 	return &result, err
 
+}
+
+func (c *PinotAPIClient) DeleteSchema(schemaName string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	endpoint := fmt.Sprintf("/schemas/%s", schemaName)
+	err := c.DeleteObject(endpoint, nil, &result)
+	return &result, err
 }
 
 func fullUrl(url *url.URL, path string) string {
