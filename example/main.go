@@ -90,6 +90,180 @@ func main() {
 
 	fmt.Println(delResp.Status)
 
+	// Get Tables
+	tablesResp, err := client.GetTables()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Tables:")
+	fmt.Println(tablesResp.Tables[0])
+
+	// Get Table
+	_, err = client.GetTable("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	// Create Table
+	table := pinotModel.Table{
+		TableName: "blockHeader",
+		TableType: "OFFLINE",
+		SegmentsConfig: pinotModel.TableSegmentsConfig{
+			TimeColumnName:            "time",
+			TimeType:                  "MILLISECONDS",
+			Replication:               "1",
+			SegmentAssignmentStrategy: "BalanceNumSegmentAssignmentStrategy",
+			SegmentPushType:           "APPEND",
+			MinimizeDataMovement:      true,
+		},
+		Tenants: pinotModel.TableTenant{
+			Broker: "DefaultTenant",
+			Server: "DefaultTenant",
+		},
+		TableIndexConfig: pinotModel.TableIndexConfig{
+			LoadMode: "MMAP",
+		},
+		Metadata: pinotModel.TableMetadata{
+			CustomConfigs: map[string]string{
+				"customKey": "customValue",
+			},
+		},
+		FieldConfigList: []pinotModel.FieldConfig{
+			{
+				Name:         "blockNumber",
+				EncodingType: "RAW",
+				IndexType:    "SORTED",
+				IndexTypes:   []string{"SORTED"},
+				TimestampConfig: pinotModel.TimestampConfig{
+					Granulatities: []string{"DAY"},
+				},
+				Indexes: pinotModel.FieldIndexes{
+					Inverted: pinotModel.FiendIndexInverted{
+						Enabled: "false",
+					},
+				},
+			},
+		},
+		IngestionConfig: pinotModel.TableIngestionConfig{
+			SegmentTimeValueCheckType: "EPOCH",
+			TransformConfigs: []pinotModel.TransformConfig{
+				{
+					ColumnName:        "blockNumber",
+					TransformFunction: "fromEpochDays(DaysSinceEpoch)",
+				},
+			},
+			ContinueOnError:   true,
+			RowTimeValueCheck: true,
+		},
+		TierConfigs: []pinotModel.TierConfig{
+			{
+				Name:                "hotTier",
+				SegmentSelectorType: "time",
+				SegmentAge:          "3130d",
+				StorageType:         "pinot_server",
+				ServerTag:           "DefaultTenant_OFFLINE",
+			},
+		},
+		IsDimTable: false,
+	}
+
+	tableBytes, err := json.Marshal(table)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	createTableResp, err := client.CreateTable(tableBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(createTableResp.Status)
+
+	// Update Table
+	updateTable := pinotModel.Table{
+		TableName: "blockHeader",
+		TableType: "OFFLINE",
+		SegmentsConfig: pinotModel.TableSegmentsConfig{
+			TimeColumnName:            "time",
+			TimeType:                  "SECONDS",
+			Replication:               "1",
+			SegmentAssignmentStrategy: "BalanceNumSegmentAssignmentStrategy",
+			SegmentPushType:           "APPEND",
+			MinimizeDataMovement:      true,
+		},
+		Tenants: pinotModel.TableTenant{
+			Broker: "DefaultTenant",
+			Server: "DefaultTenant",
+		},
+		TableIndexConfig: pinotModel.TableIndexConfig{
+			LoadMode: "MMAP",
+		},
+		Metadata: pinotModel.TableMetadata{
+			CustomConfigs: map[string]string{
+				"customKey": "customValue",
+			},
+		},
+		FieldConfigList: []pinotModel.FieldConfig{
+			{
+				Name:         "blockNumber",
+				EncodingType: "RAW",
+				IndexType:    "SORTED",
+				IndexTypes:   []string{"SORTED"},
+				TimestampConfig: pinotModel.TimestampConfig{
+					Granulatities: []string{"DAY"},
+				},
+				Indexes: pinotModel.FieldIndexes{
+					Inverted: pinotModel.FiendIndexInverted{
+						Enabled: "false",
+					},
+				},
+			},
+		},
+		IngestionConfig: pinotModel.TableIngestionConfig{
+			SegmentTimeValueCheckType: "EPOCH",
+			TransformConfigs: []pinotModel.TransformConfig{
+				{
+					ColumnName:        "blockNumber",
+					TransformFunction: "fromEpochDays(DaysSinceEpoch)",
+				},
+			},
+			ContinueOnError:   true,
+			RowTimeValueCheck: true,
+		},
+		TierConfigs: []pinotModel.TierConfig{
+			{
+				Name:                "hotTier",
+				SegmentSelectorType: "time",
+				SegmentAge:          "3130d",
+				StorageType:         "pinot_server",
+				ServerTag:           "DefaultTenant_OFFLINE",
+			},
+		},
+		IsDimTable: false,
+	}
+
+	updateTableBytes, err := json.Marshal(updateTable)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	updateTableResp, err := client.UpdateTable(updateTable.TableName, updateTableBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(updateTableResp.Status)
+
+	// Delete Table
+	deleteTableResp, err := client.DeleteTable(table.TableName)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(deleteTableResp.Status)
+
+	// Schema
 	schema := getSchema()
 
 	// Create Schema will validate the schema first anyway

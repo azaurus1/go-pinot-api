@@ -53,10 +53,6 @@ func NewPinotAPIClient(pinotController string) *PinotAPIClient {
 	}
 }
 
-type GetTablesResponse struct {
-	Tables []string `json:"tables"`
-}
-
 type CreateTablesResponse struct {
 	UnrecognizedProperties map[string][]string `json:"unrecognizedProperties"`
 	Status                 string              `json:"status"`
@@ -275,15 +271,42 @@ func (c *PinotAPIClient) UpdateUser(username string, component string, passwordC
 }
 
 // tables
-func (c *PinotAPIClient) GetTables() (*GetTablesResponse, error) {
-	var result GetTablesResponse
+func (c *PinotAPIClient) GetTables() (*model.GetTablesResponse, error) {
+	var result model.GetTablesResponse
 	err := c.FetchData("/tables", &result)
 	return &result, err
 }
 
+func (c *PinotAPIClient) GetTable(tableName string) (*model.GetTableResponse, error) {
+	var result model.GetTableResponse
+	endpoint := fmt.Sprintf("/tables/%s", tableName)
+	err := c.FetchData(endpoint, &result)
+	return &result, err
+}
+
+// TODO: ValidateTable (?)
+
+// func (c *PinotAPIClient) ValidateTable(body []byte) (*model.UserActionResponse, error) {
+
+// }
+
 func (c *PinotAPIClient) CreateTable(body []byte) (*model.UserActionResponse, error) {
 	var result model.UserActionResponse
 	err := c.CreateObject("/tables", body, result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) UpdateTable(tableName string, body []byte) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	endpoint := fmt.Sprintf("/tables/%s", tableName)
+	err := c.UpdateObject(endpoint, nil, body, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) DeleteTable(tableName string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	endpoint := fmt.Sprintf("/tables/%s", tableName)
+	err := c.DeleteObject(endpoint, nil, &result)
 	return &result, err
 }
 
