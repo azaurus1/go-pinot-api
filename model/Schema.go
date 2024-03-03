@@ -12,9 +12,9 @@ type FieldSpec struct {
 type Schema struct {
 	SchemaName          string      `json:"schemaName"`
 	DimensionFieldSpecs []FieldSpec `json:"dimensionFieldSpecs"`
-	MetricFieldSpecs    []FieldSpec `json:"metricFieldSpecs"`
-	DateTimeFieldSpecs  []FieldSpec `json:"dateTimeFieldSpecs"`
-	PrimaryKeyColumns   []string    `json:"primaryKeyColumns"`
+	MetricFieldSpecs    []FieldSpec `json:"metricFieldSpecs,omitempty"`
+	DateTimeFieldSpecs  []FieldSpec `json:"dateTimeFieldSpecs,omitempty"`
+	PrimaryKeyColumns   []string    `json:"primaryKeyColumns,omitempty"`
 }
 
 func (schema *Schema) AsBytes() ([]byte, error) {
@@ -26,4 +26,12 @@ func (schema *Schema) AsBytes() ([]byte, error) {
 
 	return schemaBytes, nil
 
+}
+
+func (schema *Schema) String() string {
+	jsonString, err := json.MarshalIndent(schema, "", "  ")
+	if err != nil {
+		return err.Error()
+	}
+	return string(jsonString)
 }
