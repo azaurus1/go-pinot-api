@@ -68,9 +68,6 @@ type ValidateSchemaResponse struct {
 	Error string
 }
 
-type GetSchemaResponse []string
-
-// generic function
 func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
 	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
@@ -221,7 +218,6 @@ func (c *PinotAPIClient) UpdateObject(endpoint string, queryParams map[string]st
 
 }
 
-// users
 func (c *PinotAPIClient) GetUsers() (*model.GetUsersResponse, error) {
 	var result model.GetUsersResponse
 	err := c.FetchData("/users", &result)
@@ -270,9 +266,10 @@ func (c *PinotAPIClient) UpdateUser(username string, component string, passwordC
 	return &result, err
 }
 
-// tables
+
 func (c *PinotAPIClient) GetTables() (*model.GetTablesResponse, error) {
 	var result model.GetTablesResponse
+
 	err := c.FetchData("/tables", &result)
 	return &result, err
 }
@@ -296,6 +293,7 @@ func (c *PinotAPIClient) CreateTable(body []byte) (*model.UserActionResponse, er
 	return &result, err
 }
 
+// tenants
 func (c *PinotAPIClient) UpdateTable(tableName string, body []byte) (*model.UserActionResponse, error) {
 	var result model.UserActionResponse
 	endpoint := fmt.Sprintf("/tables/%s", tableName)
@@ -310,7 +308,29 @@ func (c *PinotAPIClient) DeleteTable(tableName string) (*model.UserActionRespons
 	return &result, err
 }
 
-// tenants
+func (c *PinotAPIClient) CreateTableFromFile(tableConfigFile string) (*model.UserActionResponse, error) {
+
+	f, err := os.Open(tableConfigFile)
+	if err != nil {
+		return nil, fmt.Errorf("unable to open table config file: %w", err)
+	}
+
+	defer f.Close()
+
+	var tableConfig model.TableConfig
+	err = json.NewDecoder(f).Decode(&tableConfig)
+	if err != nil {
+		return nil, fmt.Errorf("unable to unmarshal table config: %w", err)
+	}
+
+	tableConfigBytes, err := tableConfig.AsBytes()
+	if err != nil {
+		return nil, fmt.Errorf("unable to marshal table config: %w", err)
+	}
+
+	return c.CreateTable(tableConfigBytes)
+}
+
 func (c *PinotAPIClient) GetTenants() (*GetTenantsResponse, error) {
 	var result GetTenantsResponse
 	err := c.FetchData("/tenants", &result)
@@ -318,10 +338,18 @@ func (c *PinotAPIClient) GetTenants() (*GetTenantsResponse, error) {
 }
 
 // GetSchemas returns a list of schemas
-func (c *PinotAPIClient) GetSchemas() (*GetSchemaResponse, error) {
-	var result GetSchemaResponse
+func (c *PinotAPIClient) GetSchemas() (*model.GetSchemaResponse, error) {
+	var result model.GetSchemaResponse
 	err := c.FetchData("/schemas", &result)
 	return &result, err
+}
+
+// GetSchema returns a schema
+func (c *PinotAPIClient) GetSchema(schemaName string) (*model.Schema, error) {
+	var result model.Schema
+	err := c.FetchData(fmt.Sprintf("/schemas/%s", schemaName), &result)
+	return &result, err
+
 }
 
 // CreateSchema creates a new schema.

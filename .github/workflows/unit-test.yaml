@@ -1,0 +1,29 @@
+name: unit-tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - '**'
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    environment: publish
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+
+      - uses: actions/checkout@v4.1.1
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache-dependency-path: ./
+
+      - name: Run Unit Tests for Templater
+        working-directory: config-templating
+        run: |
+          go test -v
