@@ -320,6 +320,14 @@ func (c *PinotAPIClient) GetSchemas() (*GetSchemaResponse, error) {
 	return &result, err
 }
 
+// GetSchema returns a schema
+func (c *PinotAPIClient) GetSchema(schemaName string) (*model.Schema, error) {
+	var result model.Schema
+	err := c.FetchData(fmt.Sprintf("/schemas/%s", schemaName), &result)
+	return &result, err
+
+}
+
 // CreateSchema creates a new schema.
 // if it already exists, it will nothing will happen
 func (c *PinotAPIClient) CreateSchema(schema model.Schema) (*model.UserActionResponse, error) {
