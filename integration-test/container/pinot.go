@@ -23,8 +23,7 @@ type Pinot struct {
 }
 
 func randomShortUUID() string {
-	uuid := uuid.New()
-	return uuid.String()[:8]
+	return uuid.New().String()[:8]
 }
 
 func randomisePinotURI(uri string) string {
@@ -72,7 +71,7 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 		ContainerRequest: testcontainers.ContainerRequest{
 			Networks: []string{networkName},
 			NetworkAliases: map[string][]string{
-				networkName: {"pinot-controller"}, // this does work btrw
+				networkName: {"pinot-controller"}, // this does work btw
 			},
 			Name:         pinotURI,
 			Image:        "apachepinot/pinot:latest",
@@ -119,7 +118,7 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 	}, nil
 }
 
-func (p *Pinot) CreateUser(ctx context.Context, userBytes []byte) (*model.UserActionResponse, error) {
+func (p *Pinot) CreateUser(_ context.Context, userBytes []byte) (*model.UserActionResponse, error) {
 	client := goPinotAPI.NewPinotAPIClient("http://" + p.URI)
 
 	userCreationResponse, err := client.CreateUser(userBytes)
@@ -131,7 +130,7 @@ func (p *Pinot) CreateUser(ctx context.Context, userBytes []byte) (*model.UserAc
 
 }
 
-func (p *Pinot) GetUsers(ctx context.Context) (*model.GetUsersResponse, error) {
+func (p *Pinot) GetUsers(_ context.Context) (*model.GetUsersResponse, error) {
 	client := goPinotAPI.NewPinotAPIClient("http://" + p.URI)
 
 	userResp, err := client.GetUsers()
