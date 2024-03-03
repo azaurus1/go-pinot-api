@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"os"
 )
 
 type Tenants struct {
@@ -83,6 +84,23 @@ type TableConfig struct {
 	FieldConfigList  any              `json:"fieldConfigList"`
 	UpsertConfig     UpsertConfig     `json:"upsertConfig"`
 	TierConfigs      TierConfigs      `json:"tierConfigs"`
+}
+
+func NewTableConfigFromFile(fileName string) (TableConfig, error) {
+	var tableConfig TableConfig
+	f, err := os.Open(fileName)
+	if err != nil {
+		return tableConfig, err
+	}
+
+	defer f.Close()
+
+	err = json.NewDecoder(f).Decode(&tableConfig)
+	if err != nil {
+		return tableConfig, err
+	}
+
+	return tableConfig, nil
 }
 
 func (tableConfig *TableConfig) AsBytes() ([]byte, error) {
