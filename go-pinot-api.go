@@ -315,13 +315,13 @@ func (c *PinotAPIClient) CreateTableFromFile(tableConfigFile string) (*model.Use
 
 	defer f.Close()
 
-	var tableConfig model.TableConfig
+	var tableConfig model.Table
 	err = json.NewDecoder(f).Decode(&tableConfig)
 	if err != nil {
 		return nil, fmt.Errorf("unable to unmarshal table config: %w", err)
 	}
 
-	tableConfigBytes, err := tableConfig.AsBytes()
+	tableConfigBytes, err := json.Marshal(tableConfig)
 	if err != nil {
 		return nil, fmt.Errorf("unable to marshal table config: %w", err)
 	}

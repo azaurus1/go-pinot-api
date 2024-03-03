@@ -1,6 +1,7 @@
 package config_templating
 
 import (
+	"encoding/json"
 	"github.com/azaurus1/go-pinot-api/model"
 	"github.com/stretchr/testify/assert"
 	"os"
@@ -21,7 +22,7 @@ func TestTemplater(t *testing.T) {
 
 		// write to it
 		config := dummyTableConfig()
-		configBytes, err := config.AsBytes()
+		configBytes, err := json.Marshal(config)
 		assert.NoError(t, err)
 
 		_, err = f.Write(configBytes)
@@ -37,8 +38,15 @@ func TestTemplater(t *testing.T) {
 		err = TemplateTableConfig(f.Name(), f.Name(), params)
 		assert.NoError(t, err)
 
-		// read from it
-		templatedConfig, err := model.NewTableConfigFromFile(f.Name())
+		f, err = os.Open(f.Name())
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		defer f.Close()
+
+		var templatedConfig model.Table
+		err = json.NewDecoder(f).Decode(&templatedConfig)
 		assert.NoError(t, err)
 
 		// assert that the template was correctly injected
@@ -50,8 +58,8 @@ func TestTemplater(t *testing.T) {
 
 }
 
-func dummyTableConfig() model.TableConfig {
-	return model.TableConfig{
+func dummyTableConfig() model.Table {
+	return model.Table{
 		TableName: "dummy",
 		TableType: "REALTIME",
 		TableIndexConfig: model.TableIndexConfig{
