@@ -72,8 +72,6 @@ type ValidateSchemaResponse struct {
 	Error string
 }
 
-type GetSchemaResponse []string
-
 func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
 	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
@@ -314,8 +312,8 @@ func (c *PinotAPIClient) GetTenants() (*GetTenantsResponse, error) {
 }
 
 // GetSchemas returns a list of schemas
-func (c *PinotAPIClient) GetSchemas() (*GetSchemaResponse, error) {
-	var result GetSchemaResponse
+func (c *PinotAPIClient) GetSchemas() (*model.GetSchemaResponse, error) {
+	var result model.GetSchemaResponse
 	err := c.FetchData("/schemas", &result)
 	return &result, err
 }
