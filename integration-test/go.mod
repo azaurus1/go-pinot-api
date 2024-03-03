@@ -3,7 +3,7 @@ module integration-test
 go 1.22.0
 
 require (
-	github.com/azaurus1/go-pinot-api v0.0.0-20240303131441-0eaeb79e8758
+	github.com/azaurus1/go-pinot-api v0.0.0-20240303134912-973e7ff51e70
 	github.com/google/uuid v1.6.0
 	github.com/hamba/avro/v2 v2.20.0
 	github.com/stretchr/testify v1.9.0
