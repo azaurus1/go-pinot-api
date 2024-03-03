@@ -107,11 +107,27 @@ func main() {
 		log.Panic(err)
 	}
 
+	currentSchemas, err := client.GetSchemas()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	currentSchemas.ForEachSchema(func(schemaName string) {
+
+		schemaResp, err := client.GetSchema(schemaName)
+		if err != nil {
+			log.Panic(err)
+		}
+
+		fmt.Println("Reading Schema:")
+		fmt.Println(schemaResp)
+
+	})
 }
 
 func getSchema() pinotModel.Schema {
 
-	schemaFilePath := "./data-gen/block_header_schema.json"
+	schemaFilePath := "./example/data-gen/block_header_schema.json"
 
 	f, err := os.Open(schemaFilePath)
 	if err != nil {
