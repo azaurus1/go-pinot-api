@@ -74,7 +74,6 @@ type ValidateSchemaResponse struct {
 
 type GetSchemaResponse []string
 
-// generic function
 func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
 	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
@@ -225,7 +224,6 @@ func (c *PinotAPIClient) UpdateObject(endpoint string, queryParams map[string]st
 
 }
 
-// users
 func (c *PinotAPIClient) GetUsers() (*model.GetUsersResponse, error) {
 	var result model.GetUsersResponse
 	err := c.FetchData("/users", &result)
@@ -274,7 +272,6 @@ func (c *PinotAPIClient) UpdateUser(username string, component string, passwordC
 	return &result, err
 }
 
-// tables
 func (c *PinotAPIClient) GetTables() (*GetTablesResponse, error) {
 	var result GetTablesResponse
 	err := c.FetchData("/tables", &result)
@@ -287,7 +284,29 @@ func (c *PinotAPIClient) CreateTable(body []byte) (*model.UserActionResponse, er
 	return &result, err
 }
 
-// tenants
+func (c *PinotAPIClient) CreateTableFromFile(tableConfigFile string) (*model.UserActionResponse, error) {
+
+	f, err := os.Open(tableConfigFile)
+	if err != nil {
+		return nil, fmt.Errorf("unable to open table config file: %w", err)
+	}
+
+	defer f.Close()
+
+	var tableConfig model.TableConfig
+	err = json.NewDecoder(f).Decode(&tableConfig)
+	if err != nil {
+		return nil, fmt.Errorf("unable to unmarshal table config: %w", err)
+	}
+
+	tableConfigBytes, err := tableConfig.AsBytes()
+	if err != nil {
+		return nil, fmt.Errorf("unable to marshal table config: %w", err)
+	}
+
+	return c.CreateTable(tableConfigBytes)
+}
+
 func (c *PinotAPIClient) GetTenants() (*GetTenantsResponse, error) {
 	var result GetTenantsResponse
 	err := c.FetchData("/tenants", &result)
