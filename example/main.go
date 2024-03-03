@@ -45,6 +45,8 @@ func main() {
 		log.Panic(err)
 	}
 
+	fmt.Println("Creating User:")
+
 	// Create User
 	createResp, err := client.CreateUser(userBytes)
 	if err != nil {
@@ -53,12 +55,22 @@ func main() {
 
 	fmt.Println(createResp.Status)
 
+	// Read User
+	getUserResp, err := client.GetUser(user.Username, user.Component)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading User:")
+	fmt.Println(getUserResp.UsernameWithComponent)
+
 	// Read Users
 	userResp, err := client.GetUsers()
 	if err != nil {
 		log.Panic(err)
 	}
 
+	fmt.Println("Reading Users:")
 	for userName, info := range userResp.Users {
 		fmt.Println(userName, info)
 	}

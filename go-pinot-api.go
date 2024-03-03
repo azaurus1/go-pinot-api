@@ -230,6 +230,19 @@ func (c *PinotAPIClient) GetUsers() (*model.GetUsersResponse, error) {
 	return &result, err
 }
 
+func (c *PinotAPIClient) GetUser(username string, component string) (*model.User, error) {
+	var result map[string]model.User
+	var resultUser model.User
+
+	endpoint := fmt.Sprintf("/users/%s?component=%s", username, component)
+	err := c.FetchData(endpoint, &result)
+
+	usernameWithComponent := fmt.Sprintf("%s_%s", username, component)
+
+	resultUser = result[usernameWithComponent]
+	return &resultUser, err
+}
+
 func (c *PinotAPIClient) CreateUser(body []byte) (*model.UserActionResponse, error) {
 	var result model.UserActionResponse
 	err := c.CreateObject("/users", body, &result)
