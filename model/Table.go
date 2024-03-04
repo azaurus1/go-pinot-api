@@ -79,7 +79,7 @@ type TransformConfig struct {
 
 type TableIngestionConfig struct {
 	SegmentTimeValueCheckType string            `json:"segmentTimeValueCheckType"`
-	TransformConfigs          []TransformConfig `json:"transformConfigs.omitempty"`
+	TransformConfigs          []TransformConfig `json:"transformConfigs,omitempty"` 
 	ContinueOnError           bool              `json:"continueOnError"`
 	RowTimeValueCheck         bool              `json:"rowTimeValueCheck"`
 }
