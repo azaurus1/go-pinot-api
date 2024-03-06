@@ -27,7 +27,7 @@ type PinotAPIClient struct {
 	Host               string
 }
 
-func NewPinotAPIClient(pinotController string) *PinotAPIClient {
+func NewPinotAPIClient(pinotController string, pinotAuthToken string) *PinotAPIClient {
 
 	pinotUrl, err := url.Parse(pinotController)
 	if err != nil {
@@ -35,10 +35,10 @@ func NewPinotAPIClient(pinotController string) *PinotAPIClient {
 	}
 
 	// handle authenticated requests
-	pinotAuthToken := os.Getenv("PINOT_AUTH_TOKEN")
+	// pinotAuthToken := os.Getenv("PINOT_AUTH_TOKEN")
 	httpAuthWriterFunc := func(req *http.Request) {
 		if pinotAuthToken != "" {
-			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", pinotAuthToken))
+			req.Header.Set("Authorization", fmt.Sprintf("Basic %s", pinotAuthToken))
 		}
 	}
 
@@ -72,9 +72,16 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
 	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
 
-	resp, err := http.Get(fullURL)
+	request, err := http.NewRequest("GET", fullURL, nil)
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
+	}
+
+	c.pinotHttp.httpAuthWriter(request)
+
+	resp, err := c.pinotHttp.httpClient.Do(request)
+	if err != nil {
+		return fmt.Errorf("client: could not send request: %w", err)
 	}
 
 	defer resp.Body.Close()
@@ -97,6 +104,7 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	c.pinotHttp.httpAuthWriter(req)
 
 	res, err := c.pinotHttp.httpClient.Do(req)
 	if err != nil {
@@ -109,6 +117,8 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 		// From client perspective, 409 isnt a failed request
 		if res.StatusCode == 409 {
 			errMsg = "client: conflict, object exists - "
+		} else if res.StatusCode == 403 {
+			errMsg = "client: forbidden - "
 		} else {
 			errMsg = "client: "
 		}
@@ -143,6 +153,8 @@ func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]st
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
+
+	c.pinotHttp.httpAuthWriter(req)
 
 	res, err := c.pinotHttp.httpClient.Do(req)
 	if err != nil {
@@ -191,6 +203,7 @@ func (c *PinotAPIClient) UpdateObject(endpoint string, queryParams map[string]st
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
 
+	c.pinotHttp.httpAuthWriter(req)
 	req.Header.Set("Content-Type", "application/json")
 
 	res, err := c.pinotHttp.httpClient.Do(req)
