@@ -11,6 +11,7 @@ import (
 )
 
 var PinotUrl = "http://localhost:9000"
+var PinotAuth = "YWRtaW46dmVyeXNlY3JldA" // Default Admin password=verysecret  admin:verysecret (b64 encoded)
 
 func main() {
 
@@ -19,7 +20,12 @@ func main() {
 		PinotUrl = envPinotUrl
 	}
 
-	client := pinot.NewPinotAPIClient(PinotUrl)
+	envPinotAuth := os.Getenv("PINOT_AUTH")
+	if envPinotAuth != "" {
+		PinotAuth = envPinotAuth
+	}
+
+	client := pinot.NewPinotAPIClient(PinotUrl, PinotAuth)
 
 	user := pinotModel.User{
 		Username:  "liam1",
