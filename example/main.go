@@ -13,6 +13,26 @@ import (
 var PinotUrl = "http://localhost:9000"
 var PinotAuth = "YWRtaW46dmVyeXNlY3JldA" // Default Admin password=verysecret  admin:verysecret (b64 encoded)
 
+func getSchema() pinotModel.Schema {
+
+	schemaFilePath := "./example/data-gen/block_header_schema.json"
+
+	f, err := os.Open(schemaFilePath)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	defer f.Close()
+
+	var schema pinotModel.Schema
+	err = json.NewDecoder(f).Decode(&schema)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return schema
+}
+
 func main() {
 
 	envPinotUrl := os.Getenv("PINOT_URL")
@@ -287,24 +307,4 @@ func main() {
 
 	fmt.Println(deleteTableResp.Status)
 
-}
-
-func getSchema() pinotModel.Schema {
-
-	schemaFilePath := "./example/data-gen/block_header_schema.json"
-
-	f, err := os.Open(schemaFilePath)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	defer f.Close()
-
-	var schema pinotModel.Schema
-	err = json.NewDecoder(f).Decode(&schema)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	return schema
 }
