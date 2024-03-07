@@ -212,6 +212,8 @@ func main() {
 		log.Panic(err)
 	}
 
+	fmt.Println(string(tableBytes))
+
 	createTableResp, err := client.CreateTable(tableBytes)
 	if err != nil {
 		log.Panic(err)
