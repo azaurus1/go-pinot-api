@@ -119,7 +119,7 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 }
 
 func (p *Pinot) CreateUser(_ context.Context, userBytes []byte) (*model.UserActionResponse, error) {
-	client := goPinotAPI.NewPinotAPIClient("http://" + p.URI)
+	client := goPinotAPI.NewPinotAPIClient("http://"+p.URI, "YWRtaW46YWRtaW4=")
 
 	userCreationResponse, err := client.CreateUser(userBytes)
 	if err != nil {
@@ -131,7 +131,7 @@ func (p *Pinot) CreateUser(_ context.Context, userBytes []byte) (*model.UserActi
 }
 
 func (p *Pinot) GetUsers(_ context.Context) (*model.GetUsersResponse, error) {
-	client := goPinotAPI.NewPinotAPIClient("http://" + p.URI)
+	client := goPinotAPI.NewPinotAPIClient("http://"+p.URI, "YWRtaW46YWRtaW4=")
 
 	userResp, err := client.GetUsers()
 	if err != nil {
