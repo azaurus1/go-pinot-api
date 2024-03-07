@@ -96,27 +96,49 @@ func main() {
 
 	fmt.Println(delResp.Status)
 
-	// Get Tables
-	tablesResp, err := client.GetTables()
+	// Schema
+	schema := getSchema()
+
+	// Create Schema will validate the schema first anyway
+	validateResp, err := client.ValidateSchema(schema)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	fmt.Println("Reading Tables:")
-	fmt.Println(tablesResp.Tables[0])
+	if !validateResp.Ok {
+		log.Panic(validateResp.Error)
+	}
 
-	// Get Table
-	_, err = client.GetTable("airlineStats")
+	_, err = client.CreateSchema(schema)
 	if err != nil {
 		log.Panic(err)
 	}
+
+	currentSchemas, err := client.GetSchemas()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	currentSchemas.ForEachSchema(func(schemaName string) {
+
+		schemaResp, err := client.GetSchema(schemaName)
+		if err != nil {
+			log.Panic(err)
+		}
+
+		fmt.Println("Reading Schema:")
+		fmt.Println(schemaResp)
+
+	})
 
 	// Create Table
+	fmt.Println("Creating Table:")
+
 	table := pinotModel.Table{
-		TableName: "blockHeader",
+		TableName: "ethereum_mainnet_block_headers",
 		TableType: "OFFLINE",
 		SegmentsConfig: pinotModel.TableSegmentsConfig{
-			TimeColumnName:            "time",
+			TimeColumnName:            "timestamp",
 			TimeType:                  "MILLISECONDS",
 			Replication:               "1",
 			SegmentAssignmentStrategy: "BalanceNumSegmentAssignmentStrategy",
@@ -137,26 +159,17 @@ func main() {
 		},
 		FieldConfigList: []pinotModel.FieldConfig{
 			{
-				Name:         "blockNumber",
+				Name:         "number",
 				EncodingType: "RAW",
 				IndexType:    "SORTED",
-				IndexTypes:   []string{"SORTED"},
-				TimestampConfig: pinotModel.TimestampConfig{
-					Granulatities: []string{"DAY"},
-				},
-				Indexes: pinotModel.FieldIndexes{
-					Inverted: pinotModel.FiendIndexInverted{
-						Enabled: "false",
-					},
-				},
 			},
 		},
 		IngestionConfig: pinotModel.TableIngestionConfig{
 			SegmentTimeValueCheckType: "EPOCH",
 			TransformConfigs: []pinotModel.TransformConfig{
 				{
-					ColumnName:        "blockNumber",
-					TransformFunction: "fromEpochDays(DaysSinceEpoch)",
+					ColumnName:        "timestamp",
+					TransformFunction: "fromEpochMilliseconds(timestamp)",
 				},
 			},
 			ContinueOnError:   true,
@@ -186,13 +199,27 @@ func main() {
 
 	fmt.Println(createTableResp.Status)
 
+	// Get Tables
+	tablesResp, err := client.GetTables()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Tables:")
+
+	// Get Table
+	_, err = client.GetTable(tablesResp.Tables[0])
+	if err != nil {
+		log.Panic(err)
+	}
+
 	// Update Table
 	updateTable := pinotModel.Table{
-		TableName: "blockHeader",
+		TableName: "ethereum_mainnet_block_headers",
 		TableType: "OFFLINE",
 		SegmentsConfig: pinotModel.TableSegmentsConfig{
-			TimeColumnName:            "time",
-			TimeType:                  "SECONDS",
+			TimeColumnName:            "timestamp",
+			TimeType:                  "MILLISECONDS",
 			Replication:               "1",
 			SegmentAssignmentStrategy: "BalanceNumSegmentAssignmentStrategy",
 			SegmentPushType:           "APPEND",
@@ -212,26 +239,17 @@ func main() {
 		},
 		FieldConfigList: []pinotModel.FieldConfig{
 			{
-				Name:         "blockNumber",
+				Name:         "number",
 				EncodingType: "RAW",
 				IndexType:    "SORTED",
-				IndexTypes:   []string{"SORTED"},
-				TimestampConfig: pinotModel.TimestampConfig{
-					Granulatities: []string{"DAY"},
-				},
-				Indexes: pinotModel.FieldIndexes{
-					Inverted: pinotModel.FiendIndexInverted{
-						Enabled: "false",
-					},
-				},
 			},
 		},
 		IngestionConfig: pinotModel.TableIngestionConfig{
 			SegmentTimeValueCheckType: "EPOCH",
 			TransformConfigs: []pinotModel.TransformConfig{
 				{
-					ColumnName:        "blockNumber",
-					TransformFunction: "fromEpochDays(DaysSinceEpoch)",
+					ColumnName:        "timestamp",
+					TransformFunction: "fromEpochMilliseconds(timestamp)",
 				},
 			},
 			ContinueOnError:   true,
@@ -269,40 +287,6 @@ func main() {
 
 	fmt.Println(deleteTableResp.Status)
 
-	// Schema
-	schema := getSchema()
-
-	// Create Schema will validate the schema first anyway
-	validateResp, err := client.ValidateSchema(schema)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	if !validateResp.Ok {
-		log.Panic(validateResp.Error)
-	}
-
-	_, err = client.CreateSchema(schema)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	currentSchemas, err := client.GetSchemas()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	currentSchemas.ForEachSchema(func(schemaName string) {
-
-		schemaResp, err := client.GetSchema(schemaName)
-		if err != nil {
-			log.Panic(err)
-		}
-
-		fmt.Println("Reading Schema:")
-		fmt.Println(schemaResp)
-
-	})
 }
 
 func getSchema() pinotModel.Schema {
