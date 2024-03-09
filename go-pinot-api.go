@@ -42,17 +42,18 @@ func NewPinotAPIClient(opts ...Opt) *PinotAPIClient {
 }
 
 func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
-
 	pathAndQuery := strings.SplitN(endpoint, "?", 2)
+	var path string
+	if len(pathAndQuery) > 0 {
+		path = pathAndQuery[0]
+	}
 	var queryString string
 	if len(pathAndQuery) > 1 {
 		queryString = pathAndQuery[1]
 	}
 
 	queryMap := c.generateQueryParams(queryString)
-
-	fullURL := c.pinotControllerUrl.JoinPath(endpoint)
-
+	fullURL := c.pinotControllerUrl.JoinPath(path)
 	c.encodeParams(fullURL, queryMap)
 
 	request, err := http.NewRequest(http.MethodGet, fullURL.String(), nil)
