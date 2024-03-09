@@ -4,13 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/azaurus1/go-pinot-api/model"
 	"log"
 	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
+
+	"github.com/azaurus1/go-pinot-api/model"
 )
 
 type PinotAPIClient struct {
@@ -41,9 +43,19 @@ func NewPinotAPIClient(opts ...Opt) *PinotAPIClient {
 
 func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
-	fullURL := c.pinotControllerUrl.JoinPath(endpoint).String()
+	pathAndQuery := strings.SplitN(endpoint, "?", 2)
+	var queryString string
+	if len(pathAndQuery) > 1 {
+		queryString = pathAndQuery[1]
+	}
 
-	request, err := http.NewRequest(http.MethodGet, fullURL, nil)
+	queryMap := c.generateQueryParams(queryString)
+
+	fullURL := c.pinotControllerUrl.JoinPath(endpoint)
+
+	c.encodeParams(fullURL, queryMap)
+
+	request, err := http.NewRequest(http.MethodGet, fullURL.String(), nil)
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
@@ -415,7 +427,7 @@ func (c *PinotAPIClient) UpdateSchema(schema model.Schema) (*model.UserActionRes
 		return nil, fmt.Errorf("unable to marshal schema: %w", err)
 	}
 
-	err = c.CreateObject("/schemas", schemaBytes, result)
+	err = c.CreateObject("/schemas", schemaBytes, result) // Should be PUT?
 	return &result, err
 
 }
@@ -460,4 +472,15 @@ func (c *PinotAPIClient) encodeParams(fullUrl *url.URL, params map[string]string
 		query.Set(key, value)
 	}
 	fullUrl.RawQuery = query.Encode()
+}
+
+func (c *PinotAPIClient) generateQueryParams(queryString string) map[string]string {
+	parts := strings.SplitN(queryString, "=", 2)
+
+	// Create a map and add the key-value pair
+	m := make(map[string]string)
+	if len(parts) == 2 {
+		m[parts[0]] = parts[1]
+	}
+	return m
 }
