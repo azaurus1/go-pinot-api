@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/azaurus1/go-pinot-api/model"
 	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
-
-	"github.com/azaurus1/go-pinot-api/model"
 )
 
 type pinotHttp struct {
@@ -25,6 +25,7 @@ type PinotAPIClient struct {
 	pinotControllerUrl *url.URL
 	pinotHttp          *pinotHttp
 	Host               string
+	log                *slog.Logger
 }
 
 func NewPinotAPIClient(opts ...Opt) *PinotAPIClient {
@@ -42,6 +43,7 @@ func NewPinotAPIClient(opts ...Opt) *PinotAPIClient {
 			httpAuthWriter:     clientCfg.httpAuthWriter,
 		},
 		Host: pinotControllerUrl.Hostname(),
+		log:  clientCfg.logger,
 	}
 }
 
@@ -74,8 +76,11 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
 
+	c.log.Debug(fmt.Sprintf("attempting GET %s", fullURL))
+
 	resp, err := c.pinotHttp.Do(request)
 	if err != nil {
+		c.logErrorResp(resp)
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
 
@@ -83,7 +88,7 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
-		return fmt.Errorf("client: could not unmarshal JSON: %w", err)
+		return fmt.Errorf("client: could not unmarshal response JSON: %w", err)
 	}
 
 	return nil
@@ -102,6 +107,7 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 
 	res, err := c.pinotHttp.Do(req)
 	if err != nil {
+		c.logErrorResp(res)
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
 
@@ -150,6 +156,7 @@ func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]st
 
 	res, err := c.pinotHttp.Do(req)
 	if err != nil {
+		c.logErrorResp(res)
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
 
@@ -462,4 +469,18 @@ func (c *PinotAPIClient) DeleteSchema(schemaName string) (*model.UserActionRespo
 
 func fullUrl(url *url.URL, path string) string {
 	return fmt.Sprintf("http://%s:%s%s", url.Hostname(), url.Port(), path)
+}
+
+func (c *PinotAPIClient) logErrorResp(r *http.Response) {
+
+	var responseContent map[string]any
+
+	err := json.NewDecoder(r.Body).Decode(&responseContent)
+	if err != nil {
+		c.log.Debug(fmt.Sprintf("unable to decode response from failed request: %s", err))
+		return
+	}
+
+	c.log.Debug(fmt.Sprintf("response from failed request: %s", responseContent))
+
 }

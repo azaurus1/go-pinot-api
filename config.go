@@ -2,8 +2,10 @@ package goPinotAPI
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
+	"os"
 )
 
 type Opt interface {
@@ -14,6 +16,7 @@ type cfg struct {
 	controllerUrl  string
 	authToken      string
 	httpAuthWriter httpAuthWriter
+	logger         *slog.Logger
 }
 
 type clientOpt struct{ fn func(*cfg) }
@@ -26,6 +29,10 @@ func ControllerUrl(pinotControllerUrl string) Opt {
 
 func AuthToken(token string) Opt {
 	return clientOpt{fn: func(cfg *cfg) { cfg.authToken = token }}
+}
+
+func Logger(logger *slog.Logger) Opt {
+	return clientOpt{fn: func(cfg *cfg) { cfg.logger = logger }}
 }
 
 func validateOpts(opts ...Opt) (*cfg, *url.URL, error) {
@@ -56,6 +63,7 @@ func validateOpts(opts ...Opt) (*cfg, *url.URL, error) {
 func defaultCfg() *cfg {
 	return &cfg{
 		httpAuthWriter: defaultAuthWriter(),
+		logger:         defaultLogger(),
 	}
 }
 
@@ -63,4 +71,8 @@ func defaultAuthWriter() func(*http.Request) {
 	return func(req *http.Request) {
 		// do nothing
 	}
+}
+
+func defaultLogger() *slog.Logger {
+	return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 }
