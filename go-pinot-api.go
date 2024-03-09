@@ -4,83 +4,55 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/azaurus1/go-pinot-api/model"
 	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
-
-	"github.com/azaurus1/go-pinot-api/model"
 )
-
-type pinotHttp struct {
-	httpClient         *http.Client
-	pinotControllerUrl *url.URL
-	httpAuthWriter     httpAuthWriter
-}
-
-type httpAuthWriter func(*http.Request)
 
 type PinotAPIClient struct {
 	pinotControllerUrl *url.URL
 	pinotHttp          *pinotHttp
 	Host               string
+	log                *slog.Logger
 }
 
-func NewPinotAPIClient(pinotController string, pinotAuthToken string) *PinotAPIClient {
+func NewPinotAPIClient(opts ...Opt) *PinotAPIClient {
 
-	pinotUrl, err := url.Parse(pinotController)
+	clientCfg, pinotControllerUrl, err := validateOpts(opts...)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	// handle authenticated requests
-	// pinotAuthToken := os.Getenv("PINOT_AUTH_TOKEN")
-	httpAuthWriterFunc := func(req *http.Request) {
-		if pinotAuthToken != "" {
-			req.Header.Set("Authorization", fmt.Sprintf("Basic %s", pinotAuthToken))
-		}
-	}
-
 	return &PinotAPIClient{
-		pinotControllerUrl: pinotUrl,
+		pinotControllerUrl: pinotControllerUrl,
 		pinotHttp: &pinotHttp{
 			httpClient:         &http.Client{},
-			pinotControllerUrl: pinotUrl,
-			httpAuthWriter:     httpAuthWriterFunc,
+			pinotControllerUrl: pinotControllerUrl,
+			httpAuthWriter:     clientCfg.httpAuthWriter,
 		},
-		Host: pinotController,
+		Host: pinotControllerUrl.Hostname(),
+		log:  clientCfg.logger,
 	}
-}
-
-type CreateTablesResponse struct {
-	UnrecognizedProperties map[string][]string `json:"unrecognizedProperties"`
-	Status                 string              `json:"status"`
-}
-
-type GetTenantsResponse struct {
-	ServerTenants []string `json:"SERVER_TENANTS"`
-	BrokerTenants []string `json:"BROKER_TENANTS"`
-}
-
-type ValidateSchemaResponse struct {
-	Ok    bool
-	Error string
 }
 
 func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
-	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
+	fullURL := c.pinotControllerUrl.JoinPath(endpoint).String()
 
-	request, err := http.NewRequest("GET", fullURL, nil)
+	request, err := http.NewRequest(http.MethodGet, fullURL, nil)
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
 
-	c.pinotHttp.httpAuthWriter(request)
+	c.log.Debug(fmt.Sprintf("attempting GET %s", fullURL))
 
-	resp, err := c.pinotHttp.httpClient.Do(request)
+	resp, err := c.pinotHttp.Do(request)
 	if err != nil {
+		c.logErrorResp(resp)
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
 
@@ -88,7 +60,7 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
-		return fmt.Errorf("client: could not unmarshal JSON: %w", err)
+		return fmt.Errorf("client: could not unmarshal response JSON: %w", err)
 	}
 
 	return nil
@@ -96,18 +68,18 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
 func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) error {
 
-	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
+	fullURL := c.pinotControllerUrl.JoinPath(endpoint).String()
 
-	req, err := http.NewRequest("POST", fullURL, bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPost, fullURL, bytes.NewBuffer(body))
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	c.pinotHttp.httpAuthWriter(req)
 
-	res, err := c.pinotHttp.httpClient.Do(req)
+	res, err := c.pinotHttp.Do(req)
 	if err != nil {
+		c.logErrorResp(res)
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
 
@@ -134,41 +106,35 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 }
 
 func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]string, result any) error {
-	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
 
-	parsedURL, err := url.Parse(fullURL)
-	if err != nil {
-		return fmt.Errorf("client: could not parse URL: %w", err)
-	}
+	fullURL := c.pinotControllerUrl.JoinPath(endpoint)
 
-	if len(queryParams) > 0 {
-		query := parsedURL.Query()
-		for key, value := range queryParams {
-			query.Set(key, value)
-		}
-		parsedURL.RawQuery = query.Encode()
-	}
+	c.encodeParams(fullURL, queryParams)
 
-	req, err := http.NewRequest("DELETE", parsedURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, fullURL.String(), nil)
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
 
-	c.pinotHttp.httpAuthWriter(req)
+	c.log.Debug(fmt.Sprintf("attempting DELETE %s", fullURL.String()))
 
-	res, err := c.pinotHttp.httpClient.Do(req)
+	res, err := c.pinotHttp.Do(req)
 	if err != nil {
+		c.logErrorResp(res)
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
 
-	if res.StatusCode < 200 || res.StatusCode >= 300 {
+	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusMultipleChoices {
+
 		var errMsg string
 		// From client perspective, 409 isnt a failed request
-		if res.StatusCode == 404 {
+		switch res.StatusCode {
+		case http.StatusNotFound:
 			errMsg = "client: object can not be found - "
-		} else {
+		default:
 			errMsg = "client: "
 		}
+
 		return fmt.Errorf("%srequest failed with status code: %d", errMsg, res.StatusCode)
 	}
 
@@ -181,37 +147,27 @@ func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]st
 }
 
 func (c *PinotAPIClient) UpdateObject(endpoint string, queryParams map[string]string, body []byte, result any) error {
-	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
 
-	parsedURL, err := url.Parse(fullURL)
-	if err != nil {
-		return fmt.Errorf("client: could not parse URL: %w", err)
-	}
+	fullURL := c.pinotControllerUrl.JoinPath(endpoint)
 
-	if len(queryParams) > 0 {
-		query := parsedURL.Query()
-		for key, value := range queryParams {
-			query.Set(key, value)
-		}
-		parsedURL.RawQuery = query.Encode()
-	}
+	c.encodeParams(fullURL, queryParams)
 
-	fmt.Println(parsedURL.String())
-
-	req, err := http.NewRequest("PUT", parsedURL.String(), bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPut, fullURL.String(), bytes.NewBuffer(body))
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
 
-	c.pinotHttp.httpAuthWriter(req)
 	req.Header.Set("Content-Type", "application/json")
 
-	res, err := c.pinotHttp.httpClient.Do(req)
+	c.log.Debug(fmt.Sprintf("attempting PUT %s", fullURL.String()))
+
+	res, err := c.pinotHttp.Do(req)
 	if err != nil {
+		c.logErrorResp(res)
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
 
-	if res.StatusCode < 200 || res.StatusCode >= 300 {
+	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusMultipleChoices {
 		var errMsg string
 		// From client perspective, 409 isnt a failed request
 		if res.StatusCode == 404 {
@@ -342,8 +298,8 @@ func (c *PinotAPIClient) CreateTableFromFile(tableConfigFile string) (*model.Use
 	return c.CreateTable(tableConfigBytes)
 }
 
-func (c *PinotAPIClient) GetTenants() (*GetTenantsResponse, error) {
-	var result GetTenantsResponse
+func (c *PinotAPIClient) GetTenants() (*model.GetTenantsResponse, error) {
+	var result model.GetTenantsResponse
 	err := c.FetchData("/tenants", &result)
 	return &result, err
 }
@@ -408,14 +364,16 @@ func (c *PinotAPIClient) CreateSchemaFromFile(schemaFilePath string) (*model.Use
 }
 
 // ValidateSchema validates a schema
-func (c *PinotAPIClient) ValidateSchema(schema model.Schema) (*ValidateSchemaResponse, error) {
+func (c *PinotAPIClient) ValidateSchema(schema model.Schema) (*model.ValidateSchemaResponse, error) {
 
 	schemaBytes, err := schema.AsBytes()
 	if err != nil {
 		return nil, fmt.Errorf("unable to marshal schema: %w", err)
 	}
 
-	req, err := http.NewRequest("POST", fullUrl(c.pinotControllerUrl, "/schemas/validate"), bytes.NewBuffer(schemaBytes))
+	fullUrl := c.pinotControllerUrl.JoinPath("schemas", "validate").String()
+
+	req, err := http.NewRequest("POST", fullUrl, bytes.NewBuffer(schemaBytes))
 	if err != nil {
 		return nil, fmt.Errorf("client: could not create request: %w", err)
 	}
@@ -439,13 +397,13 @@ func (c *PinotAPIClient) ValidateSchema(schema model.Schema) (*ValidateSchemaRes
 			return nil, fmt.Errorf("client: could not unmarshal JSON: %w", err)
 		}
 
-		return &ValidateSchemaResponse{
+		return &model.ValidateSchemaResponse{
 			Ok:    false,
 			Error: result["error"],
 		}, nil
 	}
 
-	return &ValidateSchemaResponse{Ok: true}, nil
+	return &model.ValidateSchemaResponse{Ok: true}, nil
 }
 
 func (c *PinotAPIClient) UpdateSchema(schema model.Schema) (*model.UserActionResponse, error) {
@@ -463,12 +421,43 @@ func (c *PinotAPIClient) UpdateSchema(schema model.Schema) (*model.UserActionRes
 }
 
 func (c *PinotAPIClient) DeleteSchema(schemaName string) (*model.UserActionResponse, error) {
+
+	getTablesRes, err := c.GetTables()
+	if err != nil {
+		return nil, fmt.Errorf("unable to get tables names to check: %w", err)
+	}
+
+	for _, tableName := range getTablesRes.Tables {
+		if tableName == schemaName {
+			return nil, fmt.Errorf("can not delete schema %s, it is used by table %s", schemaName, tableName)
+		}
+	}
+
+	// proceed with deletion
 	var result model.UserActionResponse
-	endpoint := fmt.Sprintf("/schemas/%s", schemaName)
-	err := c.DeleteObject(endpoint, nil, &result)
+	err = c.DeleteObject(fmt.Sprintf("/schemas/%s", schemaName), nil, &result)
+
 	return &result, err
 }
 
-func fullUrl(url *url.URL, path string) string {
-	return fmt.Sprintf("http://%s:%s%s", url.Hostname(), url.Port(), path)
+func (c *PinotAPIClient) logErrorResp(r *http.Response) {
+
+	var responseContent map[string]any
+
+	err := json.NewDecoder(r.Body).Decode(&responseContent)
+	if err != nil {
+		c.log.Debug(fmt.Sprintf("unable to decode response from failed request: %s", err))
+		return
+	}
+
+	c.log.Debug(fmt.Sprintf("response from failed request: %s", responseContent))
+
+}
+
+func (c *PinotAPIClient) encodeParams(fullUrl *url.URL, params map[string]string) {
+	query := fullUrl.Query()
+	for key, value := range params {
+		query.Set(key, value)
+	}
+	fullUrl.RawQuery = query.Encode()
 }

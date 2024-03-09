@@ -33,3 +33,7 @@ integration-test:
 	go test -v && \
 	cd ..
 
+
+.PHONY: run-example
+run-example:
+	go run ./example/main.go
