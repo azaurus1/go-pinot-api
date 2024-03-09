@@ -1,5 +1,5 @@
 {
-  "schemaName": "test_ethereum_mainnet_block_headers",
+  "schemaName": "ethereum_mainnet_block_headers",
   "enableColumnBasedNullHandling": false,
   "dimensionFieldSpecs": [
     {
