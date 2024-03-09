@@ -49,110 +49,11 @@ func main() {
 		pinot.ControllerUrl(PinotUrl),
 		pinot.AuthToken(PinotAuth))
 
-	user := pinotModel.User{
-		Username:  "liam1",
-		Password:  "password",
-		Component: "BROKER",
-		Role:      "admin",
-	}
+	demoSchemaFunctionality(client)
 
-	userBytes, err := json.Marshal(user)
-	if err != nil {
-		log.Panic(err)
-	}
+}
 
-	updateUser := pinotModel.User{
-		Username:  "liam1",
-		Password:  "password",
-		Component: "BROKER",
-		Role:      "user",
-	}
-
-	updateUserBytes, err := json.Marshal(user)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	fmt.Println("Creating User:")
-
-	// Create User
-	createResp, err := client.CreateUser(userBytes)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println(createResp.Status)
-
-	// Read User
-	getUserResp, err := client.GetUser(user.Username, user.Component)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	fmt.Println("Reading User:")
-	fmt.Println(getUserResp.UsernameWithComponent)
-
-	// Read Users
-	userResp, err := client.GetUsers()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	fmt.Println("Reading Users:")
-	for userName, info := range userResp.Users {
-		fmt.Println(userName, info)
-	}
-
-	// Update User
-	updateResp, err := client.UpdateUser(updateUser.Username, updateUser.Component, false, updateUserBytes)
-	if err != nil {
-		log.Panic(err)
-	}
-	fmt.Println(updateResp.Status)
-
-	// Delete User
-	delResp, err := client.DeleteUser(user.Username, user.Component)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	fmt.Println(delResp.Status)
-
-	// Schema
-	schema := getSchema()
-
-	// Create Schema will validate the schema first anyway
-	validateResp, err := client.ValidateSchema(schema)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	if !validateResp.Ok {
-		log.Panic(validateResp.Error)
-	}
-
-	_, err = client.CreateSchema(schema)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	currentSchemas, err := client.GetSchemas()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	currentSchemas.ForEachSchema(func(schemaName string) {
-
-		schemaResp, err := client.GetSchema(schemaName)
-		if err != nil {
-			log.Panic(err)
-		}
-
-		fmt.Println("Reading Schema:")
-		fmt.Println(schemaResp)
-
-	})
-
+func demoTableFunctionality(client *pinot.PinotAPIClient) {
 	// Create Table
 	fmt.Println("Creating Table:")
 
@@ -310,5 +211,114 @@ func main() {
 	}
 
 	fmt.Println(deleteTableResp.Status)
+}
 
+func demoSchemaFunctionality(client *pinot.PinotAPIClient) {
+
+	schema := getSchema()
+
+	// Create Schema will validate the schema first anyway
+	validateResp, err := client.ValidateSchema(schema)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	if !validateResp.Ok {
+		log.Panic(validateResp.Error)
+	}
+
+	_, err = client.CreateSchema(schema)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	currentSchemas, err := client.GetSchemas()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	currentSchemas.ForEachSchema(func(schemaName string) {
+
+		schemaResp, err := client.GetSchema(schemaName)
+		if err != nil {
+			log.Panic(err)
+		}
+
+		fmt.Println("Reading Schema:")
+		fmt.Println(schemaResp)
+
+	})
+
+}
+
+func demoUserFunctionality(client *pinot.PinotAPIClient) {
+
+	user := pinotModel.User{
+		Username:  "liam1",
+		Password:  "password",
+		Component: "BROKER",
+		Role:      "admin",
+	}
+
+	userBytes, err := json.Marshal(user)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	updateUser := pinotModel.User{
+		Username:  "liam1",
+		Password:  "password",
+		Component: "BROKER",
+		Role:      "user",
+	}
+
+	updateUserBytes, err := json.Marshal(user)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Creating User:")
+
+	// Create User
+	createResp, err := client.CreateUser(userBytes)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(createResp.Status)
+
+	// Read User
+	getUserResp, err := client.GetUser(user.Username, user.Component)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading User:")
+	fmt.Println(getUserResp.UsernameWithComponent)
+
+	// Read Users
+	userResp, err := client.GetUsers()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Users:")
+	for userName, info := range userResp.Users {
+		fmt.Println(userName, info)
+	}
+
+	// Update User
+	updateResp, err := client.UpdateUser(updateUser.Username, updateUser.Component, false, updateUserBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+	fmt.Println(updateResp.Status)
+
+	// Delete User
+	delResp, err := client.DeleteUser(user.Username, user.Component)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(delResp.Status)
 }
