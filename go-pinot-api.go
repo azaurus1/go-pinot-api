@@ -107,25 +107,22 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 
 func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]string, result any) error {
 
-	fullURL := c.pinotControllerUrl.JoinPath(endpoint).String()
-
-	parsedURL, err := url.Parse(fullURL)
-	if err != nil {
-		return fmt.Errorf("client: could not parse URL: %w", err)
-	}
+	fullURL := c.pinotControllerUrl.JoinPath(endpoint)
 
 	if len(queryParams) > 0 {
-		query := parsedURL.Query()
+		query := fullURL.Query()
 		for key, value := range queryParams {
 			query.Set(key, value)
 		}
-		parsedURL.RawQuery = query.Encode()
+		fullURL.RawQuery = query.Encode()
 	}
 
-	req, err := http.NewRequest("DELETE", parsedURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, fullURL.String(), nil)
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
+
+	c.log.Debug(fmt.Sprintf("attempting DELETE %s", fullURL.String()))
 
 	res, err := c.pinotHttp.Do(req)
 	if err != nil {
@@ -133,14 +130,17 @@ func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]st
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
 
-	if res.StatusCode < 200 || res.StatusCode >= 300 {
+	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusMultipleChoices {
+
 		var errMsg string
 		// From client perspective, 409 isnt a failed request
-		if res.StatusCode == 404 {
+		switch res.StatusCode {
+		case http.StatusNotFound:
 			errMsg = "client: object can not be found - "
-		} else {
+		default:
 			errMsg = "client: "
 		}
+
 		return fmt.Errorf("%srequest failed with status code: %d", errMsg, res.StatusCode)
 	}
 
@@ -437,9 +437,22 @@ func (c *PinotAPIClient) UpdateSchema(schema model.Schema) (*model.UserActionRes
 }
 
 func (c *PinotAPIClient) DeleteSchema(schemaName string) (*model.UserActionResponse, error) {
+
+	getTablesRes, err := c.GetTables()
+	if err != nil {
+		return nil, fmt.Errorf("unable to get tables names to check: %w", err)
+	}
+
+	for _, tableName := range getTablesRes.Tables {
+		if tableName == schemaName {
+			return nil, fmt.Errorf("can not delete schema %s, it is used by table %s", schemaName, tableName)
+		}
+	}
+
+	// proceed with deletion
 	var result model.UserActionResponse
-	endpoint := fmt.Sprintf("/schemas/%s", schemaName)
-	err := c.DeleteObject(endpoint, nil, &result)
+	err = c.DeleteObject(fmt.Sprintf("/schemas/%s", schemaName), nil, &result)
+
 	return &result, err
 }
 

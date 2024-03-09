@@ -47,6 +47,8 @@ func main() {
 		pinot.Logger(logger))
 
 	demoSchemaFunctionality(client)
+	// demoTableFunctionality(client)
+	// demoUserFunctionality(client)
 
 }
 
@@ -202,12 +204,12 @@ func demoTableFunctionality(client *pinot.PinotAPIClient) {
 	fmt.Println(updateTableResp.Status)
 
 	// Delete Table
-	deleteTableResp, err := client.DeleteTable(table.TableName)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	fmt.Println(deleteTableResp.Status)
+	//deleteTableResp, err := client.DeleteTable(table.TableName)
+	//if err != nil {
+	//	log.Panic(err)
+	//}
+	//
+	//fmt.Println(deleteTableResp.Status)
 }
 
 func demoSchemaFunctionality(client *pinot.PinotAPIClient) {
