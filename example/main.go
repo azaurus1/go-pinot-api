@@ -46,9 +46,9 @@ func main() {
 		pinot.AuthToken(authToken),
 		pinot.Logger(logger))
 
-	demoSchemaFunctionality(client)
+	// demoSchemaFunctionality(client)
 	// demoTableFunctionality(client)
-	// demoUserFunctionality(client)
+	demoUserFunctionality(client)
 
 }
 
