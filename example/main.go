@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 
 	pinot "github.com/azaurus1/go-pinot-api"
@@ -47,7 +48,8 @@ func main() {
 
 	client := pinot.NewPinotAPIClient(
 		pinot.ControllerUrl(PinotUrl),
-		pinot.AuthToken(PinotAuth))
+		pinot.AuthToken(PinotAuth),
+		pinot.Logger(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))))
 
 	demoSchemaFunctionality(client)
 
