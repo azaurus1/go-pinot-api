@@ -13,14 +13,6 @@ import (
 	"strconv"
 )
 
-type pinotHttp struct {
-	httpClient         *http.Client
-	pinotControllerUrl *url.URL
-	httpAuthWriter     httpAuthWriter
-}
-
-type httpAuthWriter func(*http.Request)
-
 type PinotAPIClient struct {
 	pinotControllerUrl *url.URL
 	pinotHttp          *pinotHttp
@@ -45,26 +37,6 @@ func NewPinotAPIClient(opts ...Opt) *PinotAPIClient {
 		Host: pinotControllerUrl.Hostname(),
 		log:  clientCfg.logger,
 	}
-}
-
-type CreateTablesResponse struct {
-	UnrecognizedProperties map[string][]string `json:"unrecognizedProperties"`
-	Status                 string              `json:"status"`
-}
-
-type GetTenantsResponse struct {
-	ServerTenants []string `json:"SERVER_TENANTS"`
-	BrokerTenants []string `json:"BROKER_TENANTS"`
-}
-
-type ValidateSchemaResponse struct {
-	Ok    bool
-	Error string
-}
-
-func (p *pinotHttp) Do(req *http.Request) (*http.Response, error) {
-	p.httpAuthWriter(req)
-	return p.httpClient.Do(req)
 }
 
 func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
@@ -342,8 +314,8 @@ func (c *PinotAPIClient) CreateTableFromFile(tableConfigFile string) (*model.Use
 	return c.CreateTable(tableConfigBytes)
 }
 
-func (c *PinotAPIClient) GetTenants() (*GetTenantsResponse, error) {
-	var result GetTenantsResponse
+func (c *PinotAPIClient) GetTenants() (*model.GetTenantsResponse, error) {
+	var result model.GetTenantsResponse
 	err := c.FetchData("/tenants", &result)
 	return &result, err
 }
@@ -408,7 +380,7 @@ func (c *PinotAPIClient) CreateSchemaFromFile(schemaFilePath string) (*model.Use
 }
 
 // ValidateSchema validates a schema
-func (c *PinotAPIClient) ValidateSchema(schema model.Schema) (*ValidateSchemaResponse, error) {
+func (c *PinotAPIClient) ValidateSchema(schema model.Schema) (*model.ValidateSchemaResponse, error) {
 
 	schemaBytes, err := schema.AsBytes()
 	if err != nil {
@@ -441,13 +413,13 @@ func (c *PinotAPIClient) ValidateSchema(schema model.Schema) (*ValidateSchemaRes
 			return nil, fmt.Errorf("client: could not unmarshal JSON: %w", err)
 		}
 
-		return &ValidateSchemaResponse{
+		return &model.ValidateSchemaResponse{
 			Ok:    false,
 			Error: result["error"],
 		}, nil
 	}
 
-	return &ValidateSchemaResponse{Ok: true}, nil
+	return &model.ValidateSchemaResponse{Ok: true}, nil
 }
 
 func (c *PinotAPIClient) UpdateSchema(schema model.Schema) (*model.UserActionResponse, error) {
