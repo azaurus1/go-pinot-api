@@ -27,29 +27,21 @@ type PinotAPIClient struct {
 	Host               string
 }
 
-func NewPinotAPIClient(pinotController string, pinotAuthToken string) *PinotAPIClient {
+func NewPinotAPIClient(opts ...Opt) *PinotAPIClient {
 
-	pinotUrl, err := url.Parse(pinotController)
+	clientCfg, pinotControllerUrl, err := validateOpts(opts...)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	// handle authenticated requests
-	// pinotAuthToken := os.Getenv("PINOT_AUTH_TOKEN")
-	httpAuthWriterFunc := func(req *http.Request) {
-		if pinotAuthToken != "" {
-			req.Header.Set("Authorization", fmt.Sprintf("Basic %s", pinotAuthToken))
-		}
-	}
-
 	return &PinotAPIClient{
-		pinotControllerUrl: pinotUrl,
+		pinotControllerUrl: pinotControllerUrl,
 		pinotHttp: &pinotHttp{
 			httpClient:         &http.Client{},
-			pinotControllerUrl: pinotUrl,
-			httpAuthWriter:     httpAuthWriterFunc,
+			pinotControllerUrl: pinotControllerUrl,
+			httpAuthWriter:     clientCfg.httpAuthWriter,
 		},
-		Host: pinotController,
+		Host: pinotControllerUrl.Hostname(),
 	}
 }
 
@@ -471,4 +463,41 @@ func (c *PinotAPIClient) DeleteSchema(schemaName string) (*model.UserActionRespo
 
 func fullUrl(url *url.URL, path string) string {
 	return fmt.Sprintf("http://%s:%s%s", url.Hostname(), url.Port(), path)
+}
+
+func validateOpts(opts ...Opt) (*cfg, *url.URL, error) {
+
+	// with default auth writer that does nothing
+	parsedCfg := defaultCfg()
+	for _, opt := range opts {
+		opt.apply(parsedCfg)
+	}
+
+	// validate controller url
+	pinotControllerUrl, err := url.Parse(parsedCfg.controllerUrl)
+	if err != nil {
+		return nil, nil, fmt.Errorf("controller url is invalid: %w", err)
+	}
+
+	// if auth token passed, handle authenticated requests
+	if parsedCfg.authToken != "" {
+		parsedCfg.httpAuthWriter = func(req *http.Request) {
+			req.Header.Set("Authorization", fmt.Sprintf("Basic %s", parsedCfg.authToken))
+		}
+	}
+
+	return parsedCfg, pinotControllerUrl, nil
+
+}
+
+func defaultCfg() *cfg {
+	return &cfg{
+		httpAuthWriter: defaultAuthWriter(),
+	}
+}
+
+func defaultAuthWriter() func(*http.Request) {
+	return func(req *http.Request) {
+		// do nothing
+	}
 }
