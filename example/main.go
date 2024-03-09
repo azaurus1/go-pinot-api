@@ -46,10 +46,12 @@ func main() {
 		PinotAuth = envPinotAuth
 	}
 
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+
 	client := pinot.NewPinotAPIClient(
 		pinot.ControllerUrl(PinotUrl),
 		pinot.AuthToken(PinotAuth),
-		pinot.Logger(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))))
+		pinot.Logger(logger))
 
 	demoSchemaFunctionality(client)
 
