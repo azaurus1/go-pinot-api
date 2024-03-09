@@ -11,8 +11,8 @@ import (
 	pinotModel "github.com/azaurus1/go-pinot-api/model"
 )
 
-var PinotUrl = "http://localhost:9000"
-var PinotAuth = "YWRtaW46dmVyeXNlY3JldA" // Default Admin password=verysecret  admin:verysecret (b64 encoded)
+const LocalPinotUrl = "http://localhost:9000"
+const LocalPinotAuthToken = "YWRtaW46dmVyeXNlY3JldA" // Default Admin password=verysecret  admin:verysecret (b64 encoded)
 
 func getSchema() pinotModel.Schema {
 
@@ -36,21 +36,14 @@ func getSchema() pinotModel.Schema {
 
 func main() {
 
-	envPinotUrl := os.Getenv("PINOT_URL")
-	if envPinotUrl != "" {
-		PinotUrl = envPinotUrl
-	}
-
-	envPinotAuth := os.Getenv("PINOT_AUTH")
-	if envPinotAuth != "" {
-		PinotAuth = envPinotAuth
-	}
+	pinotUrl := getOrDefault(LocalPinotUrl, "PINOT_URL", "PINOT_CONTROLLER_URL")
+	authToken := getOrDefault(LocalPinotAuthToken, "PINOT_AUTH", "PINOT_AUTH_TOKEN")
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
 
 	client := pinot.NewPinotAPIClient(
-		pinot.ControllerUrl(PinotUrl),
-		pinot.AuthToken(PinotAuth),
+		pinot.ControllerUrl(pinotUrl),
+		pinot.AuthToken(authToken),
 		pinot.Logger(logger))
 
 	demoSchemaFunctionality(client)
@@ -325,4 +318,16 @@ func demoUserFunctionality(client *pinot.PinotAPIClient) {
 	}
 
 	fmt.Println(delResp.Status)
+}
+
+func getOrDefault(defaultOption string, envKeys ...string) string {
+
+	for _, envKey := range envKeys {
+		if envVal := os.Getenv(envKey); envVal != "" {
+			return envVal
+		}
+	}
+
+	return defaultOption
+
 }
