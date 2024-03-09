@@ -69,7 +69,7 @@ func (p *pinotHttp) Do(req *http.Request) (*http.Response, error) {
 
 func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
-	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
+	fullURL := c.pinotControllerUrl.JoinPath(endpoint).String()
 
 	request, err := http.NewRequest("GET", fullURL, nil)
 	if err != nil {
@@ -96,7 +96,7 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
 func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) error {
 
-	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
+	fullURL := c.pinotControllerUrl.JoinPath(endpoint).String()
 
 	req, err := http.NewRequest("POST", fullURL, bytes.NewBuffer(body))
 	if err != nil {
@@ -134,7 +134,8 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 }
 
 func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]string, result any) error {
-	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
+
+	fullURL := c.pinotControllerUrl.JoinPath(endpoint).String()
 
 	parsedURL, err := url.Parse(fullURL)
 	if err != nil {
@@ -180,7 +181,8 @@ func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]st
 }
 
 func (c *PinotAPIClient) UpdateObject(endpoint string, queryParams map[string]string, body []byte, result any) error {
-	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
+
+	fullURL := c.pinotControllerUrl.JoinPath(endpoint).String()
 
 	parsedURL, err := url.Parse(fullURL)
 	if err != nil {
@@ -413,7 +415,9 @@ func (c *PinotAPIClient) ValidateSchema(schema model.Schema) (*ValidateSchemaRes
 		return nil, fmt.Errorf("unable to marshal schema: %w", err)
 	}
 
-	req, err := http.NewRequest("POST", fullUrl(c.pinotControllerUrl, "/schemas/validate"), bytes.NewBuffer(schemaBytes))
+	fullUrl := c.pinotControllerUrl.JoinPath("schemas", "validate").String()
+
+	req, err := http.NewRequest("POST", fullUrl, bytes.NewBuffer(schemaBytes))
 	if err != nil {
 		return nil, fmt.Errorf("client: could not create request: %w", err)
 	}
@@ -465,10 +469,6 @@ func (c *PinotAPIClient) DeleteSchema(schemaName string) (*model.UserActionRespo
 	endpoint := fmt.Sprintf("/schemas/%s", schemaName)
 	err := c.DeleteObject(endpoint, nil, &result)
 	return &result, err
-}
-
-func fullUrl(url *url.URL, path string) string {
-	return fmt.Sprintf("http://%s:%s%s", url.Hostname(), url.Port(), path)
 }
 
 func (c *PinotAPIClient) logErrorResp(r *http.Response) {
