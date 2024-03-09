@@ -60,6 +60,11 @@ type ValidateSchemaResponse struct {
 	Error string
 }
 
+func (p *pinotHttp) Do(req *http.Request) (*http.Response, error) {
+	p.httpAuthWriter(req)
+	return p.httpClient.Do(req)
+}
+
 func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
 	fullURL := fullUrl(c.pinotControllerUrl, endpoint)
@@ -69,9 +74,7 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
 
-	c.pinotHttp.httpAuthWriter(request)
-
-	resp, err := c.pinotHttp.httpClient.Do(request)
+	resp, err := c.pinotHttp.Do(request)
 	if err != nil {
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
@@ -96,9 +99,8 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	c.pinotHttp.httpAuthWriter(req)
 
-	res, err := c.pinotHttp.httpClient.Do(req)
+	res, err := c.pinotHttp.Do(req)
 	if err != nil {
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
@@ -146,9 +148,7 @@ func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]st
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
 
-	c.pinotHttp.httpAuthWriter(req)
-
-	res, err := c.pinotHttp.httpClient.Do(req)
+	res, err := c.pinotHttp.Do(req)
 	if err != nil {
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
@@ -195,10 +195,9 @@ func (c *PinotAPIClient) UpdateObject(endpoint string, queryParams map[string]st
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
 
-	c.pinotHttp.httpAuthWriter(req)
 	req.Header.Set("Content-Type", "application/json")
 
-	res, err := c.pinotHttp.httpClient.Do(req)
+	res, err := c.pinotHttp.Do(req)
 	if err != nil {
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
