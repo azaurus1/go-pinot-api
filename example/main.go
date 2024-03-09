@@ -45,7 +45,9 @@ func main() {
 		PinotAuth = envPinotAuth
 	}
 
-	client := pinot.NewPinotAPIClient(PinotUrl, PinotAuth)
+	client := pinot.NewPinotAPIClient(
+		pinot.ControllerUrl(PinotUrl),
+		pinot.AuthToken(PinotAuth))
 
 	user := pinotModel.User{
 		Username:  "liam1",
