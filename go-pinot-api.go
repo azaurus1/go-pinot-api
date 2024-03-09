@@ -43,7 +43,7 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
 	fullURL := c.pinotControllerUrl.JoinPath(endpoint).String()
 
-	request, err := http.NewRequest("GET", fullURL, nil)
+	request, err := http.NewRequest(http.MethodGet, fullURL, nil)
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
@@ -70,7 +70,7 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 
 	fullURL := c.pinotControllerUrl.JoinPath(endpoint).String()
 
-	req, err := http.NewRequest("POST", fullURL, bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPost, fullURL, bytes.NewBuffer(body))
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
@@ -109,13 +109,7 @@ func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]st
 
 	fullURL := c.pinotControllerUrl.JoinPath(endpoint)
 
-	if len(queryParams) > 0 {
-		query := fullURL.Query()
-		for key, value := range queryParams {
-			query.Set(key, value)
-		}
-		fullURL.RawQuery = query.Encode()
-	}
+	c.encodeParams(fullURL, queryParams)
 
 	req, err := http.NewRequest(http.MethodDelete, fullURL.String(), nil)
 	if err != nil {
@@ -154,36 +148,26 @@ func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]st
 
 func (c *PinotAPIClient) UpdateObject(endpoint string, queryParams map[string]string, body []byte, result any) error {
 
-	fullURL := c.pinotControllerUrl.JoinPath(endpoint).String()
+	fullURL := c.pinotControllerUrl.JoinPath(endpoint)
 
-	parsedURL, err := url.Parse(fullURL)
-	if err != nil {
-		return fmt.Errorf("client: could not parse URL: %w", err)
-	}
+	c.encodeParams(fullURL, queryParams)
 
-	if len(queryParams) > 0 {
-		query := parsedURL.Query()
-		for key, value := range queryParams {
-			query.Set(key, value)
-		}
-		parsedURL.RawQuery = query.Encode()
-	}
-
-	fmt.Println(parsedURL.String())
-
-	req, err := http.NewRequest("PUT", parsedURL.String(), bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPut, fullURL.String(), bytes.NewBuffer(body))
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 
+	c.log.Debug(fmt.Sprintf("attempting PUT %s", fullURL.String()))
+
 	res, err := c.pinotHttp.Do(req)
 	if err != nil {
+		c.logErrorResp(res)
 		return fmt.Errorf("client: could not send request: %w", err)
 	}
 
-	if res.StatusCode < 200 || res.StatusCode >= 300 {
+	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusMultipleChoices {
 		var errMsg string
 		// From client perspective, 409 isnt a failed request
 		if res.StatusCode == 404 {
@@ -468,4 +452,12 @@ func (c *PinotAPIClient) logErrorResp(r *http.Response) {
 
 	c.log.Debug(fmt.Sprintf("response from failed request: %s", responseContent))
 
+}
+
+func (c *PinotAPIClient) encodeParams(fullUrl *url.URL, params map[string]string) {
+	query := fullUrl.Query()
+	for key, value := range params {
+		query.Set(key, value)
+	}
+	fullUrl.RawQuery = query.Encode()
 }
