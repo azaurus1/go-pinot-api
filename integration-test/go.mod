@@ -7,8 +7,8 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/hamba/avro/v2 v2.20.0
 	github.com/stretchr/testify v1.9.0
-	github.com/testcontainers/testcontainers-go v0.28.0
-	github.com/testcontainers/testcontainers-go/modules/kafka v0.28.0
+	github.com/testcontainers/testcontainers-go v0.29.1
+	github.com/testcontainers/testcontainers-go/modules/kafka v0.29.1
 	github.com/testcontainers/testcontainers-go/modules/redpanda v0.28.0
 	github.com/twmb/franz-go v1.16.1
 	github.com/twmb/franz-go/pkg/kadm v1.11.0
@@ -66,7 +66,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	golang.org/x/crypto v0.20.0 // indirect
 	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225 // indirect
-	golang.org/x/mod v0.15.0 // indirect
+	golang.org/x/mod v0.16.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/tools v0.18.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240228224816-df926f6c8641 // indirect
