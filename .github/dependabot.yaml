@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: "gomod" # The package manager to use (gomod for Go modules)
+    directory: "/" # The directory where your go.mod file is located
+    schedule:
+      interval: "daily" # How often to check for updates (daily, weekly, etc.)
+    open-pull-requests-limit: 10 # The maximum number of open pull requests Dependabot will create
+  - package-ecosystem: "gomod"
+    directory: "/integration-test"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
