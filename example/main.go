@@ -326,125 +326,125 @@ func demoUserFunctionality(client *pinot.PinotAPIClient) {
 func demoSegmentFunctionality(client *pinot.PinotAPIClient) {
 
 	// Create Segment
-	fmt.Println("Creating Segment:")
-	segment := pinotModel.Segment{
-		ContentDisposition: pinotModel.ContentDisposition{
-			Type:       "type",
-			Parameters: map[string]string{"param": "value"},
-			FileName:   "fileName",
-			Size:       100,
-		},
-		Entity: map[string]interface{}{
-			"key": "value",
-		},
-		Headers: map[string][]string{
-			"header": {"value"},
-		},
-		MediaType: pinotModel.MediaType{
-			Type:            "type",
-			Subtype:         "subtype",
-			Parameters:      map[string]string{"param": "value"},
-			WildcardType:    true,
-			WildcardSubtype: true,
-		},
-		MessageBodyWorkers: map[string]interface{}{
-			"key": "value",
-		},
-		Parent: pinotModel.Parent{
-			ContentDisposition: pinotModel.ContentDisposition{
-				Type:       "type",
-				Parameters: map[string]string{"param": "value"},
-				FileName:   "fileName",
-				Size:       100,
-			},
-			Entity: map[string]interface{}{
-				"key": "value",
-			},
-			Headers: map[string][]string{
-				"header": {"value"},
-			},
-			MediaType: pinotModel.MediaType{
-				Type:            "type",
-				Subtype:         "subtype",
-				Parameters:      map[string]string{"param": "value"},
-				WildcardType:    true,
-				WildcardSubtype: true,
-			},
-			MessageBodyWorkers: map[string]interface{}{
-				"key": "value",
-			},
-			Parent: "parent",
-			Providers: map[string]interface{}{
-				"key": "value",
-			},
-			BodyParts: []pinotModel.BodyPart{
-				{
-					ContentDisposition: pinotModel.ContentDisposition{
-						Type:       "type",
-						Parameters: map[string]string{"param": "value"},
-						FileName:   "fileName",
-						Size:       100,
-					},
-					Entity: map[string]interface{}{
-						"key": "value",
-					},
-					Headers: map[string][]string{
-						"header": {"value"},
-					},
-					MediaType: pinotModel.MediaType{
-						Type:            "type",
-						Subtype:         "subtype",
-						Parameters:      map[string]string{"param": "value"},
-						WildcardType:    true,
-						WildcardSubtype: true,
-					},
-					MessageBodyWorkers: map[string]interface{}{
-						"key": "value",
-					},
-					Parent: "parent",
-					Providers: map[string]interface{}{
-						"key": "value",
-					},
-					ParameterizedHeaders: map[string][]pinotModel.ParameterizedHeader{
-						"key": {
-							{
-								Value: "value",
-							},
-						},
-					},
-				},
-			},
-			ParameterizedHeaders: map[string][]pinotModel.ParameterizedHeader{
-				"key": {
-					{
-						Value: "value",
-					},
-				},
-			},
-		},
-		Providers: map[string]interface{}{
-			"key": "value",
-		},
-		ParameterizedHeaders: map[string][]pinotModel.ParameterizedHeader{
-			"key": {
-				{
-					Value: "value",
-				},
-			},
-		},
-	}
+	// fmt.Println("Creating Segment:")
+	// segment := pinotModel.Segment{
+	// 	ContentDisposition: pinotModel.ContentDisposition{
+	// 		Type:       "type",
+	// 		Parameters: map[string]string{"param": "value"},
+	// 		FileName:   "fileName",
+	// 		Size:       100,
+	// 	},
+	// 	Entity: map[string]interface{}{
+	// 		"key": "value",
+	// 	},
+	// 	Headers: map[string][]string{
+	// 		"header": {"value"},
+	// 	},
+	// 	MediaType: pinotModel.MediaType{
+	// 		Type:            "type",
+	// 		Subtype:         "subtype",
+	// 		Parameters:      map[string]string{"param": "value"},
+	// 		WildcardType:    true,
+	// 		WildcardSubtype: true,
+	// 	},
+	// 	MessageBodyWorkers: map[string]interface{}{
+	// 		"key": "value",
+	// 	},
+	// 	Parent: pinotModel.Parent{
+	// 		ContentDisposition: pinotModel.ContentDisposition{
+	// 			Type:       "type",
+	// 			Parameters: map[string]string{"param": "value"},
+	// 			FileName:   "fileName",
+	// 			Size:       100,
+	// 		},
+	// 		Entity: map[string]interface{}{
+	// 			"key": "value",
+	// 		},
+	// 		Headers: map[string][]string{
+	// 			"header": {"value"},
+	// 		},
+	// 		MediaType: pinotModel.MediaType{
+	// 			Type:            "type",
+	// 			Subtype:         "subtype",
+	// 			Parameters:      map[string]string{"param": "value"},
+	// 			WildcardType:    true,
+	// 			WildcardSubtype: true,
+	// 		},
+	// 		MessageBodyWorkers: map[string]interface{}{
+	// 			"key": "value",
+	// 		},
+	// 		Parent: "parent",
+	// 		Providers: map[string]interface{}{
+	// 			"key": "value",
+	// 		},
+	// 		BodyParts: []pinotModel.BodyPart{
+	// 			{
+	// 				ContentDisposition: pinotModel.ContentDisposition{
+	// 					Type:       "type",
+	// 					Parameters: map[string]string{"param": "value"},
+	// 					FileName:   "fileName",
+	// 					Size:       100,
+	// 				},
+	// 				Entity: map[string]interface{}{
+	// 					"key": "value",
+	// 				},
+	// 				Headers: map[string][]string{
+	// 					"header": {"value"},
+	// 				},
+	// 				MediaType: pinotModel.MediaType{
+	// 					Type:            "type",
+	// 					Subtype:         "subtype",
+	// 					Parameters:      map[string]string{"param": "value"},
+	// 					WildcardType:    true,
+	// 					WildcardSubtype: true,
+	// 				},
+	// 				MessageBodyWorkers: map[string]interface{}{
+	// 					"key": "value",
+	// 				},
+	// 				Parent: "parent",
+	// 				Providers: map[string]interface{}{
+	// 					"key": "value",
+	// 				},
+	// 				ParameterizedHeaders: map[string][]pinotModel.ParameterizedHeader{
+	// 					"key": {
+	// 						{
+	// 							Value: "value",
+	// 						},
+	// 					},
+	// 				},
+	// 			},
+	// 		},
+	// 		ParameterizedHeaders: map[string][]pinotModel.ParameterizedHeader{
+	// 			"key": {
+	// 				{
+	// 					Value: "value",
+	// 				},
+	// 			},
+	// 		},
+	// 	},
+	// 	Providers: map[string]interface{}{
+	// 		"key": "value",
+	// 	},
+	// 	ParameterizedHeaders: map[string][]pinotModel.ParameterizedHeader{
+	// 		"key": {
+	// 			{
+	// 				Value: "value",
+	// 			},
+	// 		},
+	// 	},
+	// }
 
-	segmentBytes, err := json.Marshal(segment)
-	if err != nil {
-		log.Panic(err)
-	}
+	// segmentBytes, err := json.Marshal(segment)
+	// if err != nil {
+	// 	log.Panic(err)
+	// }
 
-	createSegmentResp, err := client.CreateSegment(segmentBytes)
-	if err != nil {
-		log.Panic(err)
-	}
+	// createSegmentResp, err := client.CreateSegment(segmentBytes)
+	// if err != nil {
+	// 	log.Panic(err)
+	// }
 
-	fmt.Println(createSegmentResp.Status)
+	// fmt.Println(createSegmentResp.Status)
 
 	// Get Segments
 	segmentsResp, err := client.GetSegments("githubComplexTypeEvents")
@@ -479,6 +479,22 @@ func demoSegmentFunctionality(client *pinot.PinotAPIClient) {
 	//if err != nil {
 	//	log.Panic(err)
 	//}
+
+	// Reload All Segments
+	reloadTableSegmentsResp, err := client.ReloadTableSegments("githubComplexTypeEvents")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(reloadTableSegmentsResp.Status)
+
+	// Reload Segment
+	reloadSegmentResp, err := client.ReloadSegment("githubComplexTypeEvents", segmentsResp[0].Offline[0])
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(reloadSegmentResp.Status)
 
 }
 

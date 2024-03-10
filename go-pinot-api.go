@@ -517,6 +517,18 @@ func (c *PinotAPIClient) DeleteSegment(tableName string, segmentName string) (*m
 	return &result, err
 }
 
+func (c *PinotAPIClient) ReloadTableSegments(tableName string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject(fmt.Sprintf("/segments/%s/reload", tableName), nil, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) ReloadSegment(tableName string, segmentName string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject(fmt.Sprintf("/segments/%s/%s/reload", tableName, segmentName), nil, &result)
+	return &result, err
+}
+
 func (c *PinotAPIClient) logErrorResp(r *http.Response) {
 
 	var responseContent map[string]any
