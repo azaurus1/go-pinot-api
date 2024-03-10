@@ -9,7 +9,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/testcontainers/testcontainers-go v0.29.1
 	github.com/testcontainers/testcontainers-go/modules/kafka v0.29.1
-	github.com/testcontainers/testcontainers-go/modules/redpanda v0.28.0
+	github.com/testcontainers/testcontainers-go/modules/redpanda v0.29.1
 	github.com/twmb/franz-go v1.16.1
 	github.com/twmb/franz-go/pkg/kadm v1.11.0
 	github.com/twmb/franz-go/pkg/sr v0.0.0-20240221021454-52a9ebaedf47

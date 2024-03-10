@@ -155,8 +155,8 @@ github.com/testcontainers/testcontainers-go v0.29.1 h1:z8kxdFlovA2y97RWx98v/TQ+t
 github.com/testcontainers/testcontainers-go v0.29.1/go.mod h1:SnKnKQav8UcgtKqjp/AD8bE1MqZm+3TDb/B8crE3XnI=
 github.com/testcontainers/testcontainers-go/modules/kafka v0.29.1 h1:idNT5Pw9NI6cR7ZEtw+w4tPyadi/pqqYvkAWmlfWAG0=
 github.com/testcontainers/testcontainers-go/modules/kafka v0.29.1/go.mod h1:5FZ9KvcEPtfF2w9RQhj5N/YEkY6qoQm3vM0gJ0vHzyo=
-github.com/testcontainers/testcontainers-go/modules/redpanda v0.28.0 h1:STULzp30s0ypvqwlTiZr98LSazsPIxuVY5/4JH5LklU=
-github.com/testcontainers/testcontainers-go/modules/redpanda v0.28.0/go.mod h1:vZV0T/ZZiJKj48VIR9yqliIga0bnyCNlrdfDEP//Kkw=
+github.com/testcontainers/testcontainers-go/modules/redpanda v0.29.1 h1:wqmZd30jKS1L87Va/zl7QLgjVaE/PUwjZ8XfVAAie/I=
+github.com/testcontainers/testcontainers-go/modules/redpanda v0.29.1/go.mod h1:URq0cHQv6JId/oO+ErrrTFhN6QV+TDr6D32sz7xwV5Y=
 github.com/tklauser/go-sysconf v0.3.12/go.mod h1:Ho14jnntGE1fpdOqQEEaiKRpvIavV0hSfmBq8nJbHYI=
 github.com/tklauser/go-sysconf v0.3.13 h1:GBUpcahXSpR2xN01jhkNAbTLRk2Yzgggk8IM08lq3r4=
 github.com/tklauser/go-sysconf v0.3.13/go.mod h1:zwleP4Q4OehZHGn4CYZDipCgg9usW5IJePewFCGVEa0=
