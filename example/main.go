@@ -46,7 +46,14 @@ func main() {
 		pinot.AuthToken(authToken),
 		pinot.Logger(logger))
 
-	demoSchemaFunctionality(client)
+	schema, err := client.GetSchema("terraformed_pinot_schema")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(schema)
+
+	//demoSchemaFunctionality(client)
 	// demoTableFunctionality(client)
 	// demoUserFunctionality(client)
 	// demoSegmentFunctionality(client)
