@@ -493,29 +493,30 @@ func (c *PinotAPIClient) DeleteSchema(schemaName string) (*model.UserActionRespo
 }
 
 // Segments
-func (c *PinotAPIClient) CreateSegment(body []byte) (*model.UserActionResponse, error) {
-	var result model.UserActionResponse
-	err := c.CreateFormDataObject("/v2/segments", body, &result)
-	return &result, err
-}
+// TODO: Implement Create, Get, GetMetadata, Delete
+// func (c *PinotAPIClient) CreateSegment(body []byte) (*model.UserActionResponse, error) {
+// 	var result model.UserActionResponse
+// 	err := c.CreateFormDataObject("/v2/segments", body, &result)
+// 	return &result, err
+// }
 
-func (c *PinotAPIClient) GetSegments(tableName string) (model.GetSegmentsResponse, error) {
-	var result model.GetSegmentsResponse
-	err := c.FetchData(fmt.Sprintf("/segments/%s", tableName), &result)
-	return result, err
-}
+// func (c *PinotAPIClient) GetSegments(tableName string) (model.GetSegmentsResponse, error) {
+// 	var result model.GetSegmentsResponse
+// 	err := c.FetchData(fmt.Sprintf("/segments/%s", tableName), &result)
+// 	return result, err
+// }
 
-func (c *PinotAPIClient) GetSegmentMetadata(tableName string, segmentName string) (*model.GetSegmentMetadataResponse, error) {
-	var result model.GetSegmentMetadataResponse
-	err := c.FetchData(fmt.Sprintf("/segments/%s/%s/metadata", tableName, segmentName), &result)
-	return &result, err
-}
+// func (c *PinotAPIClient) GetSegmentMetadata(tableName string, segmentName string) (*model.GetSegmentMetadataResponse, error) {
+// 	var result model.GetSegmentMetadataResponse
+// 	err := c.FetchData(fmt.Sprintf("/segments/%s/%s/metadata", tableName, segmentName), &result)
+// 	return &result, err
+// }
 
-func (c *PinotAPIClient) DeleteSegment(tableName string, segmentName string) (*model.UserActionResponse, error) {
-	var result model.UserActionResponse
-	err := c.DeleteObject(fmt.Sprintf("/segments/%s/%s", tableName, segmentName), nil, &result)
-	return &result, err
-}
+// func (c *PinotAPIClient) DeleteSegment(tableName string, segmentName string) (*model.UserActionResponse, error) {
+// 	var result model.UserActionResponse
+// 	err := c.DeleteObject(fmt.Sprintf("/segments/%s/%s", tableName, segmentName), nil, &result)
+// 	return &result, err
+// }
 
 func (c *PinotAPIClient) ReloadTableSegments(tableName string) (*model.UserActionResponse, error) {
 	var result model.UserActionResponse
