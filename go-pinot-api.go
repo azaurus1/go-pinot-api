@@ -81,9 +81,15 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 		return fmt.Errorf("client: request failed with status code: %d, body: %s", resp.StatusCode, string(bodyContents))
 	}
 
-	err = json.NewDecoder(resp.Body).Decode(result)
+	bodyContents, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("client: could not unmarshal response JSON: %w", err)
+		return fmt.Errorf("client: could not read response body: %w", err)
+	}
+
+	err = json.NewDecoder(bytes.NewReader(bodyContents)).Decode(result)
+	if err != nil {
+		c.log.Debug(fmt.Sprintf("unable to decode response from successful request: %s", err))
+		return fmt.Errorf("client: could not unmarshal response JSON: %w\n%s", err, string(bodyContents))
 	}
 
 	return nil
