@@ -198,7 +198,7 @@ See the [Contributing Guide]()
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -235,7 +235,7 @@ Project Link: [https://github.com/azaurus1/go-pinot-api](https://github.com/azau
 [issues-shield]: https://img.shields.io/github/issues/azaurus1/go-pinot-api.svg?style=for-the-badge
 [issues-url]: https://github.com/azaurus1/go-pinot-api/issues
 [license-shield]: https://img.shields.io/github/license/azaurus1/go-pinot-api.svg?style=for-the-badge
-[license-url]: https://github.com/azaurus1/go-pinot-api/blob/master/LICENSE.txt
+[license-url]: https://github.com/azaurus1/go-pinot-api/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/liam-aikin
 [product-screenshot]: images/screenshot.png
