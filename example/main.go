@@ -46,10 +46,10 @@ func main() {
 		pinot.AuthToken(authToken),
 		pinot.Logger(logger))
 
-	// demoSchemaFunctionality(client)
+	demoSchemaFunctionality(client)
 	// demoTableFunctionality(client)
 	// demoUserFunctionality(client)
-	demoSegmentFunctionality(client)
+	// demoSegmentFunctionality(client)
 
 }
 
@@ -323,180 +323,180 @@ func demoUserFunctionality(client *pinot.PinotAPIClient) {
 	fmt.Println(delResp.Status)
 }
 
-func demoSegmentFunctionality(client *pinot.PinotAPIClient) {
-
-	// Create Segment
-	// fmt.Println("Creating Segment:")
-	// segment := pinotModel.Segment{
-	// 	ContentDisposition: pinotModel.ContentDisposition{
-	// 		Type:       "type",
-	// 		Parameters: map[string]string{"param": "value"},
-	// 		FileName:   "fileName",
-	// 		Size:       100,
-	// 	},
-	// 	Entity: map[string]interface{}{
-	// 		"key": "value",
-	// 	},
-	// 	Headers: map[string][]string{
-	// 		"header": {"value"},
-	// 	},
-	// 	MediaType: pinotModel.MediaType{
-	// 		Type:            "type",
-	// 		Subtype:         "subtype",
-	// 		Parameters:      map[string]string{"param": "value"},
-	// 		WildcardType:    true,
-	// 		WildcardSubtype: true,
-	// 	},
-	// 	MessageBodyWorkers: map[string]interface{}{
-	// 		"key": "value",
-	// 	},
-	// 	Parent: pinotModel.Parent{
-	// 		ContentDisposition: pinotModel.ContentDisposition{
-	// 			Type:       "type",
-	// 			Parameters: map[string]string{"param": "value"},
-	// 			FileName:   "fileName",
-	// 			Size:       100,
-	// 		},
-	// 		Entity: map[string]interface{}{
-	// 			"key": "value",
-	// 		},
-	// 		Headers: map[string][]string{
-	// 			"header": {"value"},
-	// 		},
-	// 		MediaType: pinotModel.MediaType{
-	// 			Type:            "type",
-	// 			Subtype:         "subtype",
-	// 			Parameters:      map[string]string{"param": "value"},
-	// 			WildcardType:    true,
-	// 			WildcardSubtype: true,
-	// 		},
-	// 		MessageBodyWorkers: map[string]interface{}{
-	// 			"key": "value",
-	// 		},
-	// 		Parent: "parent",
-	// 		Providers: map[string]interface{}{
-	// 			"key": "value",
-	// 		},
-	// 		BodyParts: []pinotModel.BodyPart{
-	// 			{
-	// 				ContentDisposition: pinotModel.ContentDisposition{
-	// 					Type:       "type",
-	// 					Parameters: map[string]string{"param": "value"},
-	// 					FileName:   "fileName",
-	// 					Size:       100,
-	// 				},
-	// 				Entity: map[string]interface{}{
-	// 					"key": "value",
-	// 				},
-	// 				Headers: map[string][]string{
-	// 					"header": {"value"},
-	// 				},
-	// 				MediaType: pinotModel.MediaType{
-	// 					Type:            "type",
-	// 					Subtype:         "subtype",
-	// 					Parameters:      map[string]string{"param": "value"},
-	// 					WildcardType:    true,
-	// 					WildcardSubtype: true,
-	// 				},
-	// 				MessageBodyWorkers: map[string]interface{}{
-	// 					"key": "value",
-	// 				},
-	// 				Parent: "parent",
-	// 				Providers: map[string]interface{}{
-	// 					"key": "value",
-	// 				},
-	// 				ParameterizedHeaders: map[string][]pinotModel.ParameterizedHeader{
-	// 					"key": {
-	// 						{
-	// 							Value: "value",
-	// 						},
-	// 					},
-	// 				},
-	// 			},
-	// 		},
-	// 		ParameterizedHeaders: map[string][]pinotModel.ParameterizedHeader{
-	// 			"key": {
-	// 				{
-	// 					Value: "value",
-	// 				},
-	// 			},
-	// 		},
-	// 	},
-	// 	Providers: map[string]interface{}{
-	// 		"key": "value",
-	// 	},
-	// 	ParameterizedHeaders: map[string][]pinotModel.ParameterizedHeader{
-	// 		"key": {
-	// 			{
-	// 				Value: "value",
-	// 			},
-	// 		},
-	// 	},
-	// }
-
-	// segmentBytes, err := json.Marshal(segment)
-	// if err != nil {
-	// 	log.Panic(err)
-	// }
-
-	// createSegmentResp, err := client.CreateSegment(segmentBytes)
-	// if err != nil {
-	// 	log.Panic(err)
-	// }
-
-	// fmt.Println(createSegmentResp.Status)
-
-	// Get Segments
-	segmentsResp, err := client.GetSegments("githubComplexTypeEvents")
-	if err != nil {
-		log.Panic(err)
-	}
-	fmt.Println("Reading Segments:")
-	if len(segmentsResp) > 0 {
-		if len(segmentsResp[0].Offline) > 0 {
-			fmt.Println("OFFLINE Data:", segmentsResp[0].Offline)
-		} else {
-			fmt.Println("No OFFLINE data available.")
-		}
-		if len(segmentsResp[0].Realtime) > 0 {
-			fmt.Println("REALTIME Data:", segmentsResp[0].Realtime)
-		} else {
-			fmt.Println("No REALTIME data available.")
-		}
-	}
-
-	// Get Segment Metadata
-	segmentMetadataResp, err := client.GetSegmentMetadata("githubComplexTypeEvents", segmentsResp[0].Offline[0])
-	if err != nil {
-		log.Panic(err)
-	}
-
-	fmt.Println("Reading Segment Metadata:")
-	fmt.Println(segmentMetadataResp.SegmentStartTime)
-
-	// Delete Segment
-	//deleteSegmentResp, err := client.DeleteSegment("airlineStats", segmentsResp.OFFLINE[0])
-	//if err != nil {
-	//	log.Panic(err)
-	//}
-
-	// Reload All Segments
-	reloadTableSegmentsResp, err := client.ReloadTableSegments("githubComplexTypeEvents")
-	if err != nil {
-		log.Panic(err)
-	}
-
-	fmt.Println(reloadTableSegmentsResp.Status)
-
-	// Reload Segment
-	reloadSegmentResp, err := client.ReloadSegment("githubComplexTypeEvents", segmentsResp[0].Offline[0])
-	if err != nil {
-		log.Panic(err)
-	}
-
-	fmt.Println(reloadSegmentResp.Status)
-
-}
+//func demoSegmentFunctionality(client *pinot.PinotAPIClient) {
+//
+//	// Create Segment
+//	// fmt.Println("Creating Segment:")
+//	// segment := pinotModel.Segment{
+//	// 	ContentDisposition: pinotModel.ContentDisposition{
+//	// 		Type:       "type",
+//	// 		Parameters: map[string]string{"param": "value"},
+//	// 		FileName:   "fileName",
+//	// 		Size:       100,
+//	// 	},
+//	// 	Entity: map[string]interface{}{
+//	// 		"key": "value",
+//	// 	},
+//	// 	Headers: map[string][]string{
+//	// 		"header": {"value"},
+//	// 	},
+//	// 	MediaType: pinotModel.MediaType{
+//	// 		Type:            "type",
+//	// 		Subtype:         "subtype",
+//	// 		Parameters:      map[string]string{"param": "value"},
+//	// 		WildcardType:    true,
+//	// 		WildcardSubtype: true,
+//	// 	},
+//	// 	MessageBodyWorkers: map[string]interface{}{
+//	// 		"key": "value",
+//	// 	},
+//	// 	Parent: pinotModel.Parent{
+//	// 		ContentDisposition: pinotModel.ContentDisposition{
+//	// 			Type:       "type",
+//	// 			Parameters: map[string]string{"param": "value"},
+//	// 			FileName:   "fileName",
+//	// 			Size:       100,
+//	// 		},
+//	// 		Entity: map[string]interface{}{
+//	// 			"key": "value",
+//	// 		},
+//	// 		Headers: map[string][]string{
+//	// 			"header": {"value"},
+//	// 		},
+//	// 		MediaType: pinotModel.MediaType{
+//	// 			Type:            "type",
+//	// 			Subtype:         "subtype",
+//	// 			Parameters:      map[string]string{"param": "value"},
+//	// 			WildcardType:    true,
+//	// 			WildcardSubtype: true,
+//	// 		},
+//	// 		MessageBodyWorkers: map[string]interface{}{
+//	// 			"key": "value",
+//	// 		},
+//	// 		Parent: "parent",
+//	// 		Providers: map[string]interface{}{
+//	// 			"key": "value",
+//	// 		},
+//	// 		BodyParts: []pinotModel.BodyPart{
+//	// 			{
+//	// 				ContentDisposition: pinotModel.ContentDisposition{
+//	// 					Type:       "type",
+//	// 					Parameters: map[string]string{"param": "value"},
+//	// 					FileName:   "fileName",
+//	// 					Size:       100,
+//	// 				},
+//	// 				Entity: map[string]interface{}{
+//	// 					"key": "value",
+//	// 				},
+//	// 				Headers: map[string][]string{
+//	// 					"header": {"value"},
+//	// 				},
+//	// 				MediaType: pinotModel.MediaType{
+//	// 					Type:            "type",
+//	// 					Subtype:         "subtype",
+//	// 					Parameters:      map[string]string{"param": "value"},
+//	// 					WildcardType:    true,
+//	// 					WildcardSubtype: true,
+//	// 				},
+//	// 				MessageBodyWorkers: map[string]interface{}{
+//	// 					"key": "value",
+//	// 				},
+//	// 				Parent: "parent",
+//	// 				Providers: map[string]interface{}{
+//	// 					"key": "value",
+//	// 				},
+//	// 				ParameterizedHeaders: map[string][]pinotModel.ParameterizedHeader{
+//	// 					"key": {
+//	// 						{
+//	// 							Value: "value",
+//	// 						},
+//	// 					},
+//	// 				},
+//	// 			},
+//	// 		},
+//	// 		ParameterizedHeaders: map[string][]pinotModel.ParameterizedHeader{
+//	// 			"key": {
+//	// 				{
+//	// 					Value: "value",
+//	// 				},
+//	// 			},
+//	// 		},
+//	// 	},
+//	// 	Providers: map[string]interface{}{
+//	// 		"key": "value",
+//	// 	},
+//	// 	ParameterizedHeaders: map[string][]pinotModel.ParameterizedHeader{
+//	// 		"key": {
+//	// 			{
+//	// 				Value: "value",
+//	// 			},
+//	// 		},
+//	// 	},
+//	// }
+//
+//	// segmentBytes, err := json.Marshal(segment)
+//	// if err != nil {
+//	// 	log.Panic(err)
+//	// }
+//
+//	// createSegmentResp, err := client.CreateSegment(segmentBytes)
+//	// if err != nil {
+//	// 	log.Panic(err)
+//	// }
+//
+//	// fmt.Println(createSegmentResp.Status)
+//
+//	// Get Segments
+//	segmentsResp, err := client.GetSegments("githubComplexTypeEvents")
+//	if err != nil {
+//		log.Panic(err)
+//	}
+//	fmt.Println("Reading Segments:")
+//	if len(segmentsResp) > 0 {
+//		if len(segmentsResp[0].Offline) > 0 {
+//			fmt.Println("OFFLINE Data:", segmentsResp[0].Offline)
+//		} else {
+//			fmt.Println("No OFFLINE data available.")
+//		}
+//		if len(segmentsResp[0].Realtime) > 0 {
+//			fmt.Println("REALTIME Data:", segmentsResp[0].Realtime)
+//		} else {
+//			fmt.Println("No REALTIME data available.")
+//		}
+//	}
+//
+//	// Get Segment Metadata
+//	segmentMetadataResp, err := client.GetSegmentMetadata("githubComplexTypeEvents", segmentsResp[0].Offline[0])
+//	if err != nil {
+//		log.Panic(err)
+//	}
+//
+//	fmt.Println("Reading Segment Metadata:")
+//	fmt.Println(segmentMetadataResp.SegmentStartTime)
+//
+//	// Delete Segment
+//	//deleteSegmentResp, err := client.DeleteSegment("airlineStats", segmentsResp.OFFLINE[0])
+//	//if err != nil {
+//	//	log.Panic(err)
+//	//}
+//
+//	// Reload All Segments
+//	reloadTableSegmentsResp, err := client.ReloadTableSegments("githubComplexTypeEvents")
+//	if err != nil {
+//		log.Panic(err)
+//	}
+//
+//	fmt.Println(reloadTableSegmentsResp.Status)
+//
+//	// Reload Segment
+//	reloadSegmentResp, err := client.ReloadSegment("githubComplexTypeEvents", segmentsResp[0].Offline[0])
+//	if err != nil {
+//		log.Panic(err)
+//	}
+//
+//	fmt.Println(reloadSegmentResp.Status)
+//
+//}
 
 func getOrDefault(defaultOption string, envKeys ...string) string {
 

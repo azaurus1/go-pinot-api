@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"log/slog"
 	"net/http"
@@ -70,6 +71,15 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 	}
 
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		// extract body contents to add to error message
+		bodyContents, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("client: request failed with status code: %d", resp.StatusCode)
+		}
+		return fmt.Errorf("client: request failed with status code: %d, body: %s", resp.StatusCode, string(bodyContents))
+	}
 
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
