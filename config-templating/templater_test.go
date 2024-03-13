@@ -79,9 +79,18 @@ func TestTemplater(t *testing.T) {
 		assert.NoError(t, err)
 
 		params := TableConfigTemplateParameters{
-			KafkaBrokers:      "localhost:9092",
-			KafkaTopic:        "test",
-			SchemaRegistryUrl: "http://localhost:8081",
+			PinotSegmentsReplication: "1",
+			PinotTenantBroker:        "custom-tenant1",
+			PinotTenantServer:        "custom-tenant1",
+			KafkaBrokers:             "localhost:9092",
+			KafkaTopic:               "test",
+			KafkaSaslUsername:        "user",
+			KafkaSaslPassword:        "password",
+			KafkaSaslMechanism:       "PLAIN",
+			KafkaSecurityProtocol:    "SASL_PLAINTEXT",
+			SchemaRegistryUrl:        "http://localhost:8081",
+			SchemaRegistryUsername:   "user_sr",
+			SchemaRegistryPassword:   "password_sr",
 		}
 
 		templatedConfig, err := TemplateTableConfig(configBytes, params)
