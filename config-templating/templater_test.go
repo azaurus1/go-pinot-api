@@ -10,7 +10,7 @@ import (
 
 func TestTemplater(t *testing.T) {
 
-	t.Run("Params correctly injected into template", func(t *testing.T) {
+	t.Run("TemplateTableConfigToFile Params correctly injected into template", func(t *testing.T) {
 
 		// create temp file
 		f, err := os.CreateTemp("", "test")
@@ -35,7 +35,7 @@ func TestTemplater(t *testing.T) {
 			SchemaRegistryUrl: "http://localhost:8081",
 		}
 
-		err = TemplateTableConfig(f.Name(), f.Name(), params)
+		err = TemplateTableConfigToFile(f.Name(), f.Name(), params)
 		assert.NoError(t, err)
 
 		f, err = os.Open(f.Name())
@@ -54,6 +54,26 @@ func TestTemplater(t *testing.T) {
 		assert.Equal(t, "test", templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.topic.name"])
 		assert.Equal(t, "http://localhost:8081", templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.decoder.prop.schema.registry.rest.url"])
 
+	})
+
+	t.Run("TemplateTableConfig correctly renders template", func(t *testing.T) {
+		config := dummyTableConfig()
+		configBytes, err := json.Marshal(config)
+		assert.NoError(t, err)
+
+		params := TableConfigTemplateParameters{
+			KafkaBrokers:      "localhost:9092",
+			KafkaTopic:        "test",
+			SchemaRegistryUrl: "http://localhost:8081",
+		}
+
+		templatedConfig, err := TemplateTableConfig(configBytes, params)
+		assert.NoError(t, err)
+
+		// assert that the template was correctly injected
+		assert.Equal(t, "localhost:9092", templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.broker.list"])
+		assert.Equal(t, "test", templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.topic.name"])
+		assert.Equal(t, "http://localhost:8081", templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.decoder.prop.schema.registry.rest.url"])
 	})
 
 }
