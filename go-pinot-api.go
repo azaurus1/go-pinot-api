@@ -516,11 +516,11 @@ func (c *PinotAPIClient) DeleteSchema(schemaName string) (*model.UserActionRespo
 // 	return &result, err
 // }
 
-// func (c *PinotAPIClient) GetSegments(tableName string) (model.GetSegmentsResponse, error) {
-// 	var result model.GetSegmentsResponse
-// 	err := c.FetchData(fmt.Sprintf("/segments/%s", tableName), &result)
-// 	return result, err
-// }
+func (c *PinotAPIClient) GetSegments(tableName string) (model.GetSegmentsResponse, error) {
+	var result model.GetSegmentsResponse
+	err := c.FetchData(fmt.Sprintf("/segments/%s", tableName), &result)
+	return result, err
+}
 
 // func (c *PinotAPIClient) GetSegmentMetadata(tableName string, segmentName string) (*model.GetSegmentMetadataResponse, error) {
 // 	var result model.GetSegmentMetadataResponse
