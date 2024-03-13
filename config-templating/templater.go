@@ -2,7 +2,9 @@ package config_templating
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"github.com/azaurus1/go-pinot-api/model"
 	"os"
 	"text/template"
 )
@@ -20,7 +22,7 @@ func TemplateTableConfigToFile(inputTemplate, outputConfigFile string, params Ta
 		return err
 	}
 
-	outputConfigBytes, err := templateTableConfigToBytes(tableConfigTpl, params)
+	outputConfigBytes, err := templateTableConfig(tableConfigTpl, params)
 	if err != nil {
 		return err
 	}
@@ -41,7 +43,23 @@ func TemplateTableConfigToFile(inputTemplate, outputConfigFile string, params Ta
 
 }
 
-func templateTableConfigToBytes(inputTemplate []byte, params TableConfigTemplateParameters) ([]byte, error) {
+func TemplateTableConfig(inputTemplate []byte, params TableConfigTemplateParameters) (*model.Table, error) {
+
+	renderedBytes, err := templateTableConfig(inputTemplate, params)
+	if err != nil {
+		return nil, err
+	}
+
+	var table model.Table
+	err = json.Unmarshal(renderedBytes, &table)
+	if err != nil {
+		return nil, err
+	}
+
+	return &table, nil
+}
+
+func templateTableConfig(inputTemplate []byte, params TableConfigTemplateParameters) ([]byte, error) {
 
 	tableConfigTemplate, err := template.New("tableConfig").Parse(string(inputTemplate))
 	if err != nil {
