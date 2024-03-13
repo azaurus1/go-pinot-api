@@ -1,6 +1,7 @@
 package config_templating
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"text/template"
@@ -19,7 +20,7 @@ func TemplateTableConfigToFile(inputTemplate, outputConfigFile string, params Ta
 		return err
 	}
 
-	tableConfigTemplate, err := template.New(outputConfigFile).Parse(string(tableConfigTpl))
+	outputConfigBytes, err := templateTableConfigToBytes(tableConfigTpl, params)
 	if err != nil {
 		return err
 	}
@@ -31,11 +32,29 @@ func TemplateTableConfigToFile(inputTemplate, outputConfigFile string, params Ta
 
 	defer outputFile.Close()
 
-	err = tableConfigTemplate.Execute(outputFile, params)
+	_, err = outputFile.Write(outputConfigBytes)
 	if err != nil {
-		return err
+		return fmt.Errorf("error writing to output file %s: %s", outputConfigFile, err)
 	}
 
 	return nil
+
+}
+
+func templateTableConfigToBytes(inputTemplate []byte, params TableConfigTemplateParameters) ([]byte, error) {
+
+	tableConfigTemplate, err := template.New("tableConfig").Parse(string(inputTemplate))
+	if err != nil {
+		return nil, err
+	}
+
+	var outputConfig bytes.Buffer
+
+	err = tableConfigTemplate.Execute(&outputConfig, params)
+	if err != nil {
+		return nil, err
+	}
+
+	return outputConfig.Bytes(), nil
 
 }
