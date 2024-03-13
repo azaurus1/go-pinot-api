@@ -29,10 +29,20 @@ func TestTemplater(t *testing.T) {
 		assert.NoError(t, err)
 
 		// call TemplateTableConfig
+
 		params := TableConfigTemplateParameters{
-			KafkaBrokers:      "localhost:9092",
-			KafkaTopic:        "test",
-			SchemaRegistryUrl: "http://localhost:8081",
+			PinotSegmentsReplication: "1",
+			PinotTenantBroker:        "custom-tenant1",
+			PinotTenantServer:        "custom-tenant1",
+			KafkaBrokers:             "localhost:9092",
+			KafkaTopic:               "test",
+			KafkaSaslUsername:        "user",
+			KafkaSaslPassword:        "password",
+			KafkaSaslMechanism:       "PLAIN",
+			KafkaSecurityProtocol:    "SASL_PLAINTEXT",
+			SchemaRegistryUrl:        "http://localhost:8081",
+			SchemaRegistryUsername:   "user_sr",
+			SchemaRegistryPassword:   "password_sr",
 		}
 
 		err = TemplateTableConfigToFile(f.Name(), f.Name(), params)
@@ -50,9 +60,16 @@ func TestTemplater(t *testing.T) {
 		assert.NoError(t, err)
 
 		// assert that the template was correctly injected
-		assert.Equal(t, "localhost:9092", templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.broker.list"])
-		assert.Equal(t, "test", templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.topic.name"])
-		assert.Equal(t, "http://localhost:8081", templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.decoder.prop.schema.registry.rest.url"])
+		assert.Equal(t, params.PinotSegmentsReplication, templatedConfig.SegmentsConfig.Replication)
+		assert.Equal(t, params.PinotTenantBroker, templatedConfig.Tenants.Broker)
+		assert.Equal(t, params.PinotTenantServer, templatedConfig.Tenants.Server)
+		assert.Equal(t, params.KafkaBrokers, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.broker.list"])
+		assert.Equal(t, params.KafkaTopic, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.topic.name"])
+		assert.Equal(t, params.SchemaRegistryUrl, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.decoder.prop.schema.registry.rest.url"])
+		assert.Equal(t, params.SchemaRegistryUsername+":"+params.SchemaRegistryPassword, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.decoder.prop.schema.registry.basic.auth.user.info"])
+		assert.Equal(t, params.KafkaSecurityProtocol, templatedConfig.TableIndexConfig.StreamConfigs["security.protocol"])
+		assert.Equal(t, params.KafkaSaslMechanism, templatedConfig.TableIndexConfig.StreamConfigs["sasl.mechanism"])
+		assert.Equal(t, "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\""+params.KafkaSaslUsername+"\" \n password=\""+params.KafkaSaslPassword+"\";", templatedConfig.TableIndexConfig.StreamConfigs["sasl.jaas.config"])
 
 	})
 
@@ -62,18 +79,35 @@ func TestTemplater(t *testing.T) {
 		assert.NoError(t, err)
 
 		params := TableConfigTemplateParameters{
-			KafkaBrokers:      "localhost:9092",
-			KafkaTopic:        "test",
-			SchemaRegistryUrl: "http://localhost:8081",
+			PinotSegmentsReplication: "1",
+			PinotTenantBroker:        "custom-tenant1",
+			PinotTenantServer:        "custom-tenant1",
+			KafkaBrokers:             "localhost:9092",
+			KafkaTopic:               "test",
+			KafkaSaslUsername:        "user",
+			KafkaSaslPassword:        "password",
+			KafkaSaslMechanism:       "PLAIN",
+			KafkaSecurityProtocol:    "SASL_PLAINTEXT",
+			SchemaRegistryUrl:        "http://localhost:8081",
+			SchemaRegistryUsername:   "user_sr",
+			SchemaRegistryPassword:   "password_sr",
 		}
 
 		templatedConfig, err := TemplateTableConfig(configBytes, params)
 		assert.NoError(t, err)
 
 		// assert that the template was correctly injected
-		assert.Equal(t, "localhost:9092", templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.broker.list"])
-		assert.Equal(t, "test", templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.topic.name"])
-		assert.Equal(t, "http://localhost:8081", templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.decoder.prop.schema.registry.rest.url"])
+		assert.Equal(t, params.PinotSegmentsReplication, templatedConfig.SegmentsConfig.Replication)
+		assert.Equal(t, params.PinotTenantBroker, templatedConfig.Tenants.Broker)
+		assert.Equal(t, params.PinotTenantServer, templatedConfig.Tenants.Server)
+		assert.Equal(t, params.KafkaBrokers, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.broker.list"])
+		assert.Equal(t, params.KafkaTopic, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.topic.name"])
+		assert.Equal(t, params.SchemaRegistryUrl, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.decoder.prop.schema.registry.rest.url"])
+		assert.Equal(t, params.SchemaRegistryUsername+":"+params.SchemaRegistryPassword, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.decoder.prop.schema.registry.basic.auth.user.info"])
+		assert.Equal(t, params.KafkaSecurityProtocol, templatedConfig.TableIndexConfig.StreamConfigs["security.protocol"])
+		assert.Equal(t, params.KafkaSaslMechanism, templatedConfig.TableIndexConfig.StreamConfigs["sasl.mechanism"])
+		assert.Equal(t, "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\""+params.KafkaSaslUsername+"\" \n password=\""+params.KafkaSaslPassword+"\";", templatedConfig.TableIndexConfig.StreamConfigs["sasl.jaas.config"])
+
 	})
 
 }
@@ -82,11 +116,25 @@ func dummyTableConfig() model.Table {
 	return model.Table{
 		TableName: "dummy",
 		TableType: "REALTIME",
+		SegmentsConfig: model.TableSegmentsConfig{
+			Replication: "{{ .PinotSegmentsReplication }}",
+		},
+		Tenants: model.TableTenant{
+			Broker: "{{ .PinotTenantBroker }}",
+			Server: "{{ .PinotTenantServer }}",
+		},
 		TableIndexConfig: model.TableIndexConfig{
 			StreamConfigs: map[string]string{
-				"stream.kafka.topic.name":                            "{{ .KafkaTopic }}",
-				"stream.kafka.broker.list":                           "{{ .KafkaBrokers }}",
-				"stream.kafka.decoder.prop.schema.registry.rest.url": "{{ .SchemaRegistryUrl }}",
+				"stream.kafka.topic.name":                                                 "{{ .KafkaTopic }}",
+				"stream.kafka.broker.list":                                                "{{ .KafkaBrokers }}",
+				"stream.kafka.decoder.prop.schema.registry.rest.url":                      "{{ .SchemaRegistryUrl }}",
+				"stream.kafka.decoder.prop.schema.registry.basic.auth.credentials.source": "USER_INFO",
+				"stream.kafka.decoder.prop.schema.registry.basic.auth.user.info":          "{{ .SchemaRegistryUsername }}:{{ .SchemaRegistryPassword }}",
+				"stream.kafka.decoder.prop.format":                                        "AVRO",
+				"authentication.type":                                                     "SASL",
+				"security.protocol":                                                       "{{ .KafkaSecurityProtocol }}",
+				"sasl.mechanism":                                                          "{{ .KafkaSaslMechanism }}",
+				"sasl.jaas.config":                                                        "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\"{{ .KafkaSaslUsername }}\" \n password=\"{{ .KafkaSaslPassword }}\";",
 			},
 		},
 	}

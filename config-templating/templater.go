@@ -10,9 +10,18 @@ import (
 )
 
 type TableConfigTemplateParameters struct {
-	KafkaBrokers      string
-	KafkaTopic        string
-	SchemaRegistryUrl string
+	PinotSegmentsReplication string
+	PinotTenantBroker        string
+	PinotTenantServer        string
+	KafkaBrokers             string
+	KafkaTopic               string
+	KafkaSaslUsername        string
+	KafkaSaslPassword        string
+	KafkaSaslMechanism       string
+	KafkaSecurityProtocol    string
+	SchemaRegistryUrl        string
+	SchemaRegistryUsername   string
+	SchemaRegistryPassword   string
 }
 
 func TemplateTableConfigToFile(inputTemplate, outputConfigFile string, params TableConfigTemplateParameters) error {
