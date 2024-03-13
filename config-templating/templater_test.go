@@ -35,7 +35,7 @@ func TestTemplater(t *testing.T) {
 			SchemaRegistryUrl: "http://localhost:8081",
 		}
 
-		err = TemplateTableConfig(f.Name(), f.Name(), params)
+		err = TemplateTableConfigToFile(f.Name(), f.Name(), params)
 		assert.NoError(t, err)
 
 		f, err = os.Open(f.Name())

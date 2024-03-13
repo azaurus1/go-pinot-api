@@ -12,7 +12,7 @@ type TableConfigTemplateParameters struct {
 	SchemaRegistryUrl string
 }
 
-func TemplateTableConfig(inputTemplate, outputConfigFile string, params TableConfigTemplateParameters) error {
+func TemplateTableConfigToFile(inputTemplate, outputConfigFile string, params TableConfigTemplateParameters) error {
 
 	tableConfigTpl, err := os.ReadFile(inputTemplate)
 	if err != nil {
