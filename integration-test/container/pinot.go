@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -119,7 +121,13 @@ func RunPinotContainer(ctx context.Context) (*Pinot, error) {
 }
 
 func (p *Pinot) CreateUser(_ context.Context, userBytes []byte) (*model.UserActionResponse, error) {
-	client := goPinotAPI.NewPinotAPIClient("http://"+p.URI, "YWRtaW46YWRtaW4=")
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+
+	client := goPinotAPI.NewPinotAPIClient(
+		goPinotAPI.ControllerUrl(p.URI),
+		goPinotAPI.AuthToken("YWRtaW46YWRtaW4="),
+		goPinotAPI.Logger(logger),
+	)
 
 	userCreationResponse, err := client.CreateUser(userBytes)
 	if err != nil {
@@ -131,7 +139,10 @@ func (p *Pinot) CreateUser(_ context.Context, userBytes []byte) (*model.UserActi
 }
 
 func (p *Pinot) GetUsers(_ context.Context) (*model.GetUsersResponse, error) {
-	client := goPinotAPI.NewPinotAPIClient("http://"+p.URI, "YWRtaW46YWRtaW4=")
+	client := goPinotAPI.NewPinotAPIClient(
+		goPinotAPI.ControllerUrl(p.URI),
+		goPinotAPI.AuthToken("YWRtaW46YWRtaW4="),
+	)
 
 	userResp, err := client.GetUsers()
 	if err != nil {
@@ -139,4 +150,47 @@ func (p *Pinot) GetUsers(_ context.Context) (*model.GetUsersResponse, error) {
 	}
 
 	return userResp, nil
+}
+
+func (p *Pinot) GetSegment(tableName string) (*model.GetSegmentsResponse, error) {
+	client := goPinotAPI.NewPinotAPIClient(
+		goPinotAPI.ControllerUrl(p.URI),
+		goPinotAPI.AuthToken("YWRtaW46YWRtaW4="),
+	)
+
+	segments, err := client.GetSegments(tableName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return &segments, nil
+}
+
+func (p *Pinot) ReloadSegment(tableName string, segmentName string) (*model.UserActionResponse, error) {
+	client := goPinotAPI.NewPinotAPIClient(
+		goPinotAPI.ControllerUrl(p.URI),
+		goPinotAPI.AuthToken("YWRtaW46YWRtaW4="),
+	)
+
+	reloadSegmentResponse, err := client.ReloadSegment(tableName, segmentName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return reloadSegmentResponse, nil
+
+}
+
+func (p *Pinot) ReloadTableSegments(tableName string) (*model.UserActionResponse, error) {
+	client := goPinotAPI.NewPinotAPIClient(
+		goPinotAPI.ControllerUrl(p.URI),
+		goPinotAPI.AuthToken("YWRtaW46YWRtaW4="),
+	)
+
+	reloadTableSegmentsResponse, err := client.ReloadTableSegments(tableName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return reloadTableSegmentsResponse, nil
 }

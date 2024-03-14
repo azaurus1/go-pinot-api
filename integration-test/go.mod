@@ -3,7 +3,6 @@ module integration-test
 go 1.22.0
 
 require (
-	github.com/azaurus1/go-pinot-api v0.1.1-0.20240306034329-0b8450520d31
 	github.com/google/uuid v1.6.0
 	github.com/hamba/avro/v2 v2.20.0
 	github.com/stretchr/testify v1.9.0
@@ -20,6 +19,7 @@ require (
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/Microsoft/hcsshim v0.11.4 // indirect
+	github.com/azaurus1/go-pinot-api v0.1.5-0.20240313133131-0c48c13c034a // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/containerd/containerd v1.7.13 // indirect
 	github.com/containerd/log v0.1.0 // indirect
