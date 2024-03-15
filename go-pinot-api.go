@@ -546,6 +546,34 @@ func (c *PinotAPIClient) ReloadSegment(tableName string, segmentName string) (*m
 	return &result, err
 }
 
+// Cluster
+
+func (c *PinotAPIClient) GetClusterInfo() (*model.GetClusterResponse, error) {
+	var result model.GetClusterResponse
+	err := c.FetchData("/cluster/info", &result)
+
+	return &result, err
+}
+
+func (c *PinotAPIClient) GetClusterConfigs() (*model.GetClusterConfigResponse, error) {
+	var result model.GetClusterConfigResponse
+	err := c.FetchData("/cluster/configs", &result)
+
+	return &result, err
+}
+
+func (c *PinotAPIClient) UpdateClusterConfigs(body []byte) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject("/cluster/configs", body, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) DeleteClusterConfig(configName string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.DeleteObject(fmt.Sprintf("/cluster/configs/%s", configName), nil, &result)
+	return &result, err
+}
+
 func (c *PinotAPIClient) logErrorResp(r *http.Response) {
 
 	var responseContent map[string]any

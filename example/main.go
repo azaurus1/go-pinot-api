@@ -49,7 +49,8 @@ func main() {
 	//demoSchemaFunctionality(client)
 	// demoTableFunctionality(client)
 	// demoUserFunctionality(client)
-	demoSegmentFunctionality(client)
+	// demoSegmentFunctionality(client)
+	demoClusterFunctionality(client)
 
 }
 
@@ -495,6 +496,57 @@ func demoSegmentFunctionality(client *pinot.PinotAPIClient) {
 	// }
 
 	// fmt.Println(reloadSegmentResp.Status)
+
+}
+
+func demoClusterFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Cluster
+	clusterInfoResp, err := client.GetClusterInfo()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Cluster Info:")
+	fmt.Println(clusterInfoResp.ClusterName)
+
+	// Get Cluster Config
+	clusterConfigResp, err := client.GetClusterConfigs()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Cluster Config:")
+	fmt.Println(clusterConfigResp.AllowParticipantAutoJoin)
+
+	// Update Cluster Config
+	updateClusterConfig := pinotModel.ClusterConfig{
+		AllowParticipantAutoJoin:            "true",
+		EnableCaseInsensitive:               "true",
+		DefaultHyperlogLogLog2m:             "14",
+		PinotBrokerEnableQueryLimitOverride: "true",
+	}
+
+	updateClusterConfigBytes, err := json.Marshal(updateClusterConfig)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	updateClusterConfigResp, err := client.UpdateClusterConfigs(updateClusterConfigBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(updateClusterConfigResp.Status)
+
+	// Delete Cluster Config
+	// This deletes the cluster config - Theres no Create cluster config operation .....
+	// deleteClusterConfigResp, err := client.DeleteClusterConfig(clusterInfoResp.ClusterName)
+	// if err != nil {
+	// 	log.Panic(err)
+	// }
+
+	// fmt.Println(deleteClusterConfigResp.Status)
 
 }
 
