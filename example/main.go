@@ -89,7 +89,7 @@ func demoTableFunctionality(client *pinot.PinotAPIClient) {
 			},
 		},
 		IngestionConfig: pinotModel.TableIngestionConfig{
-			SegmentTimeValueCheckType: "EPOCH",
+			SegmentTimeValueCheck: true,
 			TransformConfigs: []pinotModel.TransformConfig{
 				{
 					ColumnName:        "timestamp",
@@ -171,7 +171,7 @@ func demoTableFunctionality(client *pinot.PinotAPIClient) {
 			},
 		},
 		IngestionConfig: pinotModel.TableIngestionConfig{
-			SegmentTimeValueCheckType: "EPOCH",
+			SegmentTimeValueCheck: true,
 			TransformConfigs: []pinotModel.TransformConfig{
 				{
 					ColumnName:        "timestamp",

@@ -83,11 +83,11 @@ type TransformConfig struct {
 }
 
 type TableIngestionConfig struct {
-	SegmentTimeValueCheckType bool                  `json:"segmentTimeValueCheckType,omitempty"`
-	TransformConfigs          []TransformConfig     `json:"transformConfigs,omitempty"`
-	ContinueOnError           bool                  `json:"continueOnError,omitempty"`
-	RowTimeValueCheck         bool                  `json:"rowTimeValueCheck,omitempty"`
-	StreamIngestionConfig     StreamIngestionConfig `json:"streamIngestionConfig,omitempty"`
+	SegmentTimeValueCheck bool                  `json:"segmentTimeValueCheck,omitempty"`
+	TransformConfigs      []TransformConfig     `json:"transformConfigs,omitempty"`
+	ContinueOnError       bool                  `json:"continueOnError,omitempty"`
+	RowTimeValueCheck     bool                  `json:"rowTimeValueCheck,omitempty"`
+	StreamIngestionConfig StreamIngestionConfig `json:"streamIngestionConfig,omitempty"`
 }
 
 type StreamIngestionConfig struct {
