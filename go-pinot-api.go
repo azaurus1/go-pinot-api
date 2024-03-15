@@ -114,7 +114,14 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 
 	// Check the status code
 	if res.StatusCode != http.StatusOK {
+
+		errRespMessage, err := c.extractErrorMessage(res)
+		if err != nil {
+			return fmt.Errorf("client: could not extract error message: %w", err)
+		}
+
 		var errMsg string
+
 		// From client perspective, 409 isnt a failed request
 		if res.StatusCode == 409 {
 			errMsg = "client: conflict, object exists - "
@@ -123,7 +130,8 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 		} else {
 			errMsg = "client: "
 		}
-		return fmt.Errorf("%srequest failed with status code: %d", errMsg, res.StatusCode)
+
+		return fmt.Errorf("%srequest failed: status %d\n%s", errMsg, res.StatusCode, errRespMessage)
 	}
 
 	err = json.NewDecoder(res.Body).Decode(&result)
@@ -173,7 +181,7 @@ func (c *PinotAPIClient) CreateFormDataObject(endpoint string, body []byte, resu
 	return nil
 }
 
-func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]string, result any) error {
+func (c *PinotAPIClient) DeleteObject(endpoint string, _ map[string]string, result any) error {
 
 	pathAndQuery := strings.SplitN(endpoint, "?", 2)
 	var path string
@@ -627,6 +635,18 @@ func (c *PinotAPIClient) RebalanceTenant(tenantName string) (*model.UserActionRe
 	var result model.UserActionResponse
 	err := c.CreateObject(fmt.Sprintf("/tenants/%s/rebalance", tenantName), nil, &result)
 	return &result, err
+}
+
+func (c *PinotAPIClient) extractErrorMessage(resp *http.Response) (string, error) {
+
+	var result map[string]string
+	err := json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return "", fmt.Errorf("unable to decode response from failed request: %s", err)
+	}
+
+	return result["error"], nil
+
 }
 
 func (c *PinotAPIClient) logErrorResp(r *http.Response) {

@@ -3,15 +3,15 @@ package model
 type TableSegmentsConfig struct {
 	TimeType                  string `json:"timeType"`
 	Replication               string `json:"replication"`
-	ReplicasPerPartition      string `json:"replicasPerPartition"`
+	ReplicasPerPartition      string `json:"replicasPerPartition,omitempty"`
 	TimeColumnName            string `json:"timeColumnName"`
 	SegmentAssignmentStrategy string `json:"segmentAssignmentStrategy,omitempty"`
 	SegmentPushType           string `json:"segmentPushType,omitempty"`
 	MinimizeDataMovement      bool   `json:"minimizeDataMovement"`
-	RetentionTimeUnit         string `json:"retentionTimeUnit"`
-	RetentionTimeValue        string `json:"retentionTimeValue"`
-	CrypterClassName          string `json:"crypterClassName"`
-	PeerSegmentDownloadScheme string `json:"peerSegmentDownloadScheme"`
+	RetentionTimeUnit         string `json:"retentionTimeUnit,omitempty"`
+	RetentionTimeValue        string `json:"retentionTimeValue,omitempty"`
+	CrypterClassName          string `json:"crypterClassName,omitempty"`
+	PeerSegmentDownloadScheme string `json:"peerSegmentDownloadScheme,omitempty"`
 }
 
 type TableTenant struct {
@@ -83,11 +83,11 @@ type TransformConfig struct {
 }
 
 type TableIngestionConfig struct {
-	SegmentTimeValueCheckType string                `json:"segmentTimeValueCheckType"`
-	TransformConfigs          []TransformConfig     `json:"transformConfigs.omitempty"`
-	ContinueOnError           bool                  `json:"continueOnError"`
-	RowTimeValueCheck         bool                  `json:"rowTimeValueCheck"`
-	StreamIngestionConfig     StreamIngestionConfig `json:"streamIngestionConfig"`
+	SegmentTimeValueCheckType bool                  `json:"segmentTimeValueCheckType,omitempty"`
+	TransformConfigs          []TransformConfig     `json:"transformConfigs,omitempty"`
+	ContinueOnError           bool                  `json:"continueOnError,omitempty"`
+	RowTimeValueCheck         bool                  `json:"rowTimeValueCheck,omitempty"`
+	StreamIngestionConfig     StreamIngestionConfig `json:"streamIngestionConfig,omitempty"`
 }
 
 type StreamIngestionConfig struct {
