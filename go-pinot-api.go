@@ -638,15 +638,11 @@ func (c *PinotAPIClient) RebalanceTenant(tenantName string) (*model.UserActionRe
 }
 
 func (c *PinotAPIClient) extractErrorMessage(resp *http.Response) (string, error) {
-
-	var result map[string]string
-	err := json.NewDecoder(resp.Body).Decode(&result)
+	resultBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("unable to decode response from failed request: %s", err)
 	}
-
-	return result["error"], nil
-
+	return string(resultBytes), nil
 }
 
 func (c *PinotAPIClient) logErrorResp(r *http.Response) {
