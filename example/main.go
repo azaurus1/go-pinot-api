@@ -46,12 +46,12 @@ func main() {
 		pinot.AuthToken(authToken),
 		pinot.Logger(logger))
 
-	//demoSchemaFunctionality(client)
+	// demoSchemaFunctionality(client)
 	// demoTableFunctionality(client)
 	// demoUserFunctionality(client)
 	// demoSegmentFunctionality(client)
-	demoClusterFunctionality(client)
-
+	// demoClusterFunctionality(client)
+	demoTenantFunctionality(client)
 }
 
 func demoTableFunctionality(client *pinot.PinotAPIClient) {
@@ -547,6 +547,79 @@ func demoClusterFunctionality(client *pinot.PinotAPIClient) {
 	// }
 
 	// fmt.Println(deleteClusterConfigResp.Status)
+
+}
+
+func demoTenantFunctionality(client *pinot.PinotAPIClient) {
+
+	// Create Tenant
+	tenant := pinotModel.Tenant{
+		TenantName: "test",
+		TenantRole: "BROKER",
+	}
+
+	tenantBytes, err := json.Marshal(tenant)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	createTenantResp, err := client.CreateTenant(tenantBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(createTenantResp.Status)
+
+	// Get Tenants
+	tenantsResp, err := client.GetTenants()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Broker Tenants:")
+	for _, tenant := range tenantsResp.BrokerTenants {
+		fmt.Println(tenant)
+	}
+
+	fmt.Println("Reading Server Tenants:")
+	for _, tenant := range tenantsResp.ServerTenants {
+		fmt.Println(tenant)
+	}
+
+	// Get Tenant
+	getTenantResp, err := client.GetTenantMetadata("test")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Tenant:")
+	fmt.Println(getTenantResp.TenantName)
+
+	// Update Tenant
+	updateTenant := pinotModel.Tenant{
+		TenantName: "test",
+		TenantRole: "SERVER",
+	}
+
+	updateTenantBytes, err := json.Marshal(updateTenant)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	updateTenantResp, err := client.UpdateTenant(updateTenantBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(updateTenantResp.Status)
+
+	// Delete Tenant
+	deleteTenantResp, err := client.DeleteTenant("test", "SERVER")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(deleteTenantResp.Status)
 
 }
 
