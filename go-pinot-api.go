@@ -637,6 +637,19 @@ func (c *PinotAPIClient) RebalanceTenant(tenantName string) (*model.UserActionRe
 	return &result, err
 }
 
+// Tasks
+func (c *PinotAPIClient) GetTaskTypes() (*model.GetTaskTypesResponse, error) {
+	var result model.GetTaskTypesResponse
+	err := c.FetchData("/tasks/tasktypes", &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) GetTaskSchedulerInfo() (*model.GetTaskSchedulerInfoResponse, error) {
+	var result model.GetTaskSchedulerInfoResponse
+	err := c.FetchData("/tasks/scheduler/information", &result)
+	return &result, err
+}
+
 func (c *PinotAPIClient) extractErrorMessage(resp *http.Response) (string, error) {
 	resultBytes, err := io.ReadAll(resp.Body)
 	if err != nil {

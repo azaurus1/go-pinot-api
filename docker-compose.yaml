@@ -50,6 +50,16 @@ services:
     depends_on:
       - pinot-broker
 
+  pinot-minion:
+    image: apachepinot/pinot
+    command: "StartMinion -zkAddress pinot-zookeeper:2181"
+    restart: unless-stopped
+    container_name: "pinot-minion"
+    environment:
+      JAVA_OPTS: "-Dplugins.dir=/opt/pinot/plugins -Xms4G -Xmx4G -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Xloggc:gc-pinot-minion.log"
+    depends_on:
+      - pinot-server
+
   kafka:
     image: confluentinc/cp-kafka
     container_name: kafka
