@@ -114,7 +114,14 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 
 	// Check the status code
 	if res.StatusCode != http.StatusOK {
+
+		responseMessageBytes, err := io.ReadAll(res.Body)
+		if err != nil {
+			return fmt.Errorf("client: request failed with status code: %d", res.StatusCode)
+		}
+
 		var errMsg string
+
 		// From client perspective, 409 isnt a failed request
 		if res.StatusCode == 409 {
 			errMsg = "client: conflict, object exists - "
@@ -123,7 +130,8 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 		} else {
 			errMsg = "client: "
 		}
-		return fmt.Errorf("%srequest failed with status code: %d", errMsg, res.StatusCode)
+
+		return fmt.Errorf("%srequest failed: status %d\n%s", errMsg, res.StatusCode, string(responseMessageBytes))
 	}
 
 	err = json.NewDecoder(res.Body).Decode(&result)
@@ -544,6 +552,23 @@ func (c *PinotAPIClient) ReloadSegment(tableName string, segmentName string) (*m
 	var result model.UserActionResponse
 	err := c.CreateObject(fmt.Sprintf("/segments/%s/%s/reload", tableName, segmentName), nil, &result)
 	return &result, err
+}
+
+func (c *PinotAPIClient) extractErrorMessage(resp *http.Response) (int, string, error) {
+
+	var result map[string]string
+	err := json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		return 0, "", fmt.Errorf("unable to decode response from failed request: %s", err)
+	}
+
+	resultCodeInt, err := strconv.Atoi(result["code"])
+	if err != nil {
+		return 0, "", fmt.Errorf("unable to convert error code to int: %s", err)
+	}
+
+	return resultCodeInt, result["error"], nil
+
 }
 
 func (c *PinotAPIClient) logErrorResp(r *http.Response) {
