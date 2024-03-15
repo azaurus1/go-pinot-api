@@ -115,9 +115,9 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 	// Check the status code
 	if res.StatusCode != http.StatusOK {
 
-		responseMessageBytes, err := io.ReadAll(res.Body)
+		errRespMessage, err := c.extractErrorMessage(res)
 		if err != nil {
-			return fmt.Errorf("client: request failed with status code: %d", res.StatusCode)
+			return fmt.Errorf("client: could not extract error message: %w", err)
 		}
 
 		var errMsg string
@@ -131,7 +131,7 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 			errMsg = "client: "
 		}
 
-		return fmt.Errorf("%srequest failed: status %d\n%s", errMsg, res.StatusCode, string(responseMessageBytes))
+		return fmt.Errorf("%srequest failed: status %d\n%s", errMsg, res.StatusCode, errRespMessage)
 	}
 
 	err = json.NewDecoder(res.Body).Decode(&result)
@@ -181,7 +181,7 @@ func (c *PinotAPIClient) CreateFormDataObject(endpoint string, body []byte, resu
 	return nil
 }
 
-func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]string, result any) error {
+func (c *PinotAPIClient) DeleteObject(endpoint string, _ map[string]string, result any) error {
 
 	pathAndQuery := strings.SplitN(endpoint, "?", 2)
 	var path string
@@ -637,20 +637,15 @@ func (c *PinotAPIClient) RebalanceTenant(tenantName string) (*model.UserActionRe
 	return &result, err
 }
 
-func (c *PinotAPIClient) extractErrorMessage(resp *http.Response) (int, string, error) {
+func (c *PinotAPIClient) extractErrorMessage(resp *http.Response) (string, error) {
 
 	var result map[string]string
 	err := json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		return 0, "", fmt.Errorf("unable to decode response from failed request: %s", err)
+		return "", fmt.Errorf("unable to decode response from failed request: %s", err)
 	}
 
-	resultCodeInt, err := strconv.Atoi(result["code"])
-	if err != nil {
-		return 0, "", fmt.Errorf("unable to convert error code to int: %s", err)
-	}
-
-	return resultCodeInt, result["error"], nil
+	return result["error"], nil
 
 }
 
