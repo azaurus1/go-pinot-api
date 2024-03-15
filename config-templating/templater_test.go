@@ -63,13 +63,13 @@ func TestTemplater(t *testing.T) {
 		assert.Equal(t, params.PinotSegmentsReplication, templatedConfig.SegmentsConfig.Replication)
 		assert.Equal(t, params.PinotTenantBroker, templatedConfig.Tenants.Broker)
 		assert.Equal(t, params.PinotTenantServer, templatedConfig.Tenants.Server)
-		assert.Equal(t, params.KafkaBrokers, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.broker.list"])
-		assert.Equal(t, params.KafkaTopic, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.topic.name"])
-		assert.Equal(t, params.SchemaRegistryUrl, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.decoder.prop.schema.registry.rest.url"])
-		assert.Equal(t, params.SchemaRegistryUsername+":"+params.SchemaRegistryPassword, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.decoder.prop.schema.registry.basic.auth.user.info"])
-		assert.Equal(t, params.KafkaSecurityProtocol, templatedConfig.TableIndexConfig.StreamConfigs["security.protocol"])
-		assert.Equal(t, params.KafkaSaslMechanism, templatedConfig.TableIndexConfig.StreamConfigs["sasl.mechanism"])
-		assert.Equal(t, "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\""+params.KafkaSaslUsername+"\" \n password=\""+params.KafkaSaslPassword+"\";", templatedConfig.TableIndexConfig.StreamConfigs["sasl.jaas.config"])
+		assert.Equal(t, params.KafkaBrokers, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.broker.list"])
+		assert.Equal(t, params.KafkaTopic, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.topic.name"])
+		assert.Equal(t, params.SchemaRegistryUrl, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.decoder.prop.schema.registry.rest.url"])
+		assert.Equal(t, params.SchemaRegistryUsername+":"+params.SchemaRegistryPassword, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.decoder.prop.schema.registry.basic.auth.user.info"])
+		assert.Equal(t, params.KafkaSecurityProtocol, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["security.protocol"])
+		assert.Equal(t, params.KafkaSaslMechanism, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["sasl.mechanism"])
+		assert.Equal(t, "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\""+params.KafkaSaslUsername+"\" \n password=\""+params.KafkaSaslPassword+"\";", templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["sasl.jaas.config"])
 
 	})
 
@@ -100,13 +100,13 @@ func TestTemplater(t *testing.T) {
 		assert.Equal(t, params.PinotSegmentsReplication, templatedConfig.SegmentsConfig.Replication)
 		assert.Equal(t, params.PinotTenantBroker, templatedConfig.Tenants.Broker)
 		assert.Equal(t, params.PinotTenantServer, templatedConfig.Tenants.Server)
-		assert.Equal(t, params.KafkaBrokers, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.broker.list"])
-		assert.Equal(t, params.KafkaTopic, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.topic.name"])
-		assert.Equal(t, params.SchemaRegistryUrl, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.decoder.prop.schema.registry.rest.url"])
-		assert.Equal(t, params.SchemaRegistryUsername+":"+params.SchemaRegistryPassword, templatedConfig.TableIndexConfig.StreamConfigs["stream.kafka.decoder.prop.schema.registry.basic.auth.user.info"])
-		assert.Equal(t, params.KafkaSecurityProtocol, templatedConfig.TableIndexConfig.StreamConfigs["security.protocol"])
-		assert.Equal(t, params.KafkaSaslMechanism, templatedConfig.TableIndexConfig.StreamConfigs["sasl.mechanism"])
-		assert.Equal(t, "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\""+params.KafkaSaslUsername+"\" \n password=\""+params.KafkaSaslPassword+"\";", templatedConfig.TableIndexConfig.StreamConfigs["sasl.jaas.config"])
+		assert.Equal(t, params.KafkaBrokers, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.broker.list"])
+		assert.Equal(t, params.KafkaTopic, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.topic.name"])
+		assert.Equal(t, params.SchemaRegistryUrl, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.decoder.prop.schema.registry.rest.url"])
+		assert.Equal(t, params.SchemaRegistryUsername+":"+params.SchemaRegistryPassword, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.decoder.prop.schema.registry.basic.auth.user.info"])
+		assert.Equal(t, params.KafkaSecurityProtocol, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["security.protocol"])
+		assert.Equal(t, params.KafkaSaslMechanism, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["sasl.mechanism"])
+		assert.Equal(t, "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\""+params.KafkaSaslUsername+"\" \n password=\""+params.KafkaSaslPassword+"\";", templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["sasl.jaas.config"])
 
 	})
 
@@ -123,19 +123,118 @@ func dummyTableConfig() model.Table {
 			Broker: "{{ .PinotTenantBroker }}",
 			Server: "{{ .PinotTenantServer }}",
 		},
-		TableIndexConfig: model.TableIndexConfig{
-			StreamConfigs: map[string]string{
-				"stream.kafka.topic.name":                                                 "{{ .KafkaTopic }}",
-				"stream.kafka.broker.list":                                                "{{ .KafkaBrokers }}",
-				"stream.kafka.decoder.prop.schema.registry.rest.url":                      "{{ .SchemaRegistryUrl }}",
-				"stream.kafka.decoder.prop.schema.registry.basic.auth.credentials.source": "USER_INFO",
-				"stream.kafka.decoder.prop.schema.registry.basic.auth.user.info":          "{{ .SchemaRegistryUsername }}:{{ .SchemaRegistryPassword }}",
-				"stream.kafka.decoder.prop.format":                                        "AVRO",
-				"authentication.type":                                                     "SASL",
-				"security.protocol":                                                       "{{ .KafkaSecurityProtocol }}",
-				"sasl.mechanism":                                                          "{{ .KafkaSaslMechanism }}",
-				"sasl.jaas.config":                                                        "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\"{{ .KafkaSaslUsername }}\" \n password=\"{{ .KafkaSaslPassword }}\";",
+		IngestionConfig: model.TableIngestionConfig{
+			StreamIngestionConfig: model.StreamIngestionConfig{
+				StreamConfigMaps: []map[string]string{{
+					"stream.kafka.topic.name":                                                 "{{ .KafkaTopic }}",
+					"stream.kafka.broker.list":                                                "{{ .KafkaBrokers }}",
+					"stream.kafka.decoder.prop.schema.registry.rest.url":                      "{{ .SchemaRegistryUrl }}",
+					"stream.kafka.decoder.prop.schema.registry.basic.auth.credentials.source": "USER_INFO",
+					"stream.kafka.decoder.prop.schema.registry.basic.auth.user.info":          "{{ .SchemaRegistryUsername }}:{{ .SchemaRegistryPassword }}",
+					"stream.kafka.decoder.prop.format":                                        "AVRO",
+					"authentication.type":                                                     "SASL",
+					"security.protocol":                                                       "{{ .KafkaSecurityProtocol }}",
+					"sasl.mechanism":                                                          "{{ .KafkaSaslMechanism }}",
+					"sasl.jaas.config":                                                        "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\"{{ .KafkaSaslUsername }}\" \n password=\"{{ .KafkaSaslPassword }}\";",
+				},
+				},
 			},
 		},
 	}
+}
+
+func dummyRawTable() string {
+	return `{
+  "tableName": "realtime_ethereum_mainnet_block_headers_REALTIME",
+  "tableType": "REALTIME",
+  "segmentsConfig": {
+    "timeColumnName": "timestamp",
+    "timeType": "MILLISECONDS",
+    "replication": "1",
+    "segmentAssignmentStrategy": "BalanceNumSegmentAssignmentStrategy",
+    "segmentPushType": "APPEND",
+    "minimizeDataMovement": true
+  },
+  "tenants": {
+    "broker": "DefaultTenant",
+    "server": "DefaultTenant"
+  },
+  "tableIndexConfig": {
+    "rangeIndexVersion": 0,
+    "autoGeneratedInvertedIndex": false,
+    "createInvertedIndexDuringSegmentGeneration": false,
+    "loadMode": "MMAP",
+    "enableDefaultStarTree": false,
+    "tierOverwrites": {
+      "hotTier": {
+        "starTreeIndexConfigs": null
+      },
+      "coldTier": {
+        "starTreeIndexConfigs": null
+      }
+    },
+    "enableDynamicStarTreeCreation": false,
+    "aggregateMetrics": false,
+    "nullHandlingEnabled": false,
+    "columnMajorSegmentBuilderEnabled": false,
+    "optimizeDictionary": false,
+    "optimizeDictionaryForMetrics": false,
+    "noDictionarySizeRatioThreshold": 0
+  },
+  "metadata": {
+    "customConfigs": {
+      "customKey": "customValue"
+    }
+  },
+  "fieldConfigList": [
+    {
+      "name": "number",
+      "encodingType": "RAW",
+      "indexType": "SORTED",
+      "indexTypes": [
+        "SORTED"
+      ],
+      "timestampConfig": {},
+      "indexes": {
+        "inverted": {
+          "enabled": ""
+        }
+      },
+      "tierOverwrites": null
+    }
+  ],
+  "ingestionConfig": {
+    "segmentTimeValueCheck": true,
+    "streamIngestionConfig": {
+      "streamConfigMaps": [
+        {
+          "streamType": "kafka",
+          "stream.kafka.consumer.type": "high-level",
+          "stream.kafka.topic.name": "ethereum_mainnet_block_headers",
+          "stream.kafka.decoder.class.name": "org.apache.pinot.plugin.stream.kafka.KafkaJSONMessageDecoder",
+          "stream.kafka.consumer.factory.class.name": "org.apache.pinot.plugin.stream.kafka20.KafkaConsumerFactory",
+          "stream.kafka.broker.list": "kafka:9092",
+          "stream.kafka.zk.broker.url": "kafka:2181",
+          "stream.kafka.consumer.prop.auto.offset.reset": "smallest",
+          "stream.kafka.decoder.prop.schema.registry.rest.url": "http://schema-registry:8081",
+          "stream.kafka.decoder.prop.schema.registry.schema.name": "ethereum_mainnet_block_headers-value",
+          "stream.kafka.decoder.prop.schema.registry.schema.version": "latest"
+        }
+      ],
+      "columnMajorSegmentBuilderEnabled": false
+    },
+    "continueOnError": true,
+    "rowTimeValueCheck": true
+  },
+  "tierConfigs": [
+    {
+      "name": "hotTier",
+      "segmentSelectorType": "time",
+      "segmentAge": "3130d",
+      "storageType": "pinot_server",
+      "serverTag": "DefaultTenant_REALTIME"
+    }
+  ],
+  "isDimTable": false
+}`
 }
