@@ -46,11 +46,12 @@ func main() {
 		pinot.AuthToken(authToken),
 		pinot.Logger(logger))
 
-	//demoSchemaFunctionality(client)
+	// demoSchemaFunctionality(client)
 	// demoTableFunctionality(client)
 	// demoUserFunctionality(client)
-	demoSegmentFunctionality(client)
-
+	// demoSegmentFunctionality(client)
+	// demoClusterFunctionality(client)
+	demoTenantFunctionality(client)
 }
 
 func demoTableFunctionality(client *pinot.PinotAPIClient) {
@@ -495,6 +496,130 @@ func demoSegmentFunctionality(client *pinot.PinotAPIClient) {
 	// }
 
 	// fmt.Println(reloadSegmentResp.Status)
+
+}
+
+func demoClusterFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Cluster
+	clusterInfoResp, err := client.GetClusterInfo()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Cluster Info:")
+	fmt.Println(clusterInfoResp.ClusterName)
+
+	// Get Cluster Config
+	clusterConfigResp, err := client.GetClusterConfigs()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Cluster Config:")
+	fmt.Println(clusterConfigResp.AllowParticipantAutoJoin)
+
+	// Update Cluster Config
+	updateClusterConfig := pinotModel.ClusterConfig{
+		AllowParticipantAutoJoin:            "true",
+		EnableCaseInsensitive:               "true",
+		DefaultHyperlogLogLog2m:             "14",
+		PinotBrokerEnableQueryLimitOverride: "true",
+	}
+
+	updateClusterConfigBytes, err := json.Marshal(updateClusterConfig)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	updateClusterConfigResp, err := client.UpdateClusterConfigs(updateClusterConfigBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(updateClusterConfigResp.Status)
+
+	// Delete Cluster Config
+	// This deletes the cluster config - Theres no Create cluster config operation .....
+	// deleteClusterConfigResp, err := client.DeleteClusterConfig(clusterInfoResp.ClusterName)
+	// if err != nil {
+	// 	log.Panic(err)
+	// }
+
+	// fmt.Println(deleteClusterConfigResp.Status)
+
+}
+
+func demoTenantFunctionality(client *pinot.PinotAPIClient) {
+
+	// Create Tenant
+	tenant := pinotModel.Tenant{
+		TenantName: "test",
+		TenantRole: "BROKER",
+	}
+
+	tenantBytes, err := json.Marshal(tenant)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	createTenantResp, err := client.CreateTenant(tenantBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(createTenantResp.Status)
+
+	// Get Tenants
+	tenantsResp, err := client.GetTenants()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Broker Tenants:")
+	for _, tenant := range tenantsResp.BrokerTenants {
+		fmt.Println(tenant)
+	}
+
+	fmt.Println("Reading Server Tenants:")
+	for _, tenant := range tenantsResp.ServerTenants {
+		fmt.Println(tenant)
+	}
+
+	// Get Tenant
+	getTenantResp, err := client.GetTenantMetadata("test")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Tenant:")
+	fmt.Println(getTenantResp.TenantName)
+
+	// Update Tenant
+	updateTenant := pinotModel.Tenant{
+		TenantName: "test",
+		TenantRole: "SERVER",
+	}
+
+	updateTenantBytes, err := json.Marshal(updateTenant)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	updateTenantResp, err := client.UpdateTenant(updateTenantBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(updateTenantResp.Status)
+
+	// Delete Tenant
+	deleteTenantResp, err := client.DeleteTenant("test", "SERVER")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(deleteTenantResp.Status)
 
 }
 

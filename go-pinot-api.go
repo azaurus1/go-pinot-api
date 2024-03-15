@@ -183,18 +183,28 @@ func (c *PinotAPIClient) CreateFormDataObject(endpoint string, body []byte, resu
 
 func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]string, result any) error {
 
-	fullURL := c.pinotControllerUrl.JoinPath(endpoint)
+	pathAndQuery := strings.SplitN(endpoint, "?", 2)
+	var path string
+	if len(pathAndQuery) > 0 {
+		path = pathAndQuery[0]
+	}
+	var queryString string
+	if len(pathAndQuery) > 1 {
+		queryString = pathAndQuery[1]
+	}
 
-	c.encodeParams(fullURL, queryParams)
+	queryMap := c.generateQueryParams(queryString)
+	fullURL := c.pinotControllerUrl.JoinPath(path)
+	c.encodeParams(fullURL, queryMap)
 
-	req, err := http.NewRequest(http.MethodDelete, fullURL.String(), nil)
+	request, err := http.NewRequest(http.MethodDelete, fullURL.String(), nil)
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
 
 	c.log.Debug(fmt.Sprintf("attempting DELETE %s", fullURL.String()))
 
-	res, err := c.pinotHttp.Do(req)
+	res, err := c.pinotHttp.Do(request)
 	if err != nil {
 		c.logErrorResp(res)
 		return fmt.Errorf("client: could not send request: %w", err)
@@ -374,12 +384,6 @@ func (c *PinotAPIClient) CreateTableFromFile(tableConfigFile string) (*model.Use
 	return c.CreateTable(tableConfigBytes)
 }
 
-func (c *PinotAPIClient) GetTenants() (*model.GetTenantsResponse, error) {
-	var result model.GetTenantsResponse
-	err := c.FetchData("/tenants", &result)
-	return &result, err
-}
-
 // GetSchemas returns a list of schemas
 func (c *PinotAPIClient) GetSchemas() (*model.GetSchemaResponse, error) {
 	var result model.GetSchemaResponse
@@ -551,6 +555,85 @@ func (c *PinotAPIClient) ReloadTableSegments(tableName string) (*model.UserActio
 func (c *PinotAPIClient) ReloadSegment(tableName string, segmentName string) (*model.UserActionResponse, error) {
 	var result model.UserActionResponse
 	err := c.CreateObject(fmt.Sprintf("/segments/%s/%s/reload", tableName, segmentName), nil, &result)
+	return &result, err
+}
+
+// Cluster
+
+func (c *PinotAPIClient) GetClusterInfo() (*model.GetClusterResponse, error) {
+	var result model.GetClusterResponse
+	err := c.FetchData("/cluster/info", &result)
+
+	return &result, err
+}
+
+func (c *PinotAPIClient) GetClusterConfigs() (*model.GetClusterConfigResponse, error) {
+	var result model.GetClusterConfigResponse
+	err := c.FetchData("/cluster/configs", &result)
+
+	return &result, err
+}
+
+func (c *PinotAPIClient) UpdateClusterConfigs(body []byte) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject("/cluster/configs", body, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) DeleteClusterConfig(configName string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.DeleteObject(fmt.Sprintf("/cluster/configs/%s", configName), nil, &result)
+	return &result, err
+}
+
+// Tenants
+
+func (c *PinotAPIClient) GetTenants() (*model.GetTenantsResponse, error) {
+	var result model.GetTenantsResponse
+	err := c.FetchData("/tenants", &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) GetTenantInstances(tenantName string) (*model.GetTenantResponse, error) {
+	var result model.GetTenantResponse
+	err := c.FetchData(fmt.Sprintf("/tenants/%s", tenantName), &result)
+	return &result, err
+
+}
+
+func (c *PinotAPIClient) GetTenantTables(tenantName string) (*model.GetTablesResponse, error) {
+	var result model.GetTablesResponse
+	err := c.FetchData(fmt.Sprintf("/tenants/%s/tables", tenantName), &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) GetTenantMetadata(tenantName string) (*model.GetTenantMetadataResponse, error) {
+	var result model.GetTenantMetadataResponse
+	err := c.FetchData(fmt.Sprintf("/tenants/%s/metadata", tenantName), &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) CreateTenant(body []byte) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject("/tenants", body, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) UpdateTenant(body []byte) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.UpdateObject("/tenants", nil, body, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) DeleteTenant(tenantName string, tenantType string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.DeleteObject(fmt.Sprintf("/tenants/%s?type=%s", tenantName, tenantType), nil, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) RebalanceTenant(tenantName string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject(fmt.Sprintf("/tenants/%s/rebalance", tenantName), nil, &result)
 	return &result, err
 }
 
