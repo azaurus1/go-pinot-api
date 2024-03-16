@@ -11,14 +11,13 @@ import (
 	"github.com/go-openapi/spec"
 )
 
-func iteratePaths(swagger *spec.Swagger, f []byte) {
+func iteratePathsAndCalculate(swagger *spec.Swagger, f []byte) float64 {
 	// Convert the file content to a string
 	fileContent := string(f)
 
 	var foundPathCount int
-	var totalPathCount int
 
-	totalPathCount = len(swagger.Paths.Paths)
+	totalPathCount := len(swagger.Paths.Paths)
 
 	// Iterate through swagger.Paths to get all API paths and operations
 	for path, _ := range swagger.Paths.Paths {
@@ -36,6 +35,8 @@ func iteratePaths(swagger *spec.Swagger, f []byte) {
 	// fmt.Printf("Number of paths found in go-pinot-api.go: %d\n", foundPathCount)
 	fmt.Printf("Coverage: %f\n", float64(foundPathCount)/float64(totalPathCount))
 
+	return (float64(foundPathCount) / float64(totalPathCount))
+
 }
 
 func readGoPinotAPIs() []byte {
@@ -51,6 +52,22 @@ func readGoPinotAPIs() []byte {
 
 }
 
+func writeToCoverageFile(coverage float64) {
+	filePath := filepath.Join(".", "coverage.txt")
+
+	f, err := os.Create(filePath)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	_, err = f.WriteString(fmt.Sprintf("%f", coverage))
+	if err != nil {
+		panic(err)
+	}
+
+}
+
 func main() {
 	filePath := filepath.Join(".", "swagger.json")
 
@@ -62,6 +79,8 @@ func main() {
 
 	f := readGoPinotAPIs()
 
-	iteratePaths(swagger, f)
+	coverage := iteratePathsAndCalculate(swagger, f)
+
+	writeToCoverageFile(coverage)
 
 }
