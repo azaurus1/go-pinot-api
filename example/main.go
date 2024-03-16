@@ -51,7 +51,9 @@ func main() {
 	// demoUserFunctionality(client)
 	// demoSegmentFunctionality(client)
 	// demoClusterFunctionality(client)
-	demoTenantFunctionality(client)
+	// demoTenantFunctionality(client)
+	demoInstanceFunctionality(client)
+
 }
 
 func demoTableFunctionality(client *pinot.PinotAPIClient) {
@@ -621,6 +623,75 @@ func demoTenantFunctionality(client *pinot.PinotAPIClient) {
 
 	fmt.Println(deleteTenantResp.Status)
 
+}
+
+func demoInstanceFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Instances
+	instancesResp, err := client.GetInstances()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Instances:")
+	for _, instance := range instancesResp.Instances {
+		fmt.Println(instance)
+	}
+
+	// Create Instance
+	instance := pinotModel.Instance{
+		Host: "localhost",
+		Port: 9000,
+		Type: "CONTROLLER",
+	}
+
+	instanceBytes, err := json.Marshal(instance)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	createInstanceResp, err := client.CreateInstance(instanceBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(createInstanceResp.Status)
+
+	// Get Instance
+	getInstanceResp, err := client.GetInstance("Controller_localhost_9000") // this is the name of the instance we created
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Instance:")
+	fmt.Println(getInstanceResp.InstanceName)
+
+	// Update Instance
+	updateInstance := pinotModel.Instance{
+		Host: "localhost",
+		Port: 9000,
+		Type: "BROKER",
+	}
+
+	updateInstanceBytes, err := json.Marshal(updateInstance)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	updateInstanceResp, err := client.UpdateInstance("Controller_localhost_9000", updateInstanceBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(updateInstanceResp.Status)
+
+	// Delete Instance
+	deleteInstanceResp, err := client.DeleteInstance("Controller_localhost_9000")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(deleteInstanceResp.Status)
 }
 
 func getOrDefault(defaultOption string, envKeys ...string) string {
