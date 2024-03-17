@@ -26,4 +26,4 @@ jobs:
 
       - name: Update Badge
         run: |
-          curl -X POST -d "coverage=${{ env.COVERAGE }}" -H ${{ env.COVERAGE_AUTH_KEY }} https://api-coverage-server.azaurus.dev/badge
+          curl -X POST -d "coverage=${{ env.COVERAGE }}" -H "Authorization: ${{ env.COVERAGE_AUTH_KEY }}" https://api-coverage-server.azaurus.dev/badge
