@@ -24,6 +24,8 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
+![API Coverage][APICoverage-shield]
+
 
 
 
@@ -257,3 +259,4 @@ Project Link: [https://github.com/azaurus1/go-pinot-api](https://github.com/azau
 [JQuery-url]: https://jquery.com 
 [Go-url]: https://go.dev
 [Go]: https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white
+[APICoverage-shield]: https://img.shields.io/badge/dynamic/json?url=https://api-coverage-server.azaurus.dev/badge&query=coverage&label=API%20Coverage&color=blue&suffix=%25

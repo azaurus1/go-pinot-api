@@ -1,0 +1,29 @@
+name: Update API Coverage Badge
+
+on:
+  push:
+    branches:
+      - main  # or your default branch
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        
+      - name: Set up environment
+        run: echo "COVERAGE_AUTH_KEY=${{ secrets.COVERAGE_AUTH_KEY }}" >> $GITHUB_ENV
+
+      - name: Calculate API Coverage
+        id: coverage
+        run: |
+          cd tools/coverage/
+          go run coverage.go
+          # Assuming the tool outputs coverage in coverage.txt
+          COVERAGE=$(cat coverage.txt)
+          echo "COVERAGE=$COVERAGE" >> $GITHUB_ENV
+
+      - name: Update Badge
+        run: |
+          curl -X POST -d "coverage=${{ env.COVERAGE }}" -H ${{ env.COVERAGE_AUTH_KEY }} https://api-coverage-server.azaurus.dev/update-badge
