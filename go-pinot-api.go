@@ -189,6 +189,11 @@ func (c *PinotAPIClient) DeleteObject(endpoint string, _ map[string]string, resu
 
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusMultipleChoices {
 
+		errRespMessage, err := c.extractErrorMessage(res)
+		if err != nil {
+			return fmt.Errorf("client: could not extract error message: %w", err)
+		}
+
 		var errMsg string
 		// From client perspective, 409 isnt a failed request
 		switch res.StatusCode {
@@ -198,7 +203,8 @@ func (c *PinotAPIClient) DeleteObject(endpoint string, _ map[string]string, resu
 			errMsg = "client: "
 		}
 
-		return fmt.Errorf("%srequest failed with status code: %d", errMsg, res.StatusCode)
+		return fmt.Errorf("%srequest failed: status %d\n%s", errMsg, res.StatusCode, errRespMessage)
+
 	}
 
 	err = json.NewDecoder(res.Body).Decode(&result)
@@ -231,6 +237,12 @@ func (c *PinotAPIClient) UpdateObject(endpoint string, queryParams map[string]st
 	}
 
 	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusMultipleChoices {
+
+		errRespMessage, err := c.extractErrorMessage(res)
+		if err != nil {
+			return fmt.Errorf("client: could not extract error message: %w", err)
+		}
+
 		var errMsg string
 		// From client perspective, 409 isnt a failed request
 		if res.StatusCode == 404 {
@@ -238,7 +250,8 @@ func (c *PinotAPIClient) UpdateObject(endpoint string, queryParams map[string]st
 		} else {
 			errMsg = "client: "
 		}
-		return fmt.Errorf("%srequest failed with status code: %d", errMsg, res.StatusCode)
+
+		return fmt.Errorf("%srequest failed: status %d\n%s", errMsg, res.StatusCode, errRespMessage)
 	}
 
 	err = json.NewDecoder(res.Body).Decode(&result)
