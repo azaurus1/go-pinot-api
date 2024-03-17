@@ -614,6 +614,37 @@ func (c *PinotAPIClient) RebalanceTenant(tenantName string) (*model.UserActionRe
 	return &result, err
 }
 
+// Instances
+func (c *PinotAPIClient) GetInstances() (*model.GetInstancesResponse, error) {
+	var result model.GetInstancesResponse
+	err := c.FetchData("/instances", &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) GetInstance(instanceName string) (*model.GetInstanceResponse, error) {
+	var result model.GetInstanceResponse
+	err := c.FetchData(fmt.Sprintf("/instances/%s", instanceName), &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) CreateInstance(body []byte) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject("/instances", body, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) UpdateInstance(instanceName string, body []byte) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.UpdateObject(fmt.Sprintf("/instances/%s", instanceName), nil, body, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) DeleteInstance(instanceName string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.DeleteObject(fmt.Sprintf("/instances/%s", instanceName), nil, &result)
+	return &result, err
+}
+
 func (c *PinotAPIClient) extractErrorMessage(resp *http.Response) (string, error) {
 	resultBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
