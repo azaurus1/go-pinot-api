@@ -43,19 +43,8 @@ func NewPinotAPIClient(opts ...Opt) *PinotAPIClient {
 }
 
 func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
-	pathAndQuery := strings.SplitN(endpoint, "?", 2)
-	var path string
-	if len(pathAndQuery) > 0 {
-		path = pathAndQuery[0]
-	}
-	var queryString string
-	if len(pathAndQuery) > 1 {
-		queryString = pathAndQuery[1]
-	}
 
-	queryMap := c.generateQueryParams(queryString)
-	fullURL := c.pinotControllerUrl.JoinPath(path)
-	c.encodeParams(fullURL, queryMap)
+	fullURL := prepareRequestURL(c, endpoint)
 
 	request, err := http.NewRequest(http.MethodGet, fullURL.String(), nil)
 	if err != nil {
@@ -183,19 +172,7 @@ func (c *PinotAPIClient) CreateFormDataObject(endpoint string, body []byte, resu
 
 func (c *PinotAPIClient) DeleteObject(endpoint string, _ map[string]string, result any) error {
 
-	pathAndQuery := strings.SplitN(endpoint, "?", 2)
-	var path string
-	if len(pathAndQuery) > 0 {
-		path = pathAndQuery[0]
-	}
-	var queryString string
-	if len(pathAndQuery) > 1 {
-		queryString = pathAndQuery[1]
-	}
-
-	queryMap := c.generateQueryParams(queryString)
-	fullURL := c.pinotControllerUrl.JoinPath(path)
-	c.encodeParams(fullURL, queryMap)
+	fullURL := prepareRequestURL(c, endpoint)
 
 	request, err := http.NewRequest(http.MethodDelete, fullURL.String(), nil)
 	if err != nil {
@@ -676,4 +653,22 @@ func (c *PinotAPIClient) generateQueryParams(queryString string) map[string]stri
 		m[parts[0]] = parts[1]
 	}
 	return m
+}
+
+func prepareRequestURL(c *PinotAPIClient, endpoint string) *url.URL {
+	pathAndQuery := strings.SplitN(endpoint, "?", 2)
+	var path string
+	if len(pathAndQuery) > 0 {
+		path = pathAndQuery[0]
+	}
+	var queryString string
+	if len(pathAndQuery) > 1 {
+		queryString = pathAndQuery[1]
+	}
+
+	queryMap := c.generateQueryParams(queryString)
+	fullURL := c.pinotControllerUrl.JoinPath(path)
+	c.encodeParams(fullURL, queryMap)
+
+	return fullURL
 }
