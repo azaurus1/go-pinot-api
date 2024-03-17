@@ -12,6 +12,7 @@ type TableSegmentsConfig struct {
 	RetentionTimeValue        string `json:"retentionTimeValue,omitempty"`
 	CrypterClassName          string `json:"crypterClassName,omitempty"`
 	PeerSegmentDownloadScheme string `json:"peerSegmentDownloadScheme,omitempty"`
+	CompletionMode            string `json:"completionMode,omitempty"`
 }
 
 type TableTenant struct {
@@ -86,6 +87,36 @@ type FieldConfig struct {
 	Indexes         FieldIndexes    `json:"indexes"`
 }
 
+type QueryConfig struct {
+	TimeoutMs              string            `json:"timeoutMs"`
+	DisableGroovy          bool              `json:"disableGroovy"`
+	UseApproximateFunction bool              `json:"useApproximateFunction"`
+	ExpressionOverrideMap  map[string]string `json:"expressionOverrideMap"`
+	MaxQueryResponseBytes  string            `json:"maxQueryResponseBytes"`
+	MaxServerResponseBytes string            `json:"maxServerResponseBytes"`
+}
+
+type RoutingConfig struct {
+	SegmentPrunerTypes   []string `json:"segmentPrunerTypes"`
+	InstanceSelectorType string   `json:"instanceSelectorType"`
+}
+
+type QuotaConfig struct {
+	Storage             string `json:"storage"`
+	MaxQueriesPerSecond int    `json:"maxQueriesPerSecond"`
+}
+
+type UpsertConfig struct {
+	Mode                    string            `json:"mode"`
+	PartialUpsertStrategies map[string]string `json:"partialUpsertStrategies"`
+	ComparisonColumns       string            `json:"comparisonColumn"`
+}
+
+type DedupConfig struct {
+	DedupEnabled bool   `json:"dedupEnabled"`
+	HashFunction string `json:"hashFunction"`
+}
+
 type TransformConfig struct {
 	ColumnName        string `json:"columnName"`
 	TransformFunction string `json:"transformFunction"`
@@ -122,4 +153,9 @@ type Table struct {
 	IngestionConfig  TableIngestionConfig `json:"ingestionConfig,omitempty"`
 	TierConfigs      []TierConfig         `json:"tierConfigs,omitempty"`
 	IsDimTable       bool                 `json:"isDimTable"`
+	Query            QueryConfig          `json:"query,omitempty"`
+	Routing          RoutingConfig        `json:"routing,omitempty"`
+	Quota            QuotaConfig          `json:"quota,omitempty"`
+	UpsertConfig     UpsertConfig         `json:"upsertConfig,omitempty"`
+	DedupConfig      DedupConfig          `json:"dedupConfig,omitempty"`
 }
