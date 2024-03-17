@@ -22,11 +22,11 @@ type TableTenant struct {
 
 type TableIndexConfig struct {
 	CreateInvertedIndexDuringSegmentGeneration bool                   `json:"createInvertedIndexDuringSegmentGeneration"`
-	SortedColumn                               []string               `json:"sortedColumn"`
-	StarTreeIndexConfigs                       []StarTreeIndexConfig  `json:"starTreeIndexConfigs"`
+	SortedColumn                               []string               `json:"sortedColumn,omitempty"`
+	StarTreeIndexConfigs                       []StarTreeIndexConfig  `json:"starTreeIndexConfigs,omitempty"`
 	EnableDefaultStarTree                      bool                   `json:"enableDefaultStarTree"`
 	EnableDynamicStarTreeCreation              bool                   `json:"enableDynamicStarTreeCreation"`
-	SegmentPartitionConfig                     SegmentPartitionConfig `json:"segmentPartitionConfig"`
+	SegmentPartitionConfig                     SegmentPartitionConfig `json:"segmentPartitionConfig,omitempty"`
 	LoadMode                                   string                 `json:"loadMode"`
 	ColumnMinMaxValueGeneratorMode             string                 `json:"columnMinMaxValueGeneratorMode"`
 	NullHandlingEnabled                        bool                   `json:"nullHandlingEnabled"`
