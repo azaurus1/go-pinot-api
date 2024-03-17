@@ -33,9 +33,9 @@ func iteratePathsAndCalculate(swagger *spec.Swagger, f []byte) float64 {
 	}
 
 	// fmt.Printf("Number of paths found in go-pinot-api.go: %d\n", foundPathCount)
-	fmt.Printf("Coverage: %f\n", float64(foundPathCount)/float64(totalPathCount))
+	fmt.Printf("Coverage: %f\n", (float64(foundPathCount)/float64(totalPathCount))*100)
 
-	return (float64(foundPathCount) / float64(totalPathCount))
+	return ((float64(foundPathCount) / float64(totalPathCount)) * 100)
 
 }
 
