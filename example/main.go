@@ -48,11 +48,11 @@ func main() {
 
 	// demoSchemaFunctionality(client)
 	// demoTableFunctionality(client)
-	// demoUserFunctionality(client)
+	demoUserFunctionality(client)
 	// demoSegmentFunctionality(client)
 	// demoClusterFunctionality(client)
 	// demoTenantFunctionality(client)
-	demoInstanceFunctionality(client)
+	// demoInstanceFunctionality(client)
 
 }
 

@@ -27,3 +27,7 @@ jobs:
         working-directory: config-templating
         run: |
           go test -v
+      - name: Run Unit Tests for GoPinotAPI
+        working-directory: ./
+        run: |
+          go test -v
