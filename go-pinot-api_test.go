@@ -39,6 +39,15 @@ func createMockControllerServer() *httptest.Server {
 		if r.URL.Path == "/users/test" && r.URL.Query().Get("component") == "BROKER" && r.Method == "DELETE" {
 			fmt.Fprint(w, `{"status": "User: test_BROKER has been successfully deleted"}`)
 		}
+		if r.URL.Path == "/instances" && r.Method == "GET" {
+			fmt.Fprint(w, `{"instances": ["Minion_172.19.0.2_9514","Server_172.19.0.7_8098","Broker_cdba1ba98e74_8099","Controller_8684b6757488_9000"]}`)
+		}
+		if r.URL.Path == "/instances/Minion_172.19.0.2_9514" && r.Method == "GET" {
+			fmt.Fprintf(w, `{"instanceName": "Minion_172.19.0.2_9514","hostName": "172.19.0.2","enabled": true,"port": "9514","tags": ["minion_untagged"],"pools": null,"grpcPort": -1,"adminPort": -1,"queryServicePort": -1,"queryMailboxPort": -1,"systemResourceInfo": null}`)
+		}
+		if r.URL.Path == "/instances" && r.Method == "POST" {
+			fmt.Fprint(w, `{"status": "Added instance: Broker_localhost_1234"}`)
+		}
 	}))
 
 	return server
@@ -177,5 +186,53 @@ func TestDeleteUserNoComponent(t *testing.T) {
 	if err != nil {
 		assert.Equal(t, err.Error(), "client: request failed: status 400\n{\"code\": 400,\"error\": \"Name is null\"}\n", "Expected error to be Name is null")
 	}
+
+}
+
+func TestGetInstances(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetInstances()
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, len(res.Instances), 4, "Expected 4 instances in the response")
+}
+
+func TestGetInstance(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetInstance("Minion_172.19.0.2_9514")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.InstanceName, "Minion_172.19.0.2_9514", "Expected instance name to be Minion_172.19.0.2_9514")
+}
+
+func TestCreateInstance(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	instance := model.Instance{
+		Host: "localhost",
+		Port: 1234,
+		Type: "BROKER",
+	}
+
+	instanceBytes, err := json.Marshal(instance)
+	if err != nil {
+		t.Errorf("Couldn't marshal instance: %v", err)
+	}
+
+	res, err := client.CreateInstance(instanceBytes)
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "Added instance: Broker_localhost_1234", "Expected response to be Added instance: Broker_localhost_1234")
 
 }
