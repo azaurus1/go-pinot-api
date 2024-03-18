@@ -48,6 +48,18 @@ func createMockControllerServer() *httptest.Server {
 		if r.URL.Path == "/instances" && r.Method == "POST" {
 			fmt.Fprint(w, `{"status": "Added instance: Broker_localhost_1234"}`)
 		}
+		if r.URL.Path == "/cluster/info" && r.Method == "GET" {
+			fmt.Fprint(w, `{"clusterName": "PinotCluster"}`)
+		}
+		if r.URL.Path == "/cluster/configs" && r.Method == "GET" {
+			fmt.Fprintf(w, `{"allowParticipantAutoJoin": "true","enable.case.insensitive": "true","pinot.broker.enable.query.limit.override": "false","default.hyperloglog.log2m": "8"}`)
+		}
+		if r.URL.Path == "/cluster/configs" && r.Method == "POST" {
+			fmt.Fprint(w, `{"status": "Updated cluster config."}`)
+		}
+		if r.URL.Path == "/cluster/configs/allowParticipantAutoJoin" && r.Method == "DELETE" {
+			fmt.Fprintf(w, `{"status": "Deleted cluster config: allowParticipantAutoJoin"}`)
+		}
 	}))
 
 	return server
@@ -235,4 +247,64 @@ func TestCreateInstance(t *testing.T) {
 
 	assert.Equal(t, res.Status, "Added instance: Broker_localhost_1234", "Expected response to be Added instance: Broker_localhost_1234")
 
+}
+
+// DeleteInstance
+
+func TestGetClusterInfo(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetClusterInfo()
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.ClusterName, "PinotCluster", "Expected cluster name to be PinotCluster")
+}
+
+func TestGetClusterConfigs(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetClusterConfigs()
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.AllowParticipantAutoJoin, "true", "Expected allowParticipantAutoJoin to be true")
+}
+
+func TestUpdateClusterConfig(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	config := model.ClusterConfig{
+		AllowParticipantAutoJoin: "false",
+	}
+
+	configBytes, err := json.Marshal(config)
+	if err != nil {
+		t.Errorf("Couldn't marshal config: %v", err)
+	}
+
+	res, err := client.UpdateClusterConfigs(configBytes)
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "Updated cluster config.", "Expected response to be Updated cluster config.")
+
+}
+
+func TestDeleteClusterConfig(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.DeleteClusterConfig("allowParticipantAutoJoin")
+	if err != nil {
+		assert.Equal(t, err.Error(), "client: request failed: status 404\n404 page not found\n", "Expected error to be 404 page not found")
+	}
+
+	assert.Equal(t, res.Status, "Deleted cluster config: allowParticipantAutoJoin", "Expected response to be Deleted cluster config: allowParticipantAutoJoin")
 }
