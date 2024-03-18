@@ -33,7 +33,10 @@ func createMockControllerServer() *httptest.Server {
 		if r.URL.Path == "/users/test" && r.URL.Query().Get("component") == "BROKER" && r.Method == "PUT" {
 			fmt.Fprint(w, `{"status": "User config update for test_BROKER"}`)
 		}
-		if r.URL.Path == "/users/test" && r.Method == "DELETE" {
+		if r.URL.Path == "/users/test" && r.Method == "DELETE" && r.URL.Query().Get("component") == "" {
+			http.Error(w, `{"code": 400,"error": "Name is null"}`, http.StatusBadRequest)
+		}
+		if r.URL.Path == "/users/test" && r.URL.Query().Get("component") == "BROKER" && r.Method == "DELETE" {
 			fmt.Fprint(w, `{"status": "User: test_BROKER has been successfully deleted"}`)
 		}
 	}))
@@ -163,5 +166,16 @@ func TestDeleteUser(t *testing.T) {
 
 	// expect User test_BROKER has been successfully deleted!
 	assert.Equal(t, res.Status, "User: test_BROKER has been successfully deleted", "Expected response to be User: test_BROKER has been successfully deleted!")
+
+}
+
+func TestDeleteUserNoComponent(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	_, err := client.DeleteUser("test", "")
+	if err != nil {
+		assert.Equal(t, err.Error(), "client: request failed: status 400\n{\"code\": 400,\"error\": \"Name is null\"}\n", "Expected error to be Name is null")
+	}
 
 }
