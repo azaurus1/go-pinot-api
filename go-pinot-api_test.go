@@ -169,6 +169,7 @@ func TestDeleteUser(t *testing.T) {
 
 }
 
+// Test delete user with no component
 func TestDeleteUserNoComponent(t *testing.T) {
 	server := createMockControllerServer()
 	client := createPinotClient(server)
