@@ -170,9 +170,11 @@ func (c *PinotAPIClient) CreateFormDataObject(endpoint string, body []byte, resu
 	return nil
 }
 
-func (c *PinotAPIClient) DeleteObject(endpoint string, _ map[string]string, result any) error {
+func (c *PinotAPIClient) DeleteObject(endpoint string, queryParams map[string]string, result any) error {
 
 	fullURL := prepareRequestURL(c, endpoint)
+
+	c.encodeParams(fullURL, queryParams)
 
 	request, err := http.NewRequest(http.MethodDelete, fullURL.String(), nil)
 	if err != nil {
