@@ -5,7 +5,7 @@ go 1.22.0
 require (
 	github.com/azaurus1/go-pinot-api v0.1.4
 	github.com/google/uuid v1.6.0
-	github.com/hamba/avro/v2 v2.20.0
+	github.com/hamba/avro/v2 v2.20.1
 	github.com/stretchr/testify v1.9.0
 	github.com/testcontainers/testcontainers-go v0.29.1
 	github.com/testcontainers/testcontainers-go/modules/kafka v0.29.1
