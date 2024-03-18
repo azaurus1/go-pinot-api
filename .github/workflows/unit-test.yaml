@@ -43,7 +43,7 @@ jobs:
           go test -coverprofile=coverage.out
           go tool cover -func=coverage.out
       - name: Upload to Codacy
-        uses: codacy/coverage-action@v2
+        uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-report: coverage.out
