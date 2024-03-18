@@ -14,55 +14,170 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createMockControllerServer() *httptest.Server {
+const (
+	RouteUsers                = "/users"
+	RouteUser                 = "/users/test"
+	RouteInstances            = "/instances"
+	RouteInstance             = "/instances/Minion_172.19.0.2_9514"
+	RouteClusterInfo          = "/cluster/info"
+	RouteClusterConfigs       = "/cluster/configs"
+	RouteClusterConfigsDelete = "/cluster/configs/allowParticipantAutoJoin"
+)
 
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Authorization") != "Basic YWRtaW46YWRtaW4K" {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
-		if r.URL.Path == "/users" && r.Method == "GET" {
-			fmt.Fprint(w, `{"users": {"test_BROKER": {"username": "test","password": "$2a$10$3KYPvIy4fBM3CWfdKSc54u/BOn1rPlgb7u4P66s4upqAct30C/q6a","component": "BROKER","role": "ADMIN","usernameWithComponent": "test_BROKER"}}}`)
-		}
-		if r.URL.Path == "/users/test" && r.URL.Query().Get("component") == "BROKER" && r.Method == "GET" {
-			fmt.Fprint(w, `{"test_BROKER": {"username": "test","password": "$2a$10$3KYPvIy4fBM3CWfdKSc54u/BOn1rPlgb7u4P66s4upqAct30C/q6a","component": "BROKER","role": "ADMIN","usernameWithComponent": "test_BROKER"}}`)
-		}
-		if r.URL.Path == "/users" && r.Method == "POST" {
-			fmt.Fprint(w, `{"status": "User testUser_BROKER has been successfully added!"}`)
-		}
-		if r.URL.Path == "/users/test" && r.URL.Query().Get("component") == "BROKER" && r.Method == "PUT" {
-			fmt.Fprint(w, `{"status": "User config update for test_BROKER"}`)
-		}
-		if r.URL.Path == "/users/test" && r.Method == "DELETE" && r.URL.Query().Get("component") == "" {
-			http.Error(w, `{"code": 400,"error": "Name is null"}`, http.StatusBadRequest)
-		}
-		if r.URL.Path == "/users/test" && r.URL.Query().Get("component") == "BROKER" && r.Method == "DELETE" {
-			fmt.Fprint(w, `{"status": "User: test_BROKER has been successfully deleted"}`)
-		}
-		if r.URL.Path == "/instances" && r.Method == "GET" {
-			fmt.Fprint(w, `{"instances": ["Minion_172.19.0.2_9514","Server_172.19.0.7_8098","Broker_cdba1ba98e74_8099","Controller_8684b6757488_9000"]}`)
-		}
-		if r.URL.Path == "/instances/Minion_172.19.0.2_9514" && r.Method == "GET" {
-			fmt.Fprintf(w, `{"instanceName": "Minion_172.19.0.2_9514","hostName": "172.19.0.2","enabled": true,"port": "9514","tags": ["minion_untagged"],"pools": null,"grpcPort": -1,"adminPort": -1,"queryServicePort": -1,"queryMailboxPort": -1,"systemResourceInfo": null}`)
-		}
-		if r.URL.Path == "/instances" && r.Method == "POST" {
-			fmt.Fprint(w, `{"status": "Added instance: Broker_localhost_1234"}`)
-		}
-		if r.URL.Path == "/cluster/info" && r.Method == "GET" {
-			fmt.Fprint(w, `{"clusterName": "PinotCluster"}`)
-		}
-		if r.URL.Path == "/cluster/configs" && r.Method == "GET" {
-			fmt.Fprintf(w, `{"allowParticipantAutoJoin": "true","enable.case.insensitive": "true","pinot.broker.enable.query.limit.override": "false","default.hyperloglog.log2m": "8"}`)
-		}
-		if r.URL.Path == "/cluster/configs" && r.Method == "POST" {
-			fmt.Fprint(w, `{"status": "Updated cluster config."}`)
-		}
-		if r.URL.Path == "/cluster/configs/allowParticipantAutoJoin" && r.Method == "DELETE" {
-			fmt.Fprintf(w, `{"status": "Deleted cluster config: allowParticipantAutoJoin"}`)
+		next(w, r)
+	}
+
+}
+
+func handleGetUsers(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"users": {"test_BROKER": {"username": "test","password": "$2a$10$3KYPvIy4fBM3CWfdKSc54u/BOn1rPlgb7u4P66s4upqAct30C/q6a","component": "BROKER","role": "ADMIN","usernameWithComponent": "test_BROKER"}}}`)
+}
+
+func handleGetUser(w http.ResponseWriter, r *http.Request) {
+	component := r.URL.Query().Get("component")
+
+	if component == "BROKER" {
+		fmt.Fprint(w, `{"test_BROKER": {"username": "test","password": "$2a$10$3KYPvIy4fBM3CWfdKSc54u/BOn1rPlgb7u4P66s4upqAct30C/q6a","component": "BROKER","role": "ADMIN","usernameWithComponent": "test_BROKER"}}`)
+	}
+}
+
+func handlePutUser(w http.ResponseWriter, r *http.Request) {
+	component := r.URL.Query().Get("component")
+
+	if component == "BROKER" {
+		fmt.Fprint(w, `{"status": "User config update for test_BROKER"}`)
+	}
+
+}
+
+func handleDeleteUser(w http.ResponseWriter, r *http.Request) {
+
+	component := r.URL.Query().Get("component")
+
+	if component == "BROKER" {
+		fmt.Fprint(w, `{"status": "User: test_BROKER has been successfully deleted"}`)
+	} else if component == "" {
+		http.Error(w, `{"code": 400,"error": "Name is null"}`, http.StatusBadRequest)
+	}
+}
+
+func handlePostUsers(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"status": "User testUser_BROKER has been successfully added!"}`)
+}
+
+func handleGetInstances(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"instances": ["Minion_172.19.0.2_9514","Server_172.19.0.7_8098","Broker_cdba1ba98e74_8099","Controller_8684b6757488_9000"]}`)
+}
+
+func handlePostInstances(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"status": "Added instance: Broker_localhost_1234"}`)
+}
+
+func handleGetInstance(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{"instanceName": "Minion_172.19.0.2_9514","hostName": "172.19.0.2","enabled": true,"port": "9514","tags": ["minion_untagged"],"pools": null,"grpcPort": -1,"adminPort": -1,"queryServicePort": -1,"queryMailboxPort": -1,"systemResourceInfo": null}`)
+
+}
+
+func handleGetClusterInfo(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"clusterName": "PinotCluster"}`)
+}
+
+func handleGetClusterConfigs(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{"allowParticipantAutoJoin": "true","enable.case.insensitive": "true","pinot.broker.enable.query.limit.override": "false","default.hyperloglog.log2m": "8"}`)
+}
+
+func handlePostClusterConfigs(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"status": "Updated cluster config."}`)
+}
+
+func handleDeleteClusterConfigs(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"status": "Deleted cluster config: allowParticipantAutoJoin"}`)
+}
+
+func createMockControllerServer() *httptest.Server {
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc(RouteUsers, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetUsers(w, r)
+		case "POST":
+			handlePostUsers(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	}))
 
-	return server
+	mux.HandleFunc(RouteUser, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetUser(w, r)
+		case "PUT":
+			handlePutUser(w, r)
+		case "DELETE":
+			handleDeleteUser(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteInstances, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetInstances(w, r)
+		case "POST":
+			handlePostInstances(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteInstance, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetInstance(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteClusterInfo, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetClusterInfo(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteClusterConfigs, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetClusterConfigs(w, r)
+		case "POST":
+			handlePostClusterConfigs(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteClusterConfigsDelete, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "DELETE":
+			handleDeleteClusterConfigs(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	return httptest.NewServer(mux)
 
 }
 
@@ -112,8 +227,6 @@ func TestGetUser(t *testing.T) {
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
-
-	fmt.Println(res.Username)
 
 	// expect username test
 	// expect component BROKER
