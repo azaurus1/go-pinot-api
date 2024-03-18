@@ -42,6 +42,8 @@ jobs:
         run: |
           go test -coverprofile=coverage.out
           go tool cover -func=coverage.out
+      - name: List files
+        run: ls -l
       - name: Upload to Codacy
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
