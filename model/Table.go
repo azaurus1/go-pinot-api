@@ -24,13 +24,13 @@ type TableIndexConfig struct {
 	CreateInvertedIndexDuringSegmentGeneration bool                   `json:"createInvertedIndexDuringSegmentGeneration"`
 	SortedColumn                               []string               `json:"sortedColumn,omitempty"`
 	StarTreeIndexConfigs                       []StarTreeIndexConfig  `json:"starTreeIndexConfigs,omitempty"`
-	EnableDefaultStarTree                      bool                   `json:"enableDefaultStarTree"`
-	EnableDynamicStarTreeCreation              bool                   `json:"enableDynamicStarTreeCreation"`
+	EnableDefaultStarTree                      bool                   `json:"enableDefaultStarTree,omitempty"`
+	EnableDynamicStarTreeCreation              bool                   `json:"enableDynamicStarTreeCreation,omitempty"`
 	SegmentPartitionConfig                     SegmentPartitionConfig `json:"segmentPartitionConfig,omitempty"`
 	LoadMode                                   string                 `json:"loadMode"`
-	ColumnMinMaxValueGeneratorMode             string                 `json:"columnMinMaxValueGeneratorMode"`
+	ColumnMinMaxValueGeneratorMode             string                 `json:"columnMinMaxValueGeneratorMode,omitempty"`
 	NullHandlingEnabled                        bool                   `json:"nullHandlingEnabled"`
-	AggregateMetrics                           bool                   `json:"aggregateMetrics"`
+	AggregateMetrics                           bool                   `json:"aggregateMetrics,omitempty"`
 	OptimizeDictionary                         bool                   `json:"optimizeDictionary"`
 	OptimizeDictionaryForMetrics               bool                   `json:"optimizeDictionaryForMetrics"`
 	NoDictionarySizeRatioThreshold             float64                `json:"noDictionarySizeRatioThreshold"`

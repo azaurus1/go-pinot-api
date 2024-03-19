@@ -5,6 +5,7 @@ import "encoding/json"
 type FieldSpec struct {
 	Name        string `json:"name"`
 	DataType    string `json:"dataType"`
+	NotNull     bool   `json:"notNull,omitempty"`
 	Format      string `json:"format,omitempty"`
 	Granularity string `json:"granularity,omitempty"`
 }
