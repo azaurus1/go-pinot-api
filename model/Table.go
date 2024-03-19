@@ -35,6 +35,12 @@ type TableIndexConfig struct {
 	OptimizeDictionaryForMetrics               bool                   `json:"optimizeDictionaryForMetrics"`
 	NoDictionarySizeRatioThreshold             float64                `json:"noDictionarySizeRatioThreshold"`
 	SegmentNameGeneratorType                   string                 `json:"segmentNameGeneratorType"`
+	InvertedIndexColumns                       []string               `json:"invertedIndexColumns,omitempty"`
+	NoDictionaryColumns                        []string               `json:"noDictionaryColumns,omitempty"`
+	RangeIndexColumns                          []string               `json:"rangeIndexColumns,omitempty"`
+	OnHeapDictionaryColumns                    []string               `json:"onHeapDictionaryColumns,omitempty"`
+	VarLengthDictionaryColumns                 []string               `json:"varLengthDictionaryColumns,omitempty"`
+	BloomFilterColumns                         []string               `json:"bloomFilterColumns,omitempty"`
 }
 
 type ColumnPartitionMapConfig struct {
