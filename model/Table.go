@@ -60,7 +60,7 @@ type StarTreeIndexConfig struct {
 }
 
 type TierOverwrite struct {
-	StarTreeIndexConfigs []StarTreeIndexConfig `json:"starTreeIndexConfigs"`
+	StarTreeIndexConfigs []*StarTreeIndexConfig `json:"starTreeIndexConfigs"`
 }
 
 type TierOverwrites struct {
@@ -149,19 +149,19 @@ type TierConfig struct {
 }
 
 type Table struct {
-	TableName        string               `json:"tableName"`
-	TableType        string               `json:"tableType"`
-	SegmentsConfig   TableSegmentsConfig  `json:"segmentsConfig"`
-	Tenants          TableTenant          `json:"tenants"`
-	TableIndexConfig TableIndexConfig     `json:"tableIndexConfig"`
-	Metadata         TableMetadata        `json:"metadata"`
-	FieldConfigList  []FieldConfig        `json:"fieldConfigList,omitempty"`
-	IngestionConfig  TableIngestionConfig `json:"ingestionConfig,omitempty"`
-	TierConfigs      []TierConfig         `json:"tierConfigs,omitempty"`
-	IsDimTable       bool                 `json:"isDimTable"`
-	Query            QueryConfig          `json:"query,omitempty"`
-	Routing          RoutingConfig        `json:"routing,omitempty"`
-	Quota            QuotaConfig          `json:"quota,omitempty"`
-	UpsertConfig     UpsertConfig         `json:"upsertConfig,omitempty"`
-	DedupConfig      DedupConfig          `json:"dedupConfig,omitempty"`
+	TableName        string                `json:"tableName"`
+	TableType        string                `json:"tableType"`
+	SegmentsConfig   TableSegmentsConfig   `json:"segmentsConfig"`
+	Tenants          TableTenant           `json:"tenants"`
+	TableIndexConfig TableIndexConfig      `json:"tableIndexConfig"`
+	Metadata         *TableMetadata        `json:"metadata"`
+	FieldConfigList  []FieldConfig         `json:"fieldConfigList,omitempty"`
+	IngestionConfig  *TableIngestionConfig `json:"ingestionConfig,omitempty"`
+	TierConfigs      []*TierConfig         `json:"tierConfigs,omitempty"`
+	IsDimTable       bool                  `json:"isDimTable"`
+	Query            *QueryConfig          `json:"query,omitempty"`
+	Routing          *RoutingConfig        `json:"routing,omitempty"`
+	Quota            *QuotaConfig          `json:"quota,omitempty"`
+	UpsertConfig     *UpsertConfig         `json:"upsertConfig,omitempty"`
+	DedupConfig      *DedupConfig          `json:"dedupConfig,omitempty"`
 }
