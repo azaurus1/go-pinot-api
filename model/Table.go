@@ -21,20 +21,20 @@ type TableTenant struct {
 }
 
 type TableIndexConfig struct {
-	CreateInvertedIndexDuringSegmentGeneration bool                   `json:"createInvertedIndexDuringSegmentGeneration"`
-	SortedColumn                               []string               `json:"sortedColumn,omitempty"`
-	StarTreeIndexConfigs                       []StarTreeIndexConfig  `json:"starTreeIndexConfigs,omitempty"`
-	EnableDefaultStarTree                      bool                   `json:"enableDefaultStarTree"`
-	EnableDynamicStarTreeCreation              bool                   `json:"enableDynamicStarTreeCreation"`
-	SegmentPartitionConfig                     SegmentPartitionConfig `json:"segmentPartitionConfig,omitempty"`
-	LoadMode                                   string                 `json:"loadMode"`
-	ColumnMinMaxValueGeneratorMode             string                 `json:"columnMinMaxValueGeneratorMode"`
-	NullHandlingEnabled                        bool                   `json:"nullHandlingEnabled"`
-	AggregateMetrics                           bool                   `json:"aggregateMetrics"`
-	OptimizeDictionary                         bool                   `json:"optimizeDictionary"`
-	OptimizeDictionaryForMetrics               bool                   `json:"optimizeDictionaryForMetrics"`
-	NoDictionarySizeRatioThreshold             float64                `json:"noDictionarySizeRatioThreshold"`
-	SegmentNameGeneratorType                   string                 `json:"segmentNameGeneratorType"`
+	CreateInvertedIndexDuringSegmentGeneration bool                    `json:"createInvertedIndexDuringSegmentGeneration"`
+	SortedColumn                               []string                `json:"sortedColumn,omitempty"`
+	StarTreeIndexConfigs                       []*StarTreeIndexConfig  `json:"starTreeIndexConfigs,omitempty"`
+	EnableDefaultStarTree                      bool                    `json:"enableDefaultStarTree"`
+	EnableDynamicStarTreeCreation              bool                    `json:"enableDynamicStarTreeCreation"`
+	SegmentPartitionConfig                     *SegmentPartitionConfig `json:"segmentPartitionConfig,omitempty"`
+	LoadMode                                   string                  `json:"loadMode"`
+	ColumnMinMaxValueGeneratorMode             string                  `json:"columnMinMaxValueGeneratorMode"`
+	NullHandlingEnabled                        bool                    `json:"nullHandlingEnabled"`
+	AggregateMetrics                           bool                    `json:"aggregateMetrics"`
+	OptimizeDictionary                         bool                    `json:"optimizeDictionary"`
+	OptimizeDictionaryForMetrics               bool                    `json:"optimizeDictionaryForMetrics"`
+	NoDictionarySizeRatioThreshold             float64                 `json:"noDictionarySizeRatioThreshold"`
+	SegmentNameGeneratorType                   string                  `json:"segmentNameGeneratorType"`
 }
 
 type ColumnPartitionMapConfig struct {
@@ -54,7 +54,7 @@ type StarTreeIndexConfig struct {
 }
 
 type TierOverwrite struct {
-	StarTreeIndexConfigs []StarTreeIndexConfig `json:"starTreeIndexConfigs"`
+	StarTreeIndexConfigs []*StarTreeIndexConfig `json:"starTreeIndexConfigs"`
 }
 
 type TierOverwrites struct {
@@ -143,19 +143,19 @@ type TierConfig struct {
 }
 
 type Table struct {
-	TableName        string               `json:"tableName"`
-	TableType        string               `json:"tableType"`
-	SegmentsConfig   TableSegmentsConfig  `json:"segmentsConfig"`
-	Tenants          TableTenant          `json:"tenants"`
-	TableIndexConfig TableIndexConfig     `json:"tableIndexConfig"`
-	Metadata         TableMetadata        `json:"metadata"`
-	FieldConfigList  []FieldConfig        `json:"fieldConfigList,omitempty"`
-	IngestionConfig  TableIngestionConfig `json:"ingestionConfig,omitempty"`
-	TierConfigs      []TierConfig         `json:"tierConfigs,omitempty"`
-	IsDimTable       bool                 `json:"isDimTable"`
-	Query            QueryConfig          `json:"query,omitempty"`
-	Routing          RoutingConfig        `json:"routing,omitempty"`
-	Quota            QuotaConfig          `json:"quota,omitempty"`
-	UpsertConfig     UpsertConfig         `json:"upsertConfig,omitempty"`
-	DedupConfig      DedupConfig          `json:"dedupConfig,omitempty"`
+	TableName        string                `json:"tableName"`
+	TableType        string                `json:"tableType"`
+	SegmentsConfig   TableSegmentsConfig   `json:"segmentsConfig"`
+	Tenants          TableTenant           `json:"tenants"`
+	TableIndexConfig TableIndexConfig      `json:"tableIndexConfig"`
+	Metadata         *TableMetadata        `json:"metadata"`
+	FieldConfigList  []FieldConfig         `json:"fieldConfigList,omitempty"`
+	IngestionConfig  *TableIngestionConfig `json:"ingestionConfig,omitempty"`
+	TierConfigs      []*TierConfig         `json:"tierConfigs,omitempty"`
+	IsDimTable       bool                  `json:"isDimTable"`
+	Query            *QueryConfig          `json:"query,omitempty"`
+	Routing          *RoutingConfig        `json:"routing,omitempty"`
+	Quota            *QuotaConfig          `json:"quota,omitempty"`
+	UpsertConfig     *UpsertConfig         `json:"upsertConfig,omitempty"`
+	DedupConfig      *DedupConfig          `json:"dedupConfig,omitempty"`
 }
