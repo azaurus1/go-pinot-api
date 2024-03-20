@@ -22,6 +22,10 @@ const (
 	RouteClusterInfo          = "/cluster/info"
 	RouteClusterConfigs       = "/cluster/configs"
 	RouteClusterConfigsDelete = "/cluster/configs/allowParticipantAutoJoin"
+	RouteTenants              = "/tenants"
+	RouteTenantsInstances     = "/tenants/DefaultTenant"
+	RouteTenantsTables        = "/tenants/DefaultTenant/tables"
+	RouteTenantsMetadata      = "/tenants/DefaultTenant/metadata"
 )
 
 func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -100,6 +104,34 @@ func handleDeleteClusterConfigs(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `{"status": "Deleted cluster config: allowParticipantAutoJoin"}`)
 }
 
+func handleGetTenants(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"SERVER_TENANTS": ["DefaultTenant"],"BROKER_TENANTS": ["DefaultTenant"]}`)
+}
+
+func handleCreateTenant(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"status": "Successfully created tenant"}`)
+}
+
+func handleUpdateTenant(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"status": "Updated tenant"}`)
+}
+
+func handleDeleteTenant(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"status": "Successfully deleted tenant DefaultTenant"}`)
+}
+
+func handleGetTenantInstances(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"ServerInstances": ["Server_172.19.0.7_8098"],"BrokerInstances": ["Broker_91e4732e326d_8099"],"tenantName": "DefaultTenant"}`)
+}
+
+func handleGetTenantTables(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"tables": []}`)
+}
+
+func handleGetTenantMetadata(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"ServerInstances": ["Server_172.19.0.7_8098"],"OfflineServerInstances": null,"RealtimeServerInstances": null,"BrokerInstances": ["Broker_91e4732e326d_8099"],"tenantName": "DefaultTenant"}`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -172,6 +204,48 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "DELETE":
 			handleDeleteClusterConfigs(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTenants, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTenants(w, r)
+		case "POST":
+			handleCreateTenant(w, r)
+		case "PUT":
+			handleUpdateTenant(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTenantsInstances, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTenantInstances(w, r)
+		case "DELETE":
+			handleDeleteTenant(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTenantsTables, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTenantTables(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTenantsMetadata, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTenantMetadata(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -421,3 +495,123 @@ func TestDeleteClusterConfig(t *testing.T) {
 
 	assert.Equal(t, res.Status, "Deleted cluster config: allowParticipantAutoJoin", "Expected response to be Deleted cluster config: allowParticipantAutoJoin")
 }
+
+func TestGetTenants(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTenants()
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, len(res.BrokerTenants), 1, "Expected 1 Broker tenants in the response")
+	assert.Equal(t, len(res.ServerTenants), 1, "Expected 1 Server tenants in the response")
+
+}
+
+// TestGetTenantInstances
+func TestGetTenantInstances(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTenantInstances("DefaultTenant")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, len(res.BrokerInstances), 1, "Expected 1 Broker instance in the response")
+	assert.Equal(t, len(res.ServerInstances), 1, "Expected 1 Server instance in the response")
+	assert.Equal(t, res.TenantName, "DefaultTenant", "Expected tenant name to be DefaultTenant")
+}
+
+// TestGetTenantTables
+func TestGetTenantTables(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTenantTables("DefaultTenant")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, len(res.Tables), 0, "Expected 0 tables in the response")
+}
+
+// TestGetTenantMetadata
+func TestGetTenantMetadata(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTenantMetadata("DefaultTenant")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, len(res.BrokerInstances), 1, "Expected 1 Broker instance in the response")
+	assert.Equal(t, len(res.ServerInstances), 1, "Expected 1 Server instance in the response")
+	assert.Equal(t, res.OfflineServerInstances, []string([]string(nil)), "Expected OfflineServerInstances to be nil")
+	assert.Equal(t, res.RealtimeServerInstances, []string([]string(nil)), "Expected RealtimeServerInstances to be nil")
+	assert.Equal(t, res.TenantName, "DefaultTenant", "Expected tenant name to be DefaultTenant")
+}
+
+// TestCreateTenant
+func TestCreateTenant(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	tenant := model.Tenant{
+		TenantName: "test",
+		TenantRole: "BROKER",
+	}
+
+	tenantBytes, err := json.Marshal(tenant)
+	if err != nil {
+		t.Errorf("Couldn't marshal tenant: %v", err)
+	}
+
+	res, err := client.CreateTenant(tenantBytes)
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "Successfully created tenant", "Expected response to be Successfully created tenant")
+}
+
+// TestUpdateTenant
+func TestUpdateTenant(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	updateTenant := model.Tenant{
+		TenantName: "test",
+		TenantRole: "SERVER",
+	}
+
+	tenantBytes, err := json.Marshal(updateTenant)
+	if err != nil {
+		t.Errorf("Couldn't marshal tenant: %v", err)
+	}
+
+	res, err := client.UpdateTenant(tenantBytes)
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "Updated tenant", "Expected response to be Successfully updated tenant")
+}
+
+// TestDeleteTenant
+func TestDeleteTenant(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.DeleteTenant("DefaultTenant", "SERVER")
+	if err != nil {
+		assert.Equal(t, err.Error(), "client: request failed: status 404\n404 page not found\n", "Expected error to be 404 page not found")
+	}
+
+	assert.Equal(t, res.Status, "Successfully deleted tenant DefaultTenant", "Expected response to be Successfully deleted tenant DefaultTenant")
+}
+
+// TestRebalanceTenant
