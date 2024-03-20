@@ -41,7 +41,7 @@ type TableIndexConfig struct {
 	OnHeapDictionaryColumns                    []string                `json:"onHeapDictionaryColumns,omitempty"`
 	VarLengthDictionaryColumns                 []string                `json:"varLengthDictionaryColumns,omitempty"`
 	BloomFilterColumns                         []string                `json:"bloomFilterColumns,omitempty"`
-	RangeIndexVersion                          string                  `json:"rangeIndexVersion,omitempty"`
+	RangeIndexVersion                          int                     `json:"rangeIndexVersion,omitempty"`
 }
 
 type ColumnPartitionMapConfig struct {
