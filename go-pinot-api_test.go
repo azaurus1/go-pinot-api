@@ -26,6 +26,10 @@ const (
 	RouteTenantsInstances     = "/tenants/DefaultTenant"
 	RouteTenantsTables        = "/tenants/DefaultTenant/tables"
 	RouteTenantsMetadata      = "/tenants/DefaultTenant/metadata"
+	RouteSegmentsTest         = "/segments/test"
+	RouteSegmentsTestReload   = "/segments/test/reload"
+	RouteSegmentTestReload    = "/segments/test/test_1/reload"
+	RouteV2Segments           = "/v2/segments"
 )
 
 func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -130,6 +134,18 @@ func handleGetTenantTables(w http.ResponseWriter, r *http.Request) {
 
 func handleGetTenantMetadata(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `{"ServerInstances": ["Server_172.19.0.7_8098"],"OfflineServerInstances": null,"RealtimeServerInstances": null,"BrokerInstances": ["Broker_91e4732e326d_8099"],"tenantName": "DefaultTenant"}`)
+}
+
+func handleGetSegments(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `[{"OFFLINE": ["test_1"],"REALTIME": ["test_1"]}]`)
+}
+
+func handleReloadTableSegments(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"status": "{\"test_OFFLINE\":{\"reloadJobId\":\"f9db13c7-3ad6-45a8-a08f-75cd03c42fb5\",\"reloadJobMetaZKStorageStatus\":\"SUCCESS\",\"numMessagesSent\":\"1\"}}"}`)
+}
+
+func handleReloadTableSegment(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"status": "Submitted reload job id: ce4650a9-774a-4b22-919b-4cb22b5c8129, sent 1 reload messages. Job meta ZK storage status: SUCCESS"}`)
 }
 
 func createMockControllerServer() *httptest.Server {
@@ -246,6 +262,33 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetTenantMetadata(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteSegmentsTest, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetSegments(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteSegmentsTestReload, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "POST":
+			handleReloadTableSegments(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteSegmentTestReload, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "POST":
+			handleReloadTableSegment(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -615,3 +658,44 @@ func TestDeleteTenant(t *testing.T) {
 }
 
 // TestRebalanceTenant
+
+// TestSegments
+func TestSegments(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetSegments("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, len(res[0].Offline), 1, "Expected 1 offline segment in the response")
+	assert.Equal(t, len(res[0].Realtime), 1, "Expected 1 realtime segment in the response")
+}
+
+// TestReloadTableSegments
+func TestReloadTableSegments(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.ReloadTableSegments("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "{\"test_OFFLINE\":{\"reloadJobId\":\"f9db13c7-3ad6-45a8-a08f-75cd03c42fb5\",\"reloadJobMetaZKStorageStatus\":\"SUCCESS\",\"numMessagesSent\":\"1\"}}", "Expected response to be {\"test_OFFLINE\":{\"reloadJobId\":\"f9db13c7-3ad6-45a8-a08f-75cd03c42fb5\",\"reloadJobMetaZKStorageStatus\":\"SUCCESS\",\"numMessagesSent\":\"1\"}}")
+
+}
+
+// TestReloadTableSegment
+func TestReloadTableSegment(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.ReloadSegment("test", "test_1")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "Submitted reload job id: ce4650a9-774a-4b22-919b-4cb22b5c8129, sent 1 reload messages. Job meta ZK storage status: SUCCESS", "Expected response to be Submitted reload job id: ce4650a9-774a-4b22-919b-4cb22b5c8129, sent 1 reload messages. Job meta ZK storage status: SUCCESS")
+}
