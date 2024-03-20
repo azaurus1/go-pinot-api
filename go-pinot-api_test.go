@@ -793,20 +793,19 @@ func TestGetSchema(t *testing.T) {
 }
 
 // TestCreateSchema
+// it appears that this is not returning the status...
 // func TestCreateSchema(t *testing.T) {
 // 	server := createMockControllerServer()
 // 	client := createPinotClient(server)
 
 // 	schema := getSchema()
 
-// 	fmt.Println(schema.SchemaName)
-
 // 	res, err := client.CreateSchema(schema)
 // 	if err != nil {
 // 		t.Errorf("Expected no error, got %v", err)
 // 	}
 
-// 	fmt.Println(res.Status)
+// 	assert.Equal(t, res.Status, "ethereum_mainnet_block_headers successfully added", "Expected response to be ethereum_mainnet_block_headers successfully added")
 
 // }
 
