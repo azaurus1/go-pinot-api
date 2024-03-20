@@ -124,7 +124,7 @@ func dummyTableConfig() model.Table {
 			Server: "{{ .PinotTenantServer }}",
 		},
 		IngestionConfig: &model.TableIngestionConfig{
-			StreamIngestionConfig: model.StreamIngestionConfig{
+			StreamIngestionConfig: &model.StreamIngestionConfig{
 				StreamConfigMaps: []map[string]string{{
 					"stream.kafka.topic.name":                                                 "{{ .KafkaTopic }}",
 					"stream.kafka.broker.list":                                                "{{ .KafkaBrokers }}",

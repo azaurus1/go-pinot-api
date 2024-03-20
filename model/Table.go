@@ -66,8 +66,8 @@ type TierOverwrite struct {
 }
 
 type TierOverwrites struct {
-	HotTier  TierOverwrite `json:"hotTier"`
-	ColdTier TierOverwrite `json:"coldTier"`
+	HotTier  *TierOverwrite `json:"hotTier,omitempty"`
+	ColdTier *TierOverwrite `json:"coldTier,omitempty"`
 }
 
 type TableMetadata struct {
@@ -75,7 +75,7 @@ type TableMetadata struct {
 }
 
 type TimestampConfig struct {
-	Granulatities []string `json:"granularities"`
+	Granularities []string `json:"granularities"`
 }
 
 type FiendIndexInverted struct {
@@ -83,16 +83,16 @@ type FiendIndexInverted struct {
 }
 
 type FieldIndexes struct {
-	Inverted FiendIndexInverted `json:"inverted"`
+	Inverted *FiendIndexInverted `json:"inverted,omitempty"`
 }
 
 type FieldConfig struct {
-	Name            string          `json:"name"`
-	EncodingType    string          `json:"encodingType"`
-	IndexType       string          `json:"indexType"`
-	IndexTypes      []string        `json:"indexTypes"`
-	TimestampConfig TimestampConfig `json:"timestampConfig"`
-	Indexes         FieldIndexes    `json:"indexes"`
+	Name            string           `json:"name"`
+	EncodingType    string           `json:"encodingType"`
+	IndexType       string           `json:"indexType"`
+	IndexTypes      []string         `json:"indexTypes"`
+	TimestampConfig *TimestampConfig `json:"timestampConfig,omitempty"`
+	Indexes         *FieldIndexes    `json:"indexes,omitempty"`
 }
 
 type QueryConfig struct {
@@ -131,11 +131,11 @@ type TransformConfig struct {
 }
 
 type TableIngestionConfig struct {
-	SegmentTimeValueCheck bool                  `json:"segmentTimeValueCheck,omitempty"`
-	TransformConfigs      []TransformConfig     `json:"transformConfigs,omitempty"`
-	ContinueOnError       bool                  `json:"continueOnError,omitempty"`
-	RowTimeValueCheck     bool                  `json:"rowTimeValueCheck,omitempty"`
-	StreamIngestionConfig StreamIngestionConfig `json:"streamIngestionConfig,omitempty"`
+	SegmentTimeValueCheck bool                   `json:"segmentTimeValueCheck,omitempty"`
+	TransformConfigs      []TransformConfig      `json:"transformConfigs,omitempty"`
+	ContinueOnError       bool                   `json:"continueOnError,omitempty"`
+	RowTimeValueCheck     bool                   `json:"rowTimeValueCheck,omitempty"`
+	StreamIngestionConfig *StreamIngestionConfig `json:"streamIngestionConfig,omitempty"`
 }
 
 type StreamIngestionConfig struct {
