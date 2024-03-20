@@ -160,7 +160,20 @@ func handleGetSchema(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleCreateSchema(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, `{"unrecognizedProperties": {},"status": "ethereum_mainnet_block_headers successfully added"}`)
+	fmt.Fprint(w, `{"unrecognizedProperties": {},"status": "test successfully added"}`)
+}
+
+func handleUpdateSchema(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"unrecognizedProperties": {},"status": "test successfully added"}`)
+}
+
+func handleDeleteSchema(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"status": "Schema test deleted"}`)
+}
+
+func handleValidateSchema(w http.ResponseWriter, r *http.Request) {
+	// return 200
+	fmt.Fprint(w, `{"ok": "true"}`)
 }
 
 func createMockControllerServer() *httptest.Server {
@@ -324,6 +337,10 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetSchema(w, r)
+		case "PUT":
+			handleUpdateSchema(w, r)
+		case "DELETE":
+			handleDeleteSchema(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -771,7 +788,7 @@ func TestGetSchemas(t *testing.T) {
 
 		schemaResp, _ := client.GetSchema(schemaName)
 
-		fmt.Println("Reading Schema:")
+		// fmt.Println("Reading Schema:")
 		schemas = append(schemas, *schemaResp)
 
 	})
@@ -794,20 +811,41 @@ func TestGetSchema(t *testing.T) {
 
 // TestCreateSchema
 // it appears that this is not returning the status...
-// func TestCreateSchema(t *testing.T) {
-// 	server := createMockControllerServer()
-// 	client := createPinotClient(server)
+func TestCreateSchema(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
 
-// 	schema := getSchema()
+	schema := model.Schema{
+		SchemaName: "test",
+		DimensionFieldSpecs: []model.FieldSpec{
+			{
+				Name:     "test",
+				DataType: "STRING",
+			},
+		},
+		MetricFieldSpecs: []model.FieldSpec{
+			{
+				Name:     "test",
+				DataType: "INT",
+			},
+		},
+	}
 
-// 	res, err := client.CreateSchema(schema)
-// 	if err != nil {
-// 		t.Errorf("Expected no error, got %v", err)
-// 	}
+	schemaBytes, err := json.Marshal(schema)
+	if err != nil {
+		t.Errorf("Couldn't marshal schema: %v", err)
+	}
 
-// 	assert.Equal(t, res.Status, "ethereum_mainnet_block_headers successfully added", "Expected response to be ethereum_mainnet_block_headers successfully added")
+	res, err := client.CreateSchemaFromBytes(schemaBytes)
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
 
-// }
+	// fmt.Println("Response: ", res.Status)
+
+	assert.Equal(t, res.Status, "test successfully added", "Expected response to be test successfully added")
+
+}
 
 // // TestCreateSchemaFromFile
 // func TestCreateSchemaFromFile(t *testing.T) {
@@ -822,41 +860,44 @@ func TestGetSchema(t *testing.T) {
 // 	assert.Equal(t, res.Status, "Schema test has been successfully added!", "Expected response to be Schema test has been successfully added!")
 // }
 
-// // TestUpdateSchema
-// func TestUpdateSchema(t *testing.T) {
-// 	server := createMockControllerServer()
-// 	client := createPinotClient(server)
+// TestUpdateSchema
+func TestUpdateSchema(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
 
-// 	schema := model.Schema{
-// 		SchemaName: "test",
-// 		DimensionFieldSpecs: []model.DimensionFieldSpec{
-// 			{
-// 				Name:     "test",
-// 				DataType: "STRING",
-// 			},
-// 		},
-// 		MetricFieldSpecs: []model.MetricFieldSpec{
-// 			{
-// 				Name:     "test",
-// 				DataType: "INT",
-// 			},
-// 		},
-// 	}
+	schema := model.Schema{
+		SchemaName: "test",
+		DimensionFieldSpecs: []model.FieldSpec{
+			{
+				Name:     "test",
+				DataType: "STRING",
+			},
+		},
+		MetricFieldSpecs: []model.FieldSpec{
+			{
+				Name:     "test",
+				DataType: "INT",
+			},
+		},
+	}
 
-// 	schemaBytes, err := json.Marshal(schema)
-// 	if err != nil {
-// 		t.Errorf("Couldn't marshal schema: %v", err)
-// 	}
+	schemaBytes, err := json.Marshal(schema)
+	if err != nil {
+		t.Errorf("Couldn't marshal schema: %v", err)
+	}
 
-// 	res, err := client.UpdateSchema("test", schemaBytes)
-// 	if err != nil {
-// 		t.Errorf("Expected no error, got %v", err)
-// 	}
+	res, err := client.UpdateSchemaFromBytes(schemaBytes)
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
 
-// 	assert.Equal(t, res.Status, "Schema test has been successfully updated!", "Expected response to be Schema test has been successfully updated!")
-// }
+	// fmt.Println("Response: ", res.Status)
 
-// // TestDeleteSchema
+	assert.Equal(t, res.Status, "test successfully added", "Expected response to be test successfully added")
+}
+
+// TestDeleteSchema
+// Requires /tables to be implemented first
 // func TestDeleteSchema(t *testing.T) {
 // 	server := createMockControllerServer()
 // 	client := createPinotClient(server)
@@ -866,39 +907,39 @@ func TestGetSchema(t *testing.T) {
 // 		t.Errorf("Expected no error, got %v", err)
 // 	}
 
-// 	assert.Equal(t, res.Status, "Schema test has been successfully deleted!", "Expected response to be Schema test has been successfully deleted!")
+// 	assert.Equal(t, res.Status, "Schema test deleted", "Expected response to be Schema test deleted")
 // }
 
-// // TestValidateSchema
-// func TestValidateSchema(t *testing.T) {
-// 	server := createMockControllerServer()
-// 	client := createPinotClient(server)
+// TestValidateSchema
+func TestValidateSchema(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
 
-// 	schema := model.Schema{
-// 		SchemaName: "test",
-// 		DimensionFieldSpecs: []model.DimensionFieldSpec{
-// 			{
-// 				Name:     "test",
-// 				DataType: "STRING",
-// 			},
-// 		},
-// 		MetricFieldSpecs: []model.MetricFieldSpec{
-// 			{
-// 				Name:     "test",
-// 				DataType: "INT",
-// 			},
-// 		},
-// 	}
+	schema := model.Schema{
+		SchemaName: "test",
+		DimensionFieldSpecs: []model.FieldSpec{
+			{
+				Name:     "test",
+				DataType: "STRING",
+			},
+		},
+		MetricFieldSpecs: []model.FieldSpec{
+			{
+				Name:     "test",
+				DataType: "INT",
+			},
+		},
+	}
 
-// 	schemaBytes, err := json.Marshal(schema)
-// 	if err != nil {
-// 		t.Errorf("Couldn't marshal schema: %v", err)
-// 	}
+	// schemaBytes, err := json.Marshal(schema)
+	// if err != nil {
+	// 	t.Errorf("Couldn't marshal schema: %v", err)
+	// }
 
-// 	res, err := client.ValidateSchema(schemaBytes)
-// 	if err != nil {
-// 		t.Errorf("Expected no error, got %v", err)
-// 	}
+	res, err := client.ValidateSchema(schema)
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
 
-// 	assert.Equal(t, res.Status, "Schema test is valid!", "Expected response to be Schema test is valid!")
-// }
+	assert.Equal(t, res.Ok, true, "Expected response to be Schema test is valid!")
+}

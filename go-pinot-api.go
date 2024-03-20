@@ -503,6 +503,27 @@ func (c *PinotAPIClient) ValidateSchema(schema model.Schema) (*model.ValidateSch
 	return &model.ValidateSchemaResponse{Ok: true}, nil
 }
 
+func (c *PinotAPIClient) UpdateSchemaFromBytes(schemaBytes []byte) (*model.UserActionResponse, error) {
+
+	var schema model.Schema
+
+	// Validate first
+	json.Unmarshal(schemaBytes, &schema)
+
+	schemaResp, err := c.ValidateSchema(schema)
+	if err != nil {
+		return nil, fmt.Errorf("unable to validate schema: %w", err)
+	}
+
+	if !schemaResp.Ok {
+		return nil, fmt.Errorf("schema is invalid: %s", schemaResp.Error)
+	}
+
+	var result model.UserActionResponse
+	err = c.CreateObject("/schemas", schemaBytes, &result)
+	return &result, err
+}
+
 func (c *PinotAPIClient) UpdateSchema(schema model.Schema) (*model.UserActionResponse, error) {
 
 	var result model.UserActionResponse
