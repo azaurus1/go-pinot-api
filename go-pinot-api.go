@@ -95,6 +95,8 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 
 	req.Header.Set("Content-Type", "application/json")
 
+	c.log.Debug(fmt.Sprintf("attempting POST %s", fullURL))
+
 	res, err := c.pinotHttp.Do(req)
 	if err != nil {
 		c.logErrorResp(res)

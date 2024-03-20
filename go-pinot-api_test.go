@@ -3,6 +3,7 @@ package goPinotAPI_test
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
@@ -30,6 +31,8 @@ const (
 	RouteSegmentsTestReload   = "/segments/test/reload"
 	RouteSegmentTestReload    = "/segments/test/test_1/reload"
 	RouteV2Segments           = "/v2/segments"
+	RouteSchemas              = "/schemas"
+	RouteSchemasTest          = "/schemas/test"
 )
 
 func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -146,6 +149,18 @@ func handleReloadTableSegments(w http.ResponseWriter, r *http.Request) {
 
 func handleReloadTableSegment(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `{"status": "Submitted reload job id: ce4650a9-774a-4b22-919b-4cb22b5c8129, sent 1 reload messages. Job meta ZK storage status: SUCCESS"}`)
+}
+
+func handleGetSchemas(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `["test"]`)
+}
+
+func handleGetSchema(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"schemaName": "test","enableColumnBasedNullHandling": false,"dimensionFieldSpecs": [{"name": "id","dataType": "STRING","notNull": false},{"name": "type","dataType": "STRING","notNull": false},{"name": "actor","dataType": "JSON","notNull": false},{"name": "repo","dataType": "JSON","notNull": false},{"name": "payload","dataType": "JSON","notNull": false},{"name": "public","dataType": "BOOLEAN","notNull": false}],"dateTimeFieldSpecs": [{"name": "created_at","dataType": "STRING","notNull": false,"format": "1:SECONDS:SIMPLE_DATE_FORMAT:yyyy-MM-dd'T'HH:mm:ss'Z'","granularity": "1:SECONDS"},{"name": "created_at_timestamp","dataType": "TIMESTAMP","notNull": false,"format": "1:MILLISECONDS:TIMESTAMP","granularity": "1:SECONDS"}]}`)
+}
+
+func handleCreateSchema(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"unrecognizedProperties": {},"status": "ethereum_mainnet_block_headers successfully added"}`)
 }
 
 func createMockControllerServer() *httptest.Server {
@@ -294,6 +309,26 @@ func createMockControllerServer() *httptest.Server {
 		}
 	}))
 
+	mux.HandleFunc(RouteSchemas, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetSchemas(w, r)
+		case "POST":
+			handleCreateSchema(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteSchemasTest, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetSchema(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
 	return httptest.NewServer(mux)
 
 }
@@ -306,6 +341,26 @@ func createPinotClient(server *httptest.Server) *goPinotAPI.PinotAPIClient {
 		goPinotAPI.AuthToken("YWRtaW46YWRtaW4K"),
 		goPinotAPI.Logger(logger),
 	)
+}
+
+func getSchema() model.Schema {
+
+	schemaFilePath := "./example/data-gen/block_header_schema.json"
+
+	f, err := os.Open(schemaFilePath)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	defer f.Close()
+
+	var schema model.Schema
+	err = json.NewDecoder(f).Decode(&schema)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return schema
 }
 
 // TestFetchData
@@ -699,3 +754,152 @@ func TestReloadTableSegment(t *testing.T) {
 
 	assert.Equal(t, res.Status, "Submitted reload job id: ce4650a9-774a-4b22-919b-4cb22b5c8129, sent 1 reload messages. Job meta ZK storage status: SUCCESS", "Expected response to be Submitted reload job id: ce4650a9-774a-4b22-919b-4cb22b5c8129, sent 1 reload messages. Job meta ZK storage status: SUCCESS")
 }
+
+// TestGetSchemas
+func TestGetSchemas(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	schemas := []model.Schema{}
+
+	res, err := client.GetSchemas()
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	res.ForEachSchema(func(schemaName string) {
+
+		schemaResp, _ := client.GetSchema(schemaName)
+
+		fmt.Println("Reading Schema:")
+		schemas = append(schemas, *schemaResp)
+
+	})
+
+	assert.Equal(t, len(schemas), 1, "Expected 1 schema in the response")
+}
+
+// TestGetSchema
+func TestGetSchema(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetSchema("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.SchemaName, "test", "Expected schema name to be test")
+}
+
+// TestCreateSchema
+// func TestCreateSchema(t *testing.T) {
+// 	server := createMockControllerServer()
+// 	client := createPinotClient(server)
+
+// 	schema := getSchema()
+
+// 	fmt.Println(schema.SchemaName)
+
+// 	res, err := client.CreateSchema(schema)
+// 	if err != nil {
+// 		t.Errorf("Expected no error, got %v", err)
+// 	}
+
+// 	fmt.Println(res.Status)
+
+// }
+
+// // TestCreateSchemaFromFile
+// func TestCreateSchemaFromFile(t *testing.T) {
+// 	server := createMockControllerServer()
+// 	client := createPinotClient(server)
+
+// 	res, err := client.CreateSchemaFromFile("test")
+// 	if err != nil {
+// 		t.Errorf("Expected no error, got %v", err)
+// 	}
+
+// 	assert.Equal(t, res.Status, "Schema test has been successfully added!", "Expected response to be Schema test has been successfully added!")
+// }
+
+// // TestUpdateSchema
+// func TestUpdateSchema(t *testing.T) {
+// 	server := createMockControllerServer()
+// 	client := createPinotClient(server)
+
+// 	schema := model.Schema{
+// 		SchemaName: "test",
+// 		DimensionFieldSpecs: []model.DimensionFieldSpec{
+// 			{
+// 				Name:     "test",
+// 				DataType: "STRING",
+// 			},
+// 		},
+// 		MetricFieldSpecs: []model.MetricFieldSpec{
+// 			{
+// 				Name:     "test",
+// 				DataType: "INT",
+// 			},
+// 		},
+// 	}
+
+// 	schemaBytes, err := json.Marshal(schema)
+// 	if err != nil {
+// 		t.Errorf("Couldn't marshal schema: %v", err)
+// 	}
+
+// 	res, err := client.UpdateSchema("test", schemaBytes)
+// 	if err != nil {
+// 		t.Errorf("Expected no error, got %v", err)
+// 	}
+
+// 	assert.Equal(t, res.Status, "Schema test has been successfully updated!", "Expected response to be Schema test has been successfully updated!")
+// }
+
+// // TestDeleteSchema
+// func TestDeleteSchema(t *testing.T) {
+// 	server := createMockControllerServer()
+// 	client := createPinotClient(server)
+
+// 	res, err := client.DeleteSchema("test")
+// 	if err != nil {
+// 		t.Errorf("Expected no error, got %v", err)
+// 	}
+
+// 	assert.Equal(t, res.Status, "Schema test has been successfully deleted!", "Expected response to be Schema test has been successfully deleted!")
+// }
+
+// // TestValidateSchema
+// func TestValidateSchema(t *testing.T) {
+// 	server := createMockControllerServer()
+// 	client := createPinotClient(server)
+
+// 	schema := model.Schema{
+// 		SchemaName: "test",
+// 		DimensionFieldSpecs: []model.DimensionFieldSpec{
+// 			{
+// 				Name:     "test",
+// 				DataType: "STRING",
+// 			},
+// 		},
+// 		MetricFieldSpecs: []model.MetricFieldSpec{
+// 			{
+// 				Name:     "test",
+// 				DataType: "INT",
+// 			},
+// 		},
+// 	}
+
+// 	schemaBytes, err := json.Marshal(schema)
+// 	if err != nil {
+// 		t.Errorf("Couldn't marshal schema: %v", err)
+// 	}
+
+// 	res, err := client.ValidateSchema(schemaBytes)
+// 	if err != nil {
+// 		t.Errorf("Expected no error, got %v", err)
+// 	}
+
+// 	assert.Equal(t, res.Status, "Schema test is valid!", "Expected response to be Schema test is valid!")
+// }
