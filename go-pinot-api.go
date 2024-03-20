@@ -86,9 +86,9 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 
 func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) error {
 
-	fullURL := c.pinotControllerUrl.JoinPath(endpoint).String()
+	fullURL := prepareRequestURL(c, endpoint)
 
-	req, err := http.NewRequest(http.MethodPost, fullURL, bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPost, fullURL.String(), bytes.NewBuffer(body))
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
@@ -413,6 +413,29 @@ func (c *PinotAPIClient) CreateSchema(schema model.Schema) (*model.UserActionRes
 
 	err = c.CreateObject("/schemas", schemaBytes, result)
 	return &result, err
+}
+
+func (c *PinotAPIClient) CreateSchemaFromBytes(schemaBytes []byte) (*model.CreateSchemaResponse, error) {
+
+	var schema model.Schema
+
+	// Validate first
+	json.Unmarshal(schemaBytes, &schema)
+
+	schemaResp, err := c.ValidateSchema(schema)
+	if err != nil {
+		return nil, fmt.Errorf("unable to validate schema: %w", err)
+	}
+
+	if !schemaResp.Ok {
+		return nil, fmt.Errorf("schema is invalid: %s", schemaResp.Error)
+	}
+
+	var result model.CreateSchemaResponse
+	err = c.CreateObject("/schemas?override=false&force=false", schemaBytes, &result)
+
+	return &result, err
+
 }
 
 // CreateSchemaFromFile creates a new schema from a file and uses CreateSchema
