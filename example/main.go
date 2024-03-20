@@ -262,12 +262,82 @@ func demoSchemaFromBytesFunctionality(client *pinot.PinotAPIClient) {
 		log.Panic(err)
 	}
 
+	// validate
+	validateResp, err := client.ValidateSchema(schema)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(validateResp)
+
 	createResp, err := client.CreateSchemaFromBytes(schemaBytes)
 	if err != nil {
 		log.Panic(err)
 	}
 
 	fmt.Println(createResp.Status)
+
+	// Get Schema
+	getSchemaResp, err := client.GetSchema(schema.SchemaName)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Schema:")
+	fmt.Println(getSchemaResp)
+
+	// Update Schema
+	updateSchema := model.Schema{
+		SchemaName: "ethereum_mainnet_block_headers",
+		DimensionFieldSpecs: []model.FieldSpec{
+			{
+				Name:     "number",
+				DataType: "LONG",
+				NotNull:  false,
+			},
+			{
+				Name:     "hash",
+				DataType: "STRING",
+				NotNull:  false,
+			},
+			{
+				Name:     "parent_hash",
+				DataType: "STRING",
+				NotNull:  false,
+			},
+			{
+				Name:     "test",
+				DataType: "STRING",
+				NotNull:  false,
+			},
+		},
+		MetricFieldSpecs: []model.FieldSpec{
+			{
+				Name:     "gas_used",
+				DataType: "LONG",
+				NotNull:  false,
+			},
+		},
+		DateTimeFieldSpecs: []model.FieldSpec{
+			{
+				Name:        "timestamp",
+				DataType:    "LONG",
+				NotNull:     false,
+				Format:      "1:MILLISECONDS:EPOCH",
+				Granularity: "1:MILLISECONDS",
+			},
+		},
+	}
+
+	fmt.Println("Updating Schema:")
+	updateSchemaBytes, err := json.Marshal(updateSchema)
+
+	updateResp, err := client.UpdateSchemaFromBytes(updateSchemaBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(updateResp.Status)
 
 	// delete schema
 
