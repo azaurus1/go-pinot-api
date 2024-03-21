@@ -335,10 +335,10 @@ func (c *PinotAPIClient) GetTable(tableName string) (*model.GetTableResponse, er
 
 // }
 
-func (c *PinotAPIClient) CreateTable(body []byte) (*model.UserActionResponse, error) {
-	var result model.UserActionResponse
+func (c *PinotAPIClient) CreateTable(body []byte) (*model.CreateTablesResponse, error) {
+	result := &model.CreateTablesResponse{}
 	err := c.CreateObject("/tables", body, result)
-	return &result, err
+	return result, err
 }
 
 func (c *PinotAPIClient) UpdateTable(tableName string, body []byte) (*model.UserActionResponse, error) {
@@ -355,7 +355,7 @@ func (c *PinotAPIClient) DeleteTable(tableName string) (*model.UserActionRespons
 	return &result, err
 }
 
-func (c *PinotAPIClient) CreateTableFromFile(tableConfigFile string) (*model.UserActionResponse, error) {
+func (c *PinotAPIClient) CreateTableFromFile(tableConfigFile string) (*model.CreateTablesResponse, error) {
 
 	f, err := os.Open(tableConfigFile)
 	if err != nil {

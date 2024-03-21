@@ -48,8 +48,8 @@ func main() {
 		pinot.Logger(logger))
 
 	// demoSchemaFunctionality(client)
-	demoSchemaFromBytesFunctionality(client)
-	// demoTableFunctionality(client)
+	// demoSchemaFromBytesFunctionality(client)
+	demoTableFunctionality(client)
 	// demoUserFunctionality(client)
 	// demoSegmentFunctionality(client)
 	// demoClusterFunctionality(client)
@@ -58,165 +58,223 @@ func main() {
 
 }
 
-// func demoTableFunctionality(client *pinot.PinotAPIClient) {
-// 	// Create Table
-// 	fmt.Println("Creating Table:")
+func demoTableFunctionality(client *pinot.PinotAPIClient) {
 
-// 	table := pinotModel.Table{
-// 		TableName: "ethereum_mainnet_block_headers",
-// 		TableType: "OFFLINE",
-// 		SegmentsConfig: pinotModel.TableSegmentsConfig{
-// 			TimeColumnName:            "timestamp",
-// 			TimeType:                  "MILLISECONDS",
-// 			Replication:               "1",
-// 			SegmentAssignmentStrategy: "BalanceNumSegmentAssignmentStrategy",
-// 			SegmentPushType:           "APPEND",
-// 			MinimizeDataMovement:      true,
-// 		},
-// 		Tenants: pinotModel.TableTenant{
-// 			Broker: "DefaultTenant",
-// 			Server: "DefaultTenant",
-// 		},
-// 		TableIndexConfig: pinotModel.TableIndexConfig{
-// 			LoadMode: "MMAP",
-// 		},
-// 		Metadata: pinotModel.TableMetadata{
-// 			CustomConfigs: map[string]string{
-// 				"customKey": "customValue",
-// 			},
-// 		},
-// 		FieldConfigList: []pinotModel.FieldConfig{
-// 			{
-// 				Name:         "number",
-// 				EncodingType: "RAW",
-// 				IndexType:    "SORTED",
-// 			},
-// 		},
-// 		IngestionConfig: pinotModel.TableIngestionConfig{
-// 			SegmentTimeValueCheck: true,
-// 			TransformConfigs: []pinotModel.TransformConfig{
-// 				{
-// 					ColumnName:        "timestamp",
-// 					TransformFunction: "fromEpochMilliseconds(timestamp)",
-// 				},
-// 			},
-// 			ContinueOnError:   true,
-// 			RowTimeValueCheck: true,
-// 		},
-// 		TierConfigs: []pinotModel.TierConfig{
-// 			{
-// 				Name:                "hotTier",
-// 				SegmentSelectorType: "time",
-// 				SegmentAge:          "3130d",
-// 				StorageType:         "pinot_server",
-// 				ServerTag:           "DefaultTenant_OFFLINE",
-// 			},
-// 		},
-// 		IsDimTable: false,
-// 	}
+	// Create Offline schema
+	schema := model.Schema{
+		SchemaName: "ethereum_mainnet_block_headers",
+		DimensionFieldSpecs: []model.FieldSpec{
+			{
+				Name:     "number",
+				DataType: "LONG",
+				NotNull:  false,
+			},
+			{
+				Name:     "hash",
+				DataType: "STRING",
+				NotNull:  false,
+			},
+			{
+				Name:     "parent_hash",
+				DataType: "STRING",
+				NotNull:  false,
+			},
+		},
+		MetricFieldSpecs: []model.FieldSpec{
+			{
+				Name:     "gas_used",
+				DataType: "LONG",
+				NotNull:  false,
+			},
+		},
+		DateTimeFieldSpecs: []model.FieldSpec{
+			{
+				Name:        "timestamp",
+				DataType:    "LONG",
+				NotNull:     false,
+				Format:      "1:MILLISECONDS:EPOCH",
+				Granularity: "1:MILLISECONDS",
+			},
+		},
+	}
 
-// 	tableBytes, err := json.Marshal(table)
-// 	if err != nil {
-// 		log.Panic(err)
-// 	}
+	schemaBytes, err := json.Marshal(schema)
+	if err != nil {
+		log.Panic(err)
+	}
 
-// 	fmt.Println(string(tableBytes))
+	createSchemaResp, err := client.CreateSchemaFromBytes(schemaBytes)
+	if err != nil {
+		log.Panic(err)
+	}
 
-// 	createTableResp, err := client.CreateTable(tableBytes)
-// 	if err != nil {
-// 		log.Panic(err)
-// 	}
+	fmt.Println(createSchemaResp.Status)
 
-// 	fmt.Println(createTableResp.Status)
+	// Create Table
+	fmt.Println("Creating Table:")
 
-// 	// Get Tables
-// 	tablesResp, err := client.GetTables()
-// 	if err != nil {
-// 		log.Panic(err)
-// 	}
+	table := pinotModel.Table{
+		TableName: "ethereum_mainnet_block_headers",
+		TableType: "OFFLINE",
+		SegmentsConfig: pinotModel.TableSegmentsConfig{
+			TimeColumnName:            "timestamp",
+			TimeType:                  "MILLISECONDS",
+			Replication:               "1",
+			SegmentAssignmentStrategy: "BalanceNumSegmentAssignmentStrategy",
+			SegmentPushType:           "APPEND",
+			MinimizeDataMovement:      true,
+		},
+		Tenants: pinotModel.TableTenant{
+			Broker: "DefaultTenant",
+			Server: "DefaultTenant",
+		},
+		TableIndexConfig: pinotModel.TableIndexConfig{
+			LoadMode: "MMAP",
+		},
+		Metadata: &pinotModel.TableMetadata{
+			CustomConfigs: map[string]string{
+				"customKey": "customValue",
+			},
+		},
+		FieldConfigList: []pinotModel.FieldConfig{
+			{
+				Name:         "number",
+				EncodingType: "RAW",
+				IndexType:    "SORTED",
+			},
+		},
+		IngestionConfig: &pinotModel.TableIngestionConfig{
+			SegmentTimeValueCheck: true,
+			TransformConfigs: []pinotModel.TransformConfig{
+				{
+					ColumnName:        "timestamp",
+					TransformFunction: "toEpochHours(millis)",
+				},
+			},
+			ContinueOnError:   true,
+			RowTimeValueCheck: true,
+		},
+		TierConfigs: []*pinotModel.TierConfig{
+			{
+				Name:                "hotTier",
+				SegmentSelectorType: "time",
+				SegmentAge:          "3130d",
+				StorageType:         "pinot_server",
+				ServerTag:           "DefaultTenant_OFFLINE",
+			},
+		},
+		IsDimTable: false,
+	}
 
-// 	fmt.Println("Reading Tables:")
+	tableBytes, err := json.Marshal(table)
+	if err != nil {
+		log.Panic(err)
+	}
 
-// 	// Get Table
-// 	_, err = client.GetTable(tablesResp.Tables[0])
-// 	if err != nil {
-// 		log.Panic(err)
-// 	}
+	fmt.Println(string(tableBytes))
 
-// 	// Update Table
-// 	updateTable := pinotModel.Table{
-// 		TableName: "ethereum_mainnet_block_headers",
-// 		TableType: "OFFLINE",
-// 		SegmentsConfig: pinotModel.TableSegmentsConfig{
-// 			TimeColumnName:            "timestamp",
-// 			TimeType:                  "MILLISECONDS",
-// 			Replication:               "1",
-// 			SegmentAssignmentStrategy: "BalanceNumSegmentAssignmentStrategy",
-// 			SegmentPushType:           "APPEND",
-// 			MinimizeDataMovement:      true,
-// 		},
-// 		Tenants: pinotModel.TableTenant{
-// 			Broker: "DefaultTenant",
-// 			Server: "DefaultTenant",
-// 		},
-// 		TableIndexConfig: pinotModel.TableIndexConfig{
-// 			LoadMode: "MMAP",
-// 		},
-// 		Metadata: pinotModel.TableMetadata{
-// 			CustomConfigs: map[string]string{
-// 				"customKey": "customValue",
-// 			},
-// 		},
-// 		FieldConfigList: []pinotModel.FieldConfig{
-// 			{
-// 				Name:         "number",
-// 				EncodingType: "RAW",
-// 				IndexType:    "SORTED",
-// 			},
-// 		},
-// 		IngestionConfig: pinotModel.TableIngestionConfig{
-// 			SegmentTimeValueCheck: true,
-// 			TransformConfigs: []pinotModel.TransformConfig{
-// 				{
-// 					ColumnName:        "timestamp",
-// 					TransformFunction: "fromEpochMilliseconds(timestamp)",
-// 				},
-// 			},
-// 			ContinueOnError:   true,
-// 			RowTimeValueCheck: true,
-// 		},
-// 		TierConfigs: []pinotModel.TierConfig{
-// 			{
-// 				Name:                "hotTier",
-// 				SegmentSelectorType: "time",
-// 				SegmentAge:          "3130d",
-// 				StorageType:         "pinot_server",
-// 				ServerTag:           "DefaultTenant_OFFLINE",
-// 			},
-// 		},
-// 		IsDimTable: false,
-// 	}
+	createTableResp, err := client.CreateTable(tableBytes)
+	if err != nil {
+		log.Panic(err)
+	}
 
-// 	updateTableBytes, err := json.Marshal(updateTable)
-// 	if err != nil {
-// 		log.Panic(err)
-// 	}
+	fmt.Println(createTableResp.Status)
 
-// 	updateTableResp, err := client.UpdateTable(updateTable.TableName, updateTableBytes)
-// 	if err != nil {
-// 		log.Panic(err)
-// 	}
+	// Get Tables
+	tablesResp, err := client.GetTables()
+	if err != nil {
+		log.Panic(err)
+	}
 
-// 	fmt.Println(updateTableResp.Status)
+	// Get Table
+	for _, info := range tablesResp.Tables {
+		if info == table.TableName {
+			fmt.Println("Reading Table:", info)
+		}
+	}
 
-// 	// Delete Table
-// 	//deleteTableResp, err := client.DeleteTable(table.TableName)
-// 	//if err != nil {
-// 	//	log.Panic(err)
-// 	//}
-// 	//
-// 	//fmt.Println(deleteTableResp.Status)
-// }
+	// Update Table
+	updateTable := pinotModel.Table{
+		TableName: "ethereum_mainnet_block_headers",
+		TableType: "OFFLINE",
+		SegmentsConfig: pinotModel.TableSegmentsConfig{
+			TimeColumnName:            "timestamp",
+			TimeType:                  "MILLISECONDS",
+			Replication:               "1",
+			SegmentAssignmentStrategy: "BalanceNumSegmentAssignmentStrategy",
+			SegmentPushType:           "APPEND",
+			MinimizeDataMovement:      true,
+		},
+		Tenants: pinotModel.TableTenant{
+			Broker: "DefaultTenant",
+			Server: "DefaultTenant",
+		},
+		TableIndexConfig: pinotModel.TableIndexConfig{
+			LoadMode: "MMAP",
+		},
+		Metadata: &pinotModel.TableMetadata{
+			CustomConfigs: map[string]string{
+				"customKey": "customValue",
+			},
+		},
+		FieldConfigList: []pinotModel.FieldConfig{
+			{
+				Name:         "number",
+				EncodingType: "RAW",
+				IndexType:    "SORTED",
+			},
+		},
+		IngestionConfig: &pinotModel.TableIngestionConfig{
+			SegmentTimeValueCheck: true,
+			TransformConfigs: []pinotModel.TransformConfig{
+				{
+					ColumnName:        "timestamp",
+					TransformFunction: "toEpochHours(millis)",
+				},
+			},
+			ContinueOnError:   true,
+			RowTimeValueCheck: true,
+		},
+		TierConfigs: []*pinotModel.TierConfig{
+			{
+				Name:                "hotTier",
+				SegmentSelectorType: "time",
+				SegmentAge:          "3130d",
+				StorageType:         "pinot_server",
+				ServerTag:           "DefaultTenant_OFFLINE",
+			},
+		},
+		IsDimTable: false,
+	}
+
+	updateTableBytes, err := json.Marshal(updateTable)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	updateTableResp, err := client.UpdateTable(updateTable.TableName, updateTableBytes)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(updateTableResp.Status)
+
+	// Delete Table
+	deleteTableResp, err := client.DeleteTable(table.TableName)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(deleteTableResp.Status)
+
+	// Delete Schema
+	deleteSchemaResp, err := client.DeleteSchema(schema.SchemaName)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(deleteSchemaResp.Status)
+}
 
 func demoSchemaFromBytesFunctionality(client *pinot.PinotAPIClient) {
 
