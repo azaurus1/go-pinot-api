@@ -1526,3 +1526,25 @@ func TestDeleteTable(t *testing.T) {
 
 	assert.Equal(t, res.Status, "Tables: [test_OFFLINE] deleted", "Expected response to be Tables: [test_OFFLINE] deleted")
 }
+
+func TestGetEmptyTable(t *testing.T) {
+	// server := createMockControllerServer()
+	// client := createPinotClient(server)
+
+	emptyTable := model.Table{}
+
+	assert.Equal(t, true, emptyTable.IsEmpty(), "Expected table to be empty")
+
+}
+
+func TestGetNonEmptyTable(t *testing.T) {
+	// server := createMockControllerServer()
+	// client := createPinotClient(server)
+
+	table := model.Table{
+		TableName: "test",
+	}
+
+	assert.Equal(t, false, table.IsEmpty(), "Expected table to not be empty")
+
+}

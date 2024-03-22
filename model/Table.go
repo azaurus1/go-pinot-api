@@ -167,3 +167,8 @@ type Table struct {
 	UpsertConfig     *UpsertConfig         `json:"upsertConfig,omitempty"`
 	DedupConfig      *DedupConfig          `json:"dedupConfig,omitempty"`
 }
+
+func (t *Table) IsEmpty() bool {
+
+	return t.TableName == "" && t.TableType == "" && t.SegmentsConfig.TimeType == "" && t.Tenants.Broker == "" && t.Tenants.Server == "" && t.TableIndexConfig.LoadMode == "" && t.TableIndexConfig.ColumnMinMaxValueGeneratorMode == "" && t.TableIndexConfig.NoDictionarySizeRatioThreshold == 0 && t.TableIndexConfig.SegmentNameGeneratorType == "" && t.TableIndexConfig.OptimizeDictionary == false && t.TableIndexConfig.OptimizeDictionaryForMetrics == false && t.TableIndexConfig.NoDictionaryColumns == nil && t.TableIndexConfig.OnHeapDictionaryColumns == nil && t.TableIndexConfig.VarLengthDictionaryColumns == nil && t.TableIndexConfig.BloomFilterColumns == nil && t.TableIndexConfig.RangeIndexVersion == 0 && t.TableIndexConfig.CreateInvertedIndexDuringSegmentGeneration == false && t.TableIndexConfig.SortedColumn == nil && t.TableIndexConfig.StarTreeIndexConfigs == nil && t.TableIndexConfig.EnableDefaultStarTree == false && t.TableIndexConfig.EnableDynamicStarTreeCreation == false && t.TableIndexConfig.AggregateMetrics == false && t.TableIndexConfig.RangeIndexColumns == nil && t.TableIndexConfig.InvertedIndexColumns == nil && t.TableIndexConfig.SegmentPartitionConfig == nil && t.Metadata == nil && t.FieldConfigList == nil && t.IngestionConfig == nil && t.TierConfigs == nil && t.IsDimTable == false && t.Query == nil && t.Routing == nil && t.Quota == nil && t.UpsertConfig == nil && t.DedupConfig == nil
+}
