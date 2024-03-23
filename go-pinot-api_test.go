@@ -28,8 +28,10 @@ const (
 	RouteTenantsTables        = "/tenants/DefaultTenant/tables"
 	RouteTenantsMetadata      = "/tenants/DefaultTenant/metadata"
 	RouteSegmentsTest         = "/segments/test"
+	RouteSegmentsTableSegment = "/segments/test/test_1"
 	RouteSegmentsTestReload   = "/segments/test/reload"
 	RouteSegmentTestReload    = "/segments/test/test_1/reload"
+	RouteSegmentsTestMetadata = "/segments/test/test_1/metadata"
 	RouteV2Segments           = "/v2/segments"
 	RouteSchemas              = "/schemas"
 	RouteSchemasTest          = "/schemas/test"
@@ -151,6 +153,29 @@ func handleReloadTableSegments(w http.ResponseWriter, r *http.Request) {
 
 func handleReloadTableSegment(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `{"status": "Submitted reload job id: ce4650a9-774a-4b22-919b-4cb22b5c8129, sent 1 reload messages. Job meta ZK storage status: SUCCESS"}`)
+}
+
+func handleGetSegmentMetadata(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"segment.start.time": "1388620800000",
+		"segment.time.unit": "MILLISECONDS",
+		"segment.size.in.bytes": "52924",
+		"segment.end.time": "1388620800000",
+		"segment.total.docs": "403",
+		"segment.creation.time": "1711233738911",
+		"segment.push.time": "1711233740913",
+		"segment.end.time.raw": "16072",
+		"segment.tier": "coldTier",
+		"segment.start.time.raw": "16072",
+		"segment.index.version": "v3",
+		"custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/02/test_data_2014-01-02.avro\"}",
+		"segment.crc": "3986423949",
+		"segment.download.url": "http://172.17.0.3:9000/segments/test/test_1"
+	  }`)
+}
+
+func handleDeleteSegment(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{"status": "Segment deleted"}`)
 }
 
 func handleGetSchemas(w http.ResponseWriter, r *http.Request) {
@@ -643,6 +668,24 @@ func createMockControllerServer() *httptest.Server {
 		}
 	}))
 
+	mux.HandleFunc(RouteSegmentsTestMetadata, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetSegmentMetadata(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.Handle(RouteSegmentsTableSegment, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "DELETE":
+			handleDeleteSegment(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
 	mux.HandleFunc(RouteSchemas, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
@@ -1077,7 +1120,7 @@ func TestDeleteTenant(t *testing.T) {
 // TestRebalanceTenant
 
 // TestSegments
-func TestSegments(t *testing.T) {
+func TestGetSegments(t *testing.T) {
 	server := createMockControllerServer()
 	client := createPinotClient(server)
 
@@ -1088,6 +1131,32 @@ func TestSegments(t *testing.T) {
 
 	assert.Equal(t, len(res[0].Offline), 1, "Expected 1 offline segment in the response")
 	assert.Equal(t, len(res[0].Realtime), 1, "Expected 1 realtime segment in the response")
+}
+
+// TestGetSegmentMetadata
+func TestGetSegmentMetadata(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetSegmentMetadata("test", "test_1")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.SegmentStartTime, "1388620800000", "Expected segment start time to be 1388620800000")
+}
+
+// TestDeleteSegment
+func TestDeleteSegment(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.DeleteSegment("test", "test_1")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "Segment deleted", "Expected response to be Segment deleted")
 }
 
 // TestReloadTableSegments
