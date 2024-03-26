@@ -1548,3 +1548,138 @@ func TestGetNonEmptyTable(t *testing.T) {
 	assert.Equal(t, false, table.IsEmpty(), "Expected table to not be empty")
 
 }
+
+func TestEmptyAuthType(t *testing.T) {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc(RouteClusterInfo, func(w http.ResponseWriter, r *http.Request) {
+		// Check the Authorization header
+		authHeader := r.Header.Get("Authorization")
+		assert.Equal(t, authHeader, "Basic your_token", "Expected Authorization header to be 'Basic your_token'")
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, `{"clusterName": "PinotCluster"}`)
+	})
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	// Create a new client
+	client := goPinotAPI.NewPinotAPIClient(
+		goPinotAPI.AuthType(""),
+		goPinotAPI.ControllerUrl(server.URL),
+		goPinotAPI.AuthToken("your_token"),
+	)
+
+	// Make a request (replace this with an actual API call)
+	_, err := client.GetClusterInfo()
+	assert.NoError(t, err, "Expected no error from client.Get")
+}
+
+func TestBasicAuthType(t *testing.T) {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc(RouteClusterInfo, func(w http.ResponseWriter, r *http.Request) {
+		// Check the Authorization header
+		authHeader := r.Header.Get("Authorization")
+		assert.Equal(t, authHeader, "Basic your_token", "Expected Authorization header to be 'Basic your_token'")
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, `{"clusterName": "PinotCluster"}`)
+	})
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	// Create a new client
+	client := goPinotAPI.NewPinotAPIClient(
+		goPinotAPI.AuthType("Basic"),
+		goPinotAPI.ControllerUrl(server.URL),
+		goPinotAPI.AuthToken("your_token"),
+	)
+
+	// Make a request (replace this with an actual API call)
+	_, err := client.GetClusterInfo()
+	assert.NoError(t, err, "Expected no error from client.Get")
+}
+
+func TestBearerAuthType(t *testing.T) {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc(RouteClusterInfo, func(w http.ResponseWriter, r *http.Request) {
+		// Check the Authorization header
+		authHeader := r.Header.Get("Authorization")
+		assert.Equal(t, authHeader, "Bearer your_token", "Expected Authorization header to be 'Bearer your_token'")
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, `{"clusterName": "PinotCluster"}`)
+	})
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	// Create a new client
+	client := goPinotAPI.NewPinotAPIClient(
+		goPinotAPI.AuthType("Bearer"),
+		goPinotAPI.ControllerUrl(server.URL),
+		goPinotAPI.AuthToken("your_token"),
+	)
+
+	// Make a request (replace this with an actual API call)
+	_, err := client.GetClusterInfo()
+	assert.NoError(t, err, "Expected no error from client.Get")
+}
+
+func TestNoAuthType(t *testing.T) {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc(RouteClusterInfo, func(w http.ResponseWriter, r *http.Request) {
+		// Check the Authorization header
+		authHeader := r.Header.Get("Authorization")
+		assert.Equal(t, authHeader, "Basic your_token", "Expected Authorization header to be 'Basic your_token'")
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, `{"clusterName": "PinotCluster"}`)
+	})
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	// Create a new client
+	client := goPinotAPI.NewPinotAPIClient(
+		goPinotAPI.ControllerUrl(server.URL),
+		goPinotAPI.AuthToken("your_token"),
+	)
+
+	// Make a request (replace this with an actual API call)
+	_, err := client.GetClusterInfo()
+	assert.NoError(t, err, "Expected no error from client.Get")
+}
+
+func TestMultipleAuthTypes(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			t.Logf("The code panicked with %v", r)
+		}
+	}()
+	mux := http.NewServeMux()
+
+	mux.HandleFunc(RouteClusterInfo, func(w http.ResponseWriter, r *http.Request) {
+		// Check the Authorization header
+		authHeader := r.Header.Get("Authorization")
+		assert.Equal(t, authHeader, "Basic your_token", "Expected Authorization header to be 'Basic your_token'")
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, `{"clusterName": "PinotCluster"}`)
+	})
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	// Create a new client
+	client := goPinotAPI.NewPinotAPIClient(
+		goPinotAPI.AuthType("Bearer"),
+		goPinotAPI.AuthType("Basic"),
+		goPinotAPI.ControllerUrl(server.URL),
+		goPinotAPI.AuthToken("your_token"),
+	)
+
+	// Make a request (replace this with an actual API call)
+	_, err := client.GetClusterInfo()
+	assert.Error(t, err, "Expected error from client.Get")
+}
