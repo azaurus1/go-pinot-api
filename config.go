@@ -6,8 +6,12 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"reflect"
 )
+
+const controllerUrl = "controllerUrl"
+const authToken = "authToken"
+const authType = "authType"
+const logger = "logger"
 
 type Opt interface {
 	apply(*cfg)
@@ -34,7 +38,7 @@ func (o *controllerUrlOpt) apply(c *cfg) {
 }
 
 func (o *controllerUrlOpt) Type() string {
-	return "controllerUrl"
+	return controllerUrl
 }
 
 // authTokenOpt is an option to set the auth token for the client
@@ -47,7 +51,7 @@ func (o *authTokenOpt) apply(c *cfg) {
 }
 
 func (o *authTokenOpt) Type() string {
-	return "authToken"
+	return authToken
 }
 
 // authTypeOpt is an option to set the auth type for the client
@@ -60,7 +64,7 @@ func (o *authTypeOpt) apply(c *cfg) {
 }
 
 func (o *authTypeOpt) Type() string {
-	return "authType"
+	return authType
 }
 
 // loggerOpt is an option to set the logger for the client
@@ -73,7 +77,7 @@ func (o *loggerOpt) apply(c *cfg) {
 }
 
 func (o *loggerOpt) Type() string {
-	return "logger"
+	return logger
 }
 
 func (opt clientOpt) apply(cfg *cfg) { opt.fn(cfg) }
@@ -100,13 +104,25 @@ func validateOpts(opts ...Opt) (*cfg, *url.URL, error) {
 	optCfg := defaultCfg()
 	optCounts := make(map[string]int)
 	for _, opt := range opts {
-		optType := reflect.TypeOf(opt).Elem().Name()
-		optCounts[optType]++
-		opt.apply(optCfg)
-	}
 
-	if optCounts["authTypeOpt"] > 1 {
-		return nil, nil, fmt.Errorf("multiple auth types provided")
+		switch opt.(type) {
+		case *authTypeOpt:
+			optCounts[authType]++
+		case *authTokenOpt:
+			optCounts[authToken]++
+		case *controllerUrlOpt:
+			optCounts[controllerUrl]++
+		case *loggerOpt:
+			optCounts[logger]++
+		default:
+			optCounts[opt.Type()]++
+		}
+
+		opt.apply(optCfg)
+
+		if optCounts[authType] > 1 {
+			return nil, nil, fmt.Errorf("multiple auth types provided")
+		}
 	}
 
 	// validate controller url
