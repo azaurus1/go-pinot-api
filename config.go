@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 )
 
 const controllerUrl = "controllerUrl"
@@ -137,8 +138,8 @@ func validateOpts(opts ...Opt) (*cfg, *url.URL, error) {
 	}
 	// if auth token passed, handle authenticated requests
 	if optCfg.authToken != "" {
-		switch optCfg.authType {
-		case "Bearer":
+		switch strings.ToLower(optCfg.authType) {
+		case "bearer":
 			optCfg.httpAuthWriter = func(req *http.Request) {
 				req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", optCfg.authToken))
 			}
@@ -146,6 +147,7 @@ func validateOpts(opts ...Opt) (*cfg, *url.URL, error) {
 			optCfg.httpAuthWriter = func(req *http.Request) {
 				req.Header.Set("Authorization", fmt.Sprintf("Basic %s", optCfg.authToken))
 			}
+			fmt.Println("auth type not supported, defaulting to basic auth")
 		}
 	}
 
