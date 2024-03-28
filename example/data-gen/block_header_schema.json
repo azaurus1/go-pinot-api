@@ -16,6 +16,12 @@
       "name": "parent_hash",
       "dataType": "STRING",
       "notNull": false
+    },
+    {
+      "name": "tags",
+      "dataType": "STRING",
+      "notNull": false,
+      "singleValueField": false
     }
   ],
   "metricFieldSpecs": [

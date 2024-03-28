@@ -725,6 +725,10 @@ func getSchema() model.Schema {
 	return schema
 }
 
+func boolPtr(b bool) *bool {
+	return &b
+}
+
 // TestFetchData
 // func TestFetchData(t *testing.T) {
 
@@ -1167,6 +1171,11 @@ func TestCreateSchema(t *testing.T) {
 				Name:     "test",
 				DataType: "STRING",
 			},
+			{
+				Name:             "multiValuedField",
+				DataType:         "STRING",
+				SingleValueField: boolPtr(false),
+			},
 		},
 		MetricFieldSpecs: []model.FieldSpec{
 			{
@@ -1338,31 +1347,36 @@ func TestCreateTable(t *testing.T) {
 			{
 				Name:     "number",
 				DataType: "LONG",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 			{
 				Name:     "hash",
 				DataType: "STRING",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 			{
 				Name:     "parent_hash",
 				DataType: "STRING",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
+			},
+			{
+				Name:             "tags",
+				DataType:         "STRING",
+				SingleValueField: boolPtr(false),
 			},
 		},
 		MetricFieldSpecs: []model.FieldSpec{
 			{
 				Name:     "gas_used",
 				DataType: "LONG",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 		},
 		DateTimeFieldSpecs: []model.FieldSpec{
 			{
 				Name:        "timestamp",
 				DataType:    "LONG",
-				NotNull:     false,
+				NotNull:     boolPtr(false),
 				Format:      "1:MILLISECONDS:EPOCH",
 				Granularity: "1:MILLISECONDS",
 			},
