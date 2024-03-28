@@ -58,6 +58,10 @@ func main() {
 
 }
 
+func boolPtr(b bool) *bool {
+	return &b
+}
+
 func demoTableFunctionality(client *pinot.PinotAPIClient) {
 
 	// Create Offline schema
@@ -67,31 +71,37 @@ func demoTableFunctionality(client *pinot.PinotAPIClient) {
 			{
 				Name:     "number",
 				DataType: "LONG",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 			{
 				Name:     "hash",
 				DataType: "STRING",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 			{
 				Name:     "parent_hash",
 				DataType: "STRING",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
+			},
+			{
+				Name:             "tags",
+				DataType:         "STRING",
+				NotNull:          boolPtr(false),
+				SingleValueField: boolPtr(false),
 			},
 		},
 		MetricFieldSpecs: []model.FieldSpec{
 			{
 				Name:     "gas_used",
 				DataType: "LONG",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 		},
 		DateTimeFieldSpecs: []model.FieldSpec{
 			{
 				Name:        "timestamp",
 				DataType:    "LONG",
-				NotNull:     false,
+				NotNull:     boolPtr(false),
 				Format:      "1:MILLISECONDS:EPOCH",
 				Granularity: "1:MILLISECONDS",
 			},
@@ -284,31 +294,37 @@ func demoSchemaFromBytesFunctionality(client *pinot.PinotAPIClient) {
 			{
 				Name:     "number",
 				DataType: "LONG",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 			{
 				Name:     "hash",
 				DataType: "STRING",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 			{
 				Name:     "parent_hash",
 				DataType: "STRING",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
+			},
+			{
+				Name:             "tags",
+				DataType:         "STRING",
+				NotNull:          boolPtr(false),
+				SingleValueField: boolPtr(false),
 			},
 		},
 		MetricFieldSpecs: []model.FieldSpec{
 			{
 				Name:     "gas_used",
 				DataType: "LONG",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 		},
 		DateTimeFieldSpecs: []model.FieldSpec{
 			{
 				Name:        "timestamp",
 				DataType:    "LONG",
-				NotNull:     false,
+				NotNull:     boolPtr(false),
 				Format:      "1:MILLISECONDS:EPOCH",
 				Granularity: "1:MILLISECONDS",
 			},
@@ -351,36 +367,42 @@ func demoSchemaFromBytesFunctionality(client *pinot.PinotAPIClient) {
 			{
 				Name:     "number",
 				DataType: "LONG",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 			{
 				Name:     "hash",
 				DataType: "STRING",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 			{
 				Name:     "parent_hash",
 				DataType: "STRING",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
+			},
+			{
+				Name:             "tags",
+				DataType:         "STRING",
+				NotNull:          boolPtr(false),
+				SingleValueField: boolPtr(false),
 			},
 			{
 				Name:     "test",
 				DataType: "STRING",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 		},
 		MetricFieldSpecs: []model.FieldSpec{
 			{
 				Name:     "gas_used",
 				DataType: "LONG",
-				NotNull:  false,
+				NotNull:  boolPtr(false),
 			},
 		},
 		DateTimeFieldSpecs: []model.FieldSpec{
 			{
 				Name:        "timestamp",
 				DataType:    "LONG",
-				NotNull:     false,
+				NotNull:     boolPtr(false),
 				Format:      "1:MILLISECONDS:EPOCH",
 				Granularity: "1:MILLISECONDS",
 			},
