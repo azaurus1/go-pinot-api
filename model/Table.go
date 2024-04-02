@@ -116,8 +116,18 @@ type QuotaConfig struct {
 
 type UpsertConfig struct {
 	Mode                    string            `json:"mode"`
-	PartialUpsertStrategies map[string]string `json:"partialUpsertStrategies"`
-	ComparisonColumns       string            `json:"comparisonColumn"`
+	PartialUpsertStrategies map[string]string `json:"partialUpsertStrategies,omitempty"`
+	ComparisonColumns       string            `json:"comparisonColumn,omitempty"`
+	DeleteRecordColumn      string            `json:"deleteRecordColumn,omitempty"`
+	DeletedKeysTTL          int               `json:"deletedKeysTTL,omitempty"`
+	HashFunction            string            `json:"hashFunction,omitempty"`
+	EnableSnapshot          *bool             `json:"enableSnapshot,omitempty"`
+	EnablePreLoad           *bool             `json:"enablePreLoad,omitempty"`
+	UpsertTTL               string            `json:"upsertTTL,omitempty"`
+	DropOutOfOrderRecords   *bool             `json:"dropOutOfOrderRecords,omitempty"`
+	OutOfOrderRecordColumn  string            `json:"outOfOrderRecordColumn,omitempty"`
+	MetadataManagerClass    string            `json:"metadataManagerClass,omitempty"`
+	MetadataManagerConfigs  map[string]string `json:"metadataManagerConfigs,omitempty"`
 }
 
 type DedupConfig struct {
