@@ -49,7 +49,8 @@ func main() {
 
 	// demoSchemaFunctionality(client)
 	// demoSchemaFromBytesFunctionality(client)
-	demoTableFunctionality(client)
+	// demoTableFunctionality(client)
+	demoGetTableFunctionality(client)
 	// demoUserFunctionality(client)
 	// demoSegmentFunctionality(client)
 	// demoClusterFunctionality(client)
@@ -284,6 +285,18 @@ func demoTableFunctionality(client *pinot.PinotAPIClient) {
 	}
 
 	fmt.Println(deleteSchemaResp.Status)
+}
+
+func demoGetTableFunctionality(client *pinot.PinotAPIClient) {
+
+	tableResp, err := client.GetTable("realtime_ethereum_mainnet_block_headers")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table:")
+	fmt.Println(tableResp.REALTIME.TableName)
+
 }
 
 func demoSchemaFromBytesFunctionality(client *pinot.PinotAPIClient) {
