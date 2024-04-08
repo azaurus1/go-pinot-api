@@ -119,7 +119,8 @@ type UpsertConfig struct {
 	PartialUpsertStrategies map[string]string `json:"partialUpsertStrategies,omitempty"`
 	ComparisonColumns       string            `json:"comparisonColumn,omitempty"`
 	DeleteRecordColumn      string            `json:"deleteRecordColumn,omitempty"`
-	DeletedKeysTTL          int               `json:"deletedKeysTTL,omitempty"`
+	DeletedKeysTTL          float64           `json:"deletedKeysTTL,omitempty"`
+	MetadataTTL             float64           `json:"metadataTTL,omitempty"`
 	HashFunction            string            `json:"hashFunction,omitempty"`
 	EnableSnapshot          *bool             `json:"enableSnapshot,omitempty"`
 	EnablePreLoad           *bool             `json:"enablePreLoad,omitempty"`
