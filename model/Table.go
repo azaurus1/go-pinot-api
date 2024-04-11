@@ -141,9 +141,14 @@ type TransformConfig struct {
 	TransformFunction string `json:"transformFunction"`
 }
 
+type FilterConfig struct {
+	FilterFunction string `json:"filterFunction"`
+}
+
 type TableIngestionConfig struct {
 	SegmentTimeValueCheck bool                   `json:"segmentTimeValueCheck,omitempty"`
 	TransformConfigs      []TransformConfig      `json:"transformConfigs,omitempty"`
+	FilterConfig          *FilterConfig          `json:"filterConfig,omitempty"`
 	ContinueOnError       bool                   `json:"continueOnError,omitempty"`
 	RowTimeValueCheck     bool                   `json:"rowTimeValueCheck,omitempty"`
 	StreamIngestionConfig *StreamIngestionConfig `json:"streamIngestionConfig,omitempty"`
