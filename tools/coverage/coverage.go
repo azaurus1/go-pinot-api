@@ -11,6 +11,8 @@ import (
 	"github.com/go-openapi/spec"
 )
 
+var coveredPaths map[string]bool = make(map[string]bool)
+
 func iteratePathsAndCalculate(swagger *spec.Swagger, f []byte) float64 {
 	// Convert the file content to a string
 	fileContent := string(f)
@@ -27,8 +29,10 @@ func iteratePathsAndCalculate(swagger *spec.Swagger, f []byte) float64 {
 		// Check if the file content contains the path
 		if strings.Contains(fileContent, path) {
 			foundPathCount++
+			coveredPaths[path] = true
 		} else {
 			// fmt.Printf("Path not found in go-pinot-api.go: %s\n", path)
+			coveredPaths[path] = false
 		}
 	}
 
@@ -68,6 +72,24 @@ func writeToCoverageFile(coverage float64) {
 
 }
 
+func writeCoverageMapToFile() {
+	filePath := filepath.Join(".", "coverageMap.txt")
+
+	f, err := os.Create(filePath)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	for k, v := range coveredPaths {
+		_, err = f.WriteString(fmt.Sprintf("%s: %t\n", k, v))
+		if err != nil {
+			panic(err)
+		}
+	}
+
+}
+
 func main() {
 	filePath := filepath.Join(".", "swagger.json")
 
@@ -82,5 +104,7 @@ func main() {
 	coverage := iteratePathsAndCalculate(swagger, f)
 
 	writeToCoverageFile(coverage)
+
+	writeCoverageMapToFile()
 
 }
