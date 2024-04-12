@@ -40,6 +40,8 @@ const (
 	RouteTablesTestIdealState   = "/tables/test/idealstate"
 	RouteTablesTestIndexes      = "/tables/test/indexes"
 	RouteTablesTestInstances    = "/tables/test/instances"
+	RouteTablesLiveBrokers      = "/tables/livebrokers"
+	RouteTablesTestLiveBrokers  = "/tables/test/livebrokers"
 	RoutePinotControllerAdmin   = "/pinot-controller/admin"
 	RouteHealth                 = "/health"
 )
@@ -1850,6 +1852,73 @@ func handleGetTableInstances(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleGetTableLiveBrokers(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"test_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"baseballStats_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"dimBaseballTeams_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"fineFoodReviews_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"starbucksStores_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"githubEvents_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"billing_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"githubComplexTypeEvents_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		]
+	  }`)
+}
+
+func handleGetTableTestLiveBrokers(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `[
+		"Broker_172.17.0.3_8000"
+	  ]`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -2102,6 +2171,24 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetTableInstances(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesLiveBrokers, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableLiveBrokers(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestLiveBrokers, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableTestLiveBrokers(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -3199,4 +3286,37 @@ func TestGetTableInstances(t *testing.T) {
 
 	assert.Equal(t, res.Brokers[0].TableType, "offline", "Expected broker_0 tableType to be offline")
 	assert.Equal(t, res.Brokers[0].Instances[0], "Broker_172.17.0.3_8000", "Expected broker_0 instance_0 to be Broker_172.17.0.3_8000")
+}
+
+func TestGetTableLiveBrokers(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetAllTableLiveBrokers()
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+	brokers, ok := (*res)["test_OFFLINE"]
+	if !ok {
+		fmt.Println("No brokers found for test_OFFLINE")
+	} else {
+		for _, broker := range brokers {
+			fmt.Printf("InstanceName: %s\n", broker.InstanceName)
+			assert.Equal(t, broker.InstanceName, "Broker_172.17.0.3_8000", "Expected test broker_0 to be Broker_172.17.0.3_8000")
+		}
+	}
+
+}
+
+func TestGetTableTestLiveBrokers(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableLiveBrokers("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, (*res)[0], "Broker_172.17.0.3_8000", "Expected test broker_0 to be Broker_172.17.0.3_8000")
+
 }

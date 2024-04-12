@@ -61,7 +61,9 @@ func main() {
 	// demoTableExternalViewFunctionality(client)
 	// demoTableIdealStateFunctionality(client)
 	// demoTableIndexesFunctionality(client)
-	demoTableInstancesFunctionality(client)
+	// demoTableInstancesFunctionality(client)
+	demoTableLiveBrokersFunctionality(client)
+	demoAllLiveBrokersFunctionality(client)
 
 }
 
@@ -1042,6 +1044,32 @@ func demoTableInstancesFunctionality(client *pinot.PinotAPIClient) {
 			fmt.Println(instance)
 		}
 	}
+
+}
+
+func demoTableLiveBrokersFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Table Live Brokers
+	tableLiveBrokersResp, err := client.GetTableLiveBrokers("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Live Brokers:")
+	fmt.Println(tableLiveBrokersResp)
+
+}
+
+func demoAllLiveBrokersFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get All Live Brokers
+	allLiveBrokersResp, err := client.GetAllTableLiveBrokers()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading All Live Brokers:")
+	fmt.Println((*allLiveBrokersResp)["airlineStats_OFFLINE"])
 
 }
 
