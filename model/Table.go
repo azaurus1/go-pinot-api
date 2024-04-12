@@ -115,20 +115,20 @@ type QuotaConfig struct {
 }
 
 type UpsertConfig struct {
-	Mode                    string            `json:"mode"`
-	PartialUpsertStrategies map[string]string `json:"partialUpsertStrategies,omitempty"`
-	ComparisonColumns       string            `json:"comparisonColumn,omitempty"`
-	DeleteRecordColumn      string            `json:"deleteRecordColumn,omitempty"`
-	DeletedKeysTTL          float64           `json:"deletedKeysTTL,omitempty"`
-	MetadataTTL             float64           `json:"metadataTTL,omitempty"`
-	HashFunction            string            `json:"hashFunction,omitempty"`
-	EnableSnapshot          *bool             `json:"enableSnapshot,omitempty"`
-	EnablePreLoad           *bool             `json:"enablePreLoad,omitempty"`
-	UpsertTTL               string            `json:"upsertTTL,omitempty"`
-	DropOutOfOrderRecords   *bool             `json:"dropOutOfOrderRecords,omitempty"`
-	OutOfOrderRecordColumn  string            `json:"outOfOrderRecordColumn,omitempty"`
-	MetadataManagerClass    string            `json:"metadataManagerClass,omitempty"`
-	MetadataManagerConfigs  map[string]string `json:"metadataManagerConfigs,omitempty"`
+	Mode                         string            `json:"mode"`
+	PartialUpsertStrategies      map[string]string `json:"partialUpsertStrategies,omitempty"`
+	DefaultPartialUpsertStrategy string            `json:"defaultPartialUpsertStrategy,omitempty"`
+	ComparisonColumns            string            `json:"comparisonColumn,omitempty"`
+	DeleteRecordColumn           string            `json:"deleteRecordColumn,omitempty"`
+	DeletedKeysTTL               float64           `json:"deletedKeysTTL,omitempty"`
+	HashFunction                 string            `json:"hashFunction,omitempty"`
+	EnableSnapshot               *bool             `json:"enableSnapshot,omitempty"`
+	EnablePreLoad                *bool             `json:"enablePreLoad,omitempty"`
+	UpsertTTL                    string            `json:"upsertTTL,omitempty"`
+	DropOutOfOrderRecord         *bool             `json:"dropOutOfOrderRecord,omitempty"`
+	OutOfOrderRecordColumn       string            `json:"outOfOrderRecordColumn,omitempty"`
+	MetadataManagerClass         string            `json:"metadataManagerClass,omitempty"`
+	MetadataManagerConfigs       map[string]string `json:"metadataManagerConfigs,omitempty"`
 }
 
 type DedupConfig struct {
