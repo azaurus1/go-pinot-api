@@ -72,7 +72,8 @@ func main() {
 	// demoChangeTableState(client)
 	// demoGetTableStats(client)
 	// demoResetTableSegments(client)
-	demoResetTableSegment(client)
+	// demoResetTableSegment(client)
+	demoGetSegmentTiers(client)
 
 }
 
@@ -1204,6 +1205,18 @@ func demoResetTableSegment(client *pinot.PinotAPIClient) {
 
 	fmt.Println("Reloading airlineStats Table Segment:")
 	fmt.Println(reloadTableSegmentResp.Status)
+
+}
+
+func demoGetSegmentTiers(client *pinot.PinotAPIClient) {
+
+	segmentTiersResp, err := client.GetSegmentTiers("airlineStats", "OFFLINE")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Segment Tiers:")
+	fmt.Println(segmentTiersResp.SegmentTiers)
 
 }
 

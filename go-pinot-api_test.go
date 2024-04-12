@@ -32,6 +32,7 @@ const (
 	RouteSegmentTestReload                            = "/segments/test/test_1/reload"
 	RouteSegmentTestResetAll                          = "/segments/test_OFFLINE/reset"
 	RouteSegmentTestReset                             = "/segments/test_OFFLINE/test_OFFLINE_16071_16071_0/reset"
+	RouteSegmentTestTiers                             = "/segments/test/tiers"
 	RouteV2Segments                                   = "/v2/segments"
 	RouteSchemas                                      = "/schemas"
 	RouteSchemasTest                                  = "/schemas/test"
@@ -2769,6 +2770,138 @@ func handleResetTableSegments(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleGetSegmentTiers(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"segmentTiers": {
+		  "test_OFFLINE_16071_16071_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16072_16072_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16074_16074_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16081_16081_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16073_16073_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16083_16083_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16082_16082_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16077_16077_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16076_16076_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16085_16085_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16092_16092_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16093_16093_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16075_16075_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16084_16084_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16089_16089_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16101_16101_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16096_16096_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16088_16088_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16094_16094_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16091_16091_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16086_16086_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16087_16087_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16090_16090_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16095_16095_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16078_16078_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16079_16079_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16080_16080_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16099_16099_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16098_16098_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16100_16100_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  },
+		  "test_OFFLINE_16097_16097_0": {
+			"Server_172.17.0.3_7050": null,
+			"targetTier": "coldTier"
+		  }
+		},
+		"tableName": "test_OFFLINE"
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -3113,6 +3246,15 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "POST":
 			handleResetTableSegments(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteSegmentTestTiers, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetSegmentTiers(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -4351,4 +4493,16 @@ func TestResetAllTableSegments(t *testing.T) {
 	}
 
 	assert.Equal(t, res.Status, "Successfully reset segments of table: test_OFFLINE", "Expected response to be Successfully reset segments of table: test_OFFLINE")
+}
+
+func TestGetSegmentTiers(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetSegmentTiers("test", "OFFLINE")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.SegmentTiers["test_OFFLINE_16071_16071_0"]["targetTier"], "coldTier", "Expected tier to be coldTier")
 }

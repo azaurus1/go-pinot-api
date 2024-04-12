@@ -758,6 +758,12 @@ func (c *PinotAPIClient) ResetTableSegment(tableName string, segmentName string)
 	return &result, err
 }
 
+func (c *PinotAPIClient) GetSegmentTiers(tableName string, tableType string) (*model.GetSegmentTiersResponse, error) {
+	var result model.GetSegmentTiersResponse
+	err := c.FetchData(fmt.Sprintf("/segments/%s/tiers?type=%s", tableName, tableType), &result)
+	return &result, err
+}
+
 // Cluster
 
 func (c *PinotAPIClient) GetClusterInfo() (*model.GetClusterResponse, error) {
