@@ -35,6 +35,8 @@ const (
 	RouteSchemasTest          = "/schemas/test"
 	RouteTables               = "/tables"
 	RouteTablesTest           = "/tables/test"
+	RoutePinotControllerAdmin = "/pinot-controller/admin"
+	RouteHealth               = "/health"
 )
 
 func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -428,6 +430,14 @@ func handleDeleteTable(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, `{"status": "Tables: [test_OFFLINE] deleted"}`)
 }
 
+func handlePinotControllerAdmin(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "GOOD")
+}
+
+func handleHealth(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "OK")
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -617,6 +627,24 @@ func createMockControllerServer() *httptest.Server {
 			handleUpdateTable(w, r)
 		case "DELETE":
 			handleDeleteTable(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RoutePinotControllerAdmin, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handlePinotControllerAdmin(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteHealth, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleHealth(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -1627,4 +1655,28 @@ func TestMultipleAuthTypes(t *testing.T) {
 	// Make a request (replace this with an actual API call)
 	_, err := client.GetClusterInfo()
 	assert.Error(t, err, "Expected error from client.Get")
+}
+
+func TestPinotControllerAdmin(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.CheckPinotControllerAdminHealth()
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Response, "GOOD", "Expected response to be GOOD")
+}
+
+func TestPinotHealth(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.CheckPinotControllerHealth()
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Response, "OK", "Expected response to be OK")
 }

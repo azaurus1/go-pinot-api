@@ -84,6 +84,47 @@ func (c *PinotAPIClient) FetchData(endpoint string, result any) error {
 	return nil
 }
 
+func (c *PinotAPIClient) FetchPlainText(endpoint string, result *model.PlainTextAPIResponse) error {
+
+	fullURL := prepareRequestURL(c, endpoint)
+
+	request, err := http.NewRequest(http.MethodGet, fullURL.String(), nil)
+	if err != nil {
+		return fmt.Errorf("client: could not create request: %w", err)
+	}
+
+	c.log.Debug(fmt.Sprintf("attempting GET %s", fullURL))
+
+	resp, err := c.pinotHttp.Do(request)
+	if err != nil {
+		c.logErrorResp(resp)
+		return fmt.Errorf("client: could not send request: %w", err)
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		// extract body contents to add to error message
+		bodyContents, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("client: request failed with status code: %d", resp.StatusCode)
+		}
+		return fmt.Errorf("client: request failed with status code: %d, body: %s", resp.StatusCode, string(bodyContents))
+	}
+
+	bodyContents, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("client: could not read response body: %w", err)
+	}
+
+	c.log.Debug(fmt.Sprintf("response from successful request: %s", string(bodyContents)))
+
+	result.Response = string(bodyContents)
+
+	return nil
+
+}
+
 func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) error {
 
 	fullURL := prepareRequestURL(c, endpoint)
@@ -703,6 +744,20 @@ func (c *PinotAPIClient) UpdateInstance(instanceName string, body []byte) (*mode
 func (c *PinotAPIClient) DeleteInstance(instanceName string) (*model.UserActionResponse, error) {
 	var result model.UserActionResponse
 	err := c.DeleteObject(fmt.Sprintf("/instances/%s", instanceName), nil, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) CheckPinotControllerAdminHealth() (*model.PlainTextAPIResponse, error) {
+	// Returns text/plain
+	var result model.PlainTextAPIResponse
+	err := c.FetchPlainText("/pinot-controller/admin", &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) CheckPinotControllerHealth() (*model.PlainTextAPIResponse, error) {
+	// Returns text/plain
+	var result model.PlainTextAPIResponse
+	err := c.FetchPlainText("/health", &result)
 	return &result, err
 }
 
