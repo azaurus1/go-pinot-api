@@ -16,28 +16,40 @@ import (
 )
 
 const (
-	RouteUsers                = "/users"
-	RouteUser                 = "/users/test"
-	RouteInstances            = "/instances"
-	RouteInstance             = "/instances/Minion_172.19.0.2_9514"
-	RouteClusterInfo          = "/cluster/info"
-	RouteClusterConfigs       = "/cluster/configs"
-	RouteClusterConfigsDelete = "/cluster/configs/allowParticipantAutoJoin"
-	RouteTenants              = "/tenants"
-	RouteTenantsInstances     = "/tenants/DefaultTenant"
-	RouteTenantsTables        = "/tenants/DefaultTenant/tables"
-	RouteTenantsMetadata      = "/tenants/DefaultTenant/metadata"
-	RouteSegmentsTest         = "/segments/test"
-	RouteSegmentsTestReload   = "/segments/test/reload"
-	RouteSegmentTestReload    = "/segments/test/test_1/reload"
-	RouteV2Segments           = "/v2/segments"
-	RouteSchemas              = "/schemas"
-	RouteSchemasTest          = "/schemas/test"
-	RouteSchemasFieldSpec     = "/schemas/fieldSpec"
-	RouteTables               = "/tables"
-	RouteTablesTest           = "/tables/test"
-	RoutePinotControllerAdmin = "/pinot-controller/admin"
-	RouteHealth               = "/health"
+	RouteUsers                                        = "/users"
+	RouteUser                                         = "/users/test"
+	RouteInstances                                    = "/instances"
+	RouteInstance                                     = "/instances/Minion_172.19.0.2_9514"
+	RouteClusterInfo                                  = "/cluster/info"
+	RouteClusterConfigs                               = "/cluster/configs"
+	RouteClusterConfigsDelete                         = "/cluster/configs/allowParticipantAutoJoin"
+	RouteTenants                                      = "/tenants"
+	RouteTenantsInstances                             = "/tenants/DefaultTenant"
+	RouteTenantsTables                                = "/tenants/DefaultTenant/tables"
+	RouteTenantsMetadata                              = "/tenants/DefaultTenant/metadata"
+	RouteSegmentsTest                                 = "/segments/test"
+	RouteSegmentsTestReload                           = "/segments/test/reload"
+	RouteSegmentTestReload                            = "/segments/test/test_1/reload"
+	RouteV2Segments                                   = "/v2/segments"
+	RouteSchemas                                      = "/schemas"
+	RouteSchemasTest                                  = "/schemas/test"
+	RouteSchemasFieldSpec                             = "/schemas/fieldSpec"
+	RouteTables                                       = "/tables"
+	RouteTablesTest                                   = "/tables/test"
+	RouteTablesTestExternalView                       = "/tables/test/externalview"
+	RouteTablesTestIdealState                         = "/tables/test/idealstate"
+	RouteTablesTestIndexes                            = "/tables/test/indexes"
+	RouteTablesTestInstances                          = "/tables/test/instances"
+	RouteTablesLiveBrokers                            = "/tables/livebrokers"
+	RouteTablesTestLiveBrokers                        = "/tables/test/livebrokers"
+	RouteTablesTestMetadata                           = "/tables/test/metadata"
+	RouteTablesTestRebuildBrokerResourceFromHelixTags = "/tables/test/rebuildBrokerResourceFromHelixTags"
+	RouteTablesTestSchema                             = "/tables/test/schema"
+	RouteTablesTestSize                               = "/tables/test/size"
+	RouteTablesTestState                              = "/tables/test/state"
+	RouteTablesTestStats                              = "/tables/test/stats"
+	RoutePinotControllerAdmin                         = "/pinot-controller/admin"
+	RouteHealth                                       = "/health"
 )
 
 func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -670,6 +682,2079 @@ func handleGetFieldSpecs(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleTableExternalView(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"OFFLINE": {
+		  "test_OFFLINE_0": {
+			"Server_172.17.0.3_7050": "ONLINE"
+		  }
+		},
+		"REALTIME": null
+	  }`)
+}
+
+func handleTableIdealState(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"OFFLINE": {
+		  "test_OFFLINE_0": {
+			"Server_172.17.0.3_7050": "ONLINE"
+		  }
+		},
+		"REALTIME": null
+	  }`)
+}
+
+func handleTableIndexes(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, `{
+		"totalOnlineSegments": 31,
+		"columnToIndexesCount": {
+		  "Quarter": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "Origin": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "FlightNum": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "LateAircraftDelay": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivWheelsOns": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivActualElapsedTime": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivWheelsOffs": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "ArrDel15": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "AirTime": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivTotalGTimes": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DepTimeBlk": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DestCityMarketID": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "$ts$WEEK": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 31,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivAirportSeqIDs": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DaysSinceEpoch": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DepTime": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "Month": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "$segmentName": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DestStateName": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "CRSElapsedTime": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "Carrier": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "Distance": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DestAirportID": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "ArrTimeBlk": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "SecurityDelay": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivArrDelay": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "LongestAddGTime": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 5,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "OriginWac": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "WheelsOff": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "UniqueCarrier": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DestAirportSeqID": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivReachedDest": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "Diverted": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "ActualElapsedTime": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "tsRaw": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "OriginStateName": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "AirlineID": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "FlightDate": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivAirportLandings": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DepartureDelayGroups": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "OriginCityName": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "OriginStateFips": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "OriginState": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DistanceGroup": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "WeatherDelay": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DestWac": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "WheelsOn": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "OriginAirportID": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "OriginCityMarketID": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "NASDelay": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "$ts$DAY": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 31,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DestState": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "ArrTime": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "$hostName": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "ArrivalDelayGroups": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "Flights": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "RandomAirports": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DayofMonth": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "TotalAddGTime": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 5,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "CRSDepTime": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DayOfWeek": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "FirstDepTime": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 5,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "Dest": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "CancellationCode": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 1,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivTailNums": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DepDelayMinutes": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "TaxiIn": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DepDelay": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "OriginAirportSeqID": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DestStateFips": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "Cancelled": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 1,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "ArrDelay": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivAirportIDs": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "$docId": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "TaxiOut": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivLongestGTimes": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DepDel15": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "CarrierDelay": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivAirports": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DivDistance": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "Year": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "$ts$MONTH": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 31,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "CRSArrTime": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "ArrDelayMinutes": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "TailNum": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "ts": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 31,
+			"text_index": 0,
+			"fst_index": 0
+		  },
+		  "DestCityName": {
+			"vector_index": 0,
+			"nullvalue_vector": 0,
+			"h3_index": 0,
+			"dictionary": 31,
+			"json_index": 0,
+			"range_index": 0,
+			"forward_index": 31,
+			"bloom_filter": 0,
+			"inverted_index": 0,
+			"text_index": 0,
+			"fst_index": 0
+		  }
+		}
+	  }`)
+}
+
+func handleGetTableInstances(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"tableName": "test",
+		"brokers": [
+		  {
+			"tableType": "offline",
+			"instances": [
+			  "Broker_172.17.0.3_8000"
+			]
+		  }
+		],
+		"server": []
+	  }`)
+}
+
+func handleGetTableLiveBrokers(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"test_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"baseballStats_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"dimBaseballTeams_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"fineFoodReviews_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"starbucksStores_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"githubEvents_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"billing_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		],
+		"githubComplexTypeEvents_OFFLINE": [
+		  {
+			"instanceName": "Broker_172.17.0.3_8000",
+			"port": 8000,
+			"host": "172.17.0.3"
+		  }
+		]
+	  }`)
+}
+
+func handleGetTableTestLiveBrokers(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `[
+		"Broker_172.17.0.3_8000"
+	  ]`)
+}
+
+func handleGetTableTestMetadata(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"tableName": "test_OFFLINE",
+		"diskSizeInBytes": 72068,
+		"numSegments": 1,
+		"numRows": 694,
+		"columnLengthMap": {},
+		"columnCardinalityMap": {},
+		"maxNumMultiValuesMap": {},
+		"columnIndexSizeMap": {},
+		"upsertPartitionToServerPrimaryKeyCountMap": {}
+	  }`)
+}
+
+func handleTableRebuildBrokerResourceFromHelixTags(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"status": "Broker resource is not rebuilt because ideal state is the same for table: test_OFFLINE"
+	  }`)
+}
+
+func handleGetTableSchema(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"schemaName": "test",
+		"enableColumnBasedNullHandling": false,
+		"dimensionFieldSpecs": [
+		  {
+			"name": "ActualElapsedTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "AirTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "AirlineID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "ArrDel15",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "ArrDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "ArrDelayMinutes",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "ArrTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "ArrTimeBlk",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "ArrivalDelayGroups",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "CRSArrTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "CRSDepTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "CRSElapsedTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "CancellationCode",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "Cancelled",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Carrier",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "CarrierDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DayOfWeek",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DayofMonth",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DepDel15",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DepDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DepDelayMinutes",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DepTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DepTimeBlk",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "DepartureDelayGroups",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Dest",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "DestAirportID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DestAirportSeqID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DestCityMarketID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DestCityName",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "DestState",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "DestStateFips",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DestStateName",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "DestWac",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Distance",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DistanceGroup",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DivActualElapsedTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DivAirportIDs",
+			"dataType": "INT",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivAirportLandings",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DivAirportSeqIDs",
+			"dataType": "INT",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivAirports",
+			"dataType": "STRING",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivArrDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DivDistance",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DivLongestGTimes",
+			"dataType": "INT",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivReachedDest",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DivTailNums",
+			"dataType": "STRING",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivTotalGTimes",
+			"dataType": "INT",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivWheelsOffs",
+			"dataType": "INT",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivWheelsOns",
+			"dataType": "INT",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "Diverted",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "FirstDepTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "FlightDate",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "FlightNum",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Flights",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "LateAircraftDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "LongestAddGTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Month",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "NASDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Origin",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginAirportID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginAirportSeqID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginCityMarketID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginCityName",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginState",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginStateFips",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginStateName",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginWac",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Quarter",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "RandomAirports",
+			"dataType": "STRING",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "SecurityDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "TailNum",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "TaxiIn",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "TaxiOut",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Year",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "WheelsOn",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "WheelsOff",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "WeatherDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "UniqueCarrier",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "TotalAddGTime",
+			"dataType": "INT",
+			"notNull": false
+		  }
+		],
+		"dateTimeFieldSpecs": [
+		  {
+			"name": "DaysSinceEpoch",
+			"dataType": "INT",
+			"notNull": false,
+			"format": "1:DAYS:EPOCH",
+			"granularity": "1:DAYS"
+		  },
+		  {
+			"name": "ts",
+			"dataType": "TIMESTAMP",
+			"notNull": false,
+			"format": "1:MILLISECONDS:TIMESTAMP",
+			"granularity": "1:SECONDS"
+		  },
+		  {
+			"name": "tsRaw",
+			"dataType": "TIMESTAMP",
+			"notNull": false,
+			"format": "1:MILLISECONDS:TIMESTAMP",
+			"granularity": "1:SECONDS"
+		  }
+		]
+	  }`)
+}
+
+func handleGetTableSize(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"tableName": "test",
+		"reportedSizeInBytes": 4723495,
+		"estimatedSizeInBytes": 4723495,
+		"reportedSizePerReplicaInBytes": 4723495,
+		"offlineSegments": {
+		  "reportedSizeInBytes": 4723495,
+		  "estimatedSizeInBytes": 4723495,
+		  "missingSegments": 0,
+		  "reportedSizePerReplicaInBytes": 4723495,
+		  "segments": {
+			"test_OFFLINE_16071_16071_0": {
+			  "reportedSizeInBytes": 148141,
+			  "estimatedSizeInBytes": 148141,
+			  "maxReportedSizePerReplicaInBytes": 148141,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16071_16071_0",
+				  "diskSizeInBytes": 148141
+				}
+			  }
+			},
+			"test_OFFLINE_16072_16072_0": {
+			  "reportedSizeInBytes": 170479,
+			  "estimatedSizeInBytes": 170479,
+			  "maxReportedSizePerReplicaInBytes": 170479,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16072_16072_0",
+				  "diskSizeInBytes": 170479
+				}
+			  }
+			},
+			"test_OFFLINE_16074_16074_0": {
+			  "reportedSizeInBytes": 152313,
+			  "estimatedSizeInBytes": 152313,
+			  "maxReportedSizePerReplicaInBytes": 152313,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16074_16074_0",
+				  "diskSizeInBytes": 152313
+				}
+			  }
+			},
+			"test_OFFLINE_16081_16081_0": {
+			  "reportedSizeInBytes": 143424,
+			  "estimatedSizeInBytes": 143424,
+			  "maxReportedSizePerReplicaInBytes": 143424,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16081_16081_0",
+				  "diskSizeInBytes": 143424
+				}
+			  }
+			},
+			"test_OFFLINE_16073_16073_0": {
+			  "reportedSizeInBytes": 172148,
+			  "estimatedSizeInBytes": 172148,
+			  "maxReportedSizePerReplicaInBytes": 172148,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16073_16073_0",
+				  "diskSizeInBytes": 172148
+				}
+			  }
+			},
+			"test_OFFLINE_16083_16083_0": {
+			  "reportedSizeInBytes": 146487,
+			  "estimatedSizeInBytes": 146487,
+			  "maxReportedSizePerReplicaInBytes": 146487,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16083_16083_0",
+				  "diskSizeInBytes": 146487
+				}
+			  }
+			},
+			"test_OFFLINE_16082_16082_0": {
+			  "reportedSizeInBytes": 144331,
+			  "estimatedSizeInBytes": 144331,
+			  "maxReportedSizePerReplicaInBytes": 144331,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16082_16082_0",
+				  "diskSizeInBytes": 144331
+				}
+			  }
+			},
+			"test_OFFLINE_16077_16077_0": {
+			  "reportedSizeInBytes": 147533,
+			  "estimatedSizeInBytes": 147533,
+			  "maxReportedSizePerReplicaInBytes": 147533,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16077_16077_0",
+				  "diskSizeInBytes": 147533
+				}
+			  }
+			},
+			"test_OFFLINE_16076_16076_0": {
+			  "reportedSizeInBytes": 160686,
+			  "estimatedSizeInBytes": 160686,
+			  "maxReportedSizePerReplicaInBytes": 160686,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16076_16076_0",
+				  "diskSizeInBytes": 160686
+				}
+			  }
+			},
+			"test_OFFLINE_16085_16085_0": {
+			  "reportedSizeInBytes": 155212,
+			  "estimatedSizeInBytes": 155212,
+			  "maxReportedSizePerReplicaInBytes": 155212,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16085_16085_0",
+				  "diskSizeInBytes": 155212
+				}
+			  }
+			},
+			"test_OFFLINE_16092_16092_0": {
+			  "reportedSizeInBytes": 146841,
+			  "estimatedSizeInBytes": 146841,
+			  "maxReportedSizePerReplicaInBytes": 146841,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16092_16092_0",
+				  "diskSizeInBytes": 146841
+				}
+			  }
+			},
+			"test_OFFLINE_16093_16093_0": {
+			  "reportedSizeInBytes": 152480,
+			  "estimatedSizeInBytes": 152480,
+			  "maxReportedSizePerReplicaInBytes": 152480,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16093_16093_0",
+				  "diskSizeInBytes": 152480
+				}
+			  }
+			},
+			"test_OFFLINE_16075_16075_0": {
+			  "reportedSizeInBytes": 173926,
+			  "estimatedSizeInBytes": 173926,
+			  "maxReportedSizePerReplicaInBytes": 173926,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16075_16075_0",
+				  "diskSizeInBytes": 173926
+				}
+			  }
+			},
+			"test_OFFLINE_16084_16084_0": {
+			  "reportedSizeInBytes": 151416,
+			  "estimatedSizeInBytes": 151416,
+			  "maxReportedSizePerReplicaInBytes": 151416,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16084_16084_0",
+				  "diskSizeInBytes": 151416
+				}
+			  }
+			},
+			"test_OFFLINE_16089_16089_0": {
+			  "reportedSizeInBytes": 140200,
+			  "estimatedSizeInBytes": 140200,
+			  "maxReportedSizePerReplicaInBytes": 140200,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16089_16089_0",
+				  "diskSizeInBytes": 140200
+				}
+			  }
+			},
+			"test_OFFLINE_16101_16101_0": {
+			  "reportedSizeInBytes": 161946,
+			  "estimatedSizeInBytes": 161946,
+			  "maxReportedSizePerReplicaInBytes": 161946,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16101_16101_0",
+				  "diskSizeInBytes": 161946
+				}
+			  }
+			},
+			"test_OFFLINE_16096_16096_0": {
+			  "reportedSizeInBytes": 157100,
+			  "estimatedSizeInBytes": 157100,
+			  "maxReportedSizePerReplicaInBytes": 157100,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16096_16096_0",
+				  "diskSizeInBytes": 157100
+				}
+			  }
+			},
+			"test_OFFLINE_16088_16088_0": {
+			  "reportedSizeInBytes": 135803,
+			  "estimatedSizeInBytes": 135803,
+			  "maxReportedSizePerReplicaInBytes": 135803,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16088_16088_0",
+				  "diskSizeInBytes": 135803
+				}
+			  }
+			},
+			"test_OFFLINE_16094_16094_0": {
+			  "reportedSizeInBytes": 159093,
+			  "estimatedSizeInBytes": 159093,
+			  "maxReportedSizePerReplicaInBytes": 159093,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16094_16094_0",
+				  "diskSizeInBytes": 159093
+				}
+			  }
+			},
+			"test_OFFLINE_16091_16091_0": {
+			  "reportedSizeInBytes": 148804,
+			  "estimatedSizeInBytes": 148804,
+			  "maxReportedSizePerReplicaInBytes": 148804,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16091_16091_0",
+				  "diskSizeInBytes": 148804
+				}
+			  }
+			},
+			"test_OFFLINE_16086_16086_0": {
+			  "reportedSizeInBytes": 152318,
+			  "estimatedSizeInBytes": 152318,
+			  "maxReportedSizePerReplicaInBytes": 152318,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16086_16086_0",
+				  "diskSizeInBytes": 152318
+				}
+			  }
+			},
+			"test_OFFLINE_16087_16087_0": {
+			  "reportedSizeInBytes": 146948,
+			  "estimatedSizeInBytes": 146948,
+			  "maxReportedSizePerReplicaInBytes": 146948,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16087_16087_0",
+				  "diskSizeInBytes": 146948
+				}
+			  }
+			},
+			"test_OFFLINE_16090_16090_0": {
+			  "reportedSizeInBytes": 147078,
+			  "estimatedSizeInBytes": 147078,
+			  "maxReportedSizePerReplicaInBytes": 147078,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16090_16090_0",
+				  "diskSizeInBytes": 147078
+				}
+			  }
+			},
+			"test_OFFLINE_16095_16095_0": {
+			  "reportedSizeInBytes": 133078,
+			  "estimatedSizeInBytes": 133078,
+			  "maxReportedSizePerReplicaInBytes": 133078,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16095_16095_0",
+				  "diskSizeInBytes": 133078
+				}
+			  }
+			},
+			"test_OFFLINE_16078_16078_0": {
+			  "reportedSizeInBytes": 154535,
+			  "estimatedSizeInBytes": 154535,
+			  "maxReportedSizePerReplicaInBytes": 154535,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16078_16078_0",
+				  "diskSizeInBytes": 154535
+				}
+			  }
+			},
+			"test_OFFLINE_16079_16079_0": {
+			  "reportedSizeInBytes": 160246,
+			  "estimatedSizeInBytes": 160246,
+			  "maxReportedSizePerReplicaInBytes": 160246,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16079_16079_0",
+				  "diskSizeInBytes": 160246
+				}
+			  }
+			},
+			"test_OFFLINE_16080_16080_0": {
+			  "reportedSizeInBytes": 159886,
+			  "estimatedSizeInBytes": 159886,
+			  "maxReportedSizePerReplicaInBytes": 159886,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16080_16080_0",
+				  "diskSizeInBytes": 159886
+				}
+			  }
+			},
+			"test_OFFLINE_16099_16099_0": {
+			  "reportedSizeInBytes": 151587,
+			  "estimatedSizeInBytes": 151587,
+			  "maxReportedSizePerReplicaInBytes": 151587,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16099_16099_0",
+				  "diskSizeInBytes": 151587
+				}
+			  }
+			},
+			"test_OFFLINE_16098_16098_0": {
+			  "reportedSizeInBytes": 147585,
+			  "estimatedSizeInBytes": 147585,
+			  "maxReportedSizePerReplicaInBytes": 147585,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16098_16098_0",
+				  "diskSizeInBytes": 147585
+				}
+			  }
+			},
+			"test_OFFLINE_16097_16097_0": {
+			  "reportedSizeInBytes": 143544,
+			  "estimatedSizeInBytes": 143544,
+			  "maxReportedSizePerReplicaInBytes": 143544,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16097_16097_0",
+				  "diskSizeInBytes": 143544
+				}
+			  }
+			},
+			"test_OFFLINE_16100_16100_0": {
+			  "reportedSizeInBytes": 158327,
+			  "estimatedSizeInBytes": 158327,
+			  "maxReportedSizePerReplicaInBytes": 158327,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16100_16100_0",
+				  "diskSizeInBytes": 158327
+				}
+			  }
+			}
+		  }
+		},
+		"realtimeSegments": null
+	  }`)
+}
+
+func handleGetTableState(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"state": "enabled"
+	  }`)
+}
+
+func handleChangeTableState(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"status": "Request to enable table 'test_OFFLINE' is successful"
+	  }`)
+}
+
+func handleGetTableStats(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"OFFLINE": {
+		  "creationTime": "20240411T224913Z"
+		}
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -864,6 +2949,15 @@ func createMockControllerServer() *httptest.Server {
 		}
 	}))
 
+	mux.HandleFunc(RouteTablesTestExternalView, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleTableExternalView(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
 	mux.HandleFunc(RoutePinotControllerAdmin, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
@@ -886,6 +2980,107 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetFieldSpecs(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestIdealState, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleTableIdealState(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestIndexes, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleTableIndexes(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestInstances, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableInstances(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesLiveBrokers, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableLiveBrokers(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestLiveBrokers, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableTestLiveBrokers(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestMetadata, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableTestMetadata(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestRebuildBrokerResourceFromHelixTags, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "POST":
+			handleTableRebuildBrokerResourceFromHelixTags(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestSchema, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableSchema(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestSize, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableSize(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestState, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableState(w, r)
+		case "PUT":
+			handleChangeTableState(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestStats, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableStats(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -1933,4 +4128,171 @@ func TestGetFieldSpecs(t *testing.T) {
 
 	assert.Equal(t, (res.FieldTypes["METRIC"].AllowedDataTypes["LONG"].NullDefault), float64(0), "Expected METRIC field type to equal 0")
 	assert.Equal(t, (res.DataTypes["LONG"].StoredType), "LONG", "Expected LONG data type to equal LONG")
+}
+
+func TestGetTableExternalView(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableExternalView("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Offline["test_OFFLINE_0"]["Server_172.17.0.3_7050"], "ONLINE", "Expected Server_172.17.0.3_7050 to be ONLINE")
+}
+
+func TestGetTableIdealState(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableIdealState("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Offline["test_OFFLINE_0"]["Server_172.17.0.3_7050"], "ONLINE", "Expected Server_172.17.0.3_7050 to be ONLINE")
+}
+
+func TestGetTableIndexes(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableIndexes("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.TotalOnlineSegments, 31, "Expected 31 indexes in the response")
+	assert.Equal(t, res.ColumnToIndexesCount["Quarter"].ForwardIndex, 31, "Expected ForwardIndex to be set to 31 in the response")
+}
+
+func TestGetTableInstances(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableInstances("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Brokers[0].TableType, "offline", "Expected broker_0 tableType to be offline")
+	assert.Equal(t, res.Brokers[0].Instances[0], "Broker_172.17.0.3_8000", "Expected broker_0 instance_0 to be Broker_172.17.0.3_8000")
+}
+
+func TestGetTableLiveBrokers(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetAllTableLiveBrokers()
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+	brokers, ok := (*res)["test_OFFLINE"]
+	if !ok {
+		fmt.Println("No brokers found for test_OFFLINE")
+	} else {
+		for _, broker := range brokers {
+			fmt.Printf("InstanceName: %s\n", broker.InstanceName)
+			assert.Equal(t, broker.InstanceName, "Broker_172.17.0.3_8000", "Expected test broker_0 to be Broker_172.17.0.3_8000")
+		}
+	}
+
+}
+
+func TestGetTableTestLiveBrokers(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableLiveBrokers("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, (*res)[0], "Broker_172.17.0.3_8000", "Expected test broker_0 to be Broker_172.17.0.3_8000")
+
+}
+
+func TestGetTableMetadata(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableMetadata("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.TableName, "test_OFFLINE", "Expected table name to be test_OFFLINE")
+}
+
+func TestRebuildBrokerResourceFromHelixTags(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.RebuildBrokerResourceFromHelixTags("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "Broker resource is not rebuilt because ideal state is the same for table: test_OFFLINE", "Expected response to be Broker resource is not rebuilt because ideal state is the same for table: test_OFFLINE")
+}
+
+func TestGetTableSchema(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableSchema("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.SchemaName, "test", "Expected schema name to be test")
+}
+
+func TestGetTableSize(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableSize("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.TableName, "test", "Expected table name to be test")
+}
+
+func TestGetTableState(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableState("test", "OFFLINE")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.State, "enabled", "Expected table state to be enabled")
+}
+
+func TestChangeTableState(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.ChangeTableState("test", "OFFLINE", "enable")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "Request to enable table 'test_OFFLINE' is successful", "Expected Request to enable table 'test_OFFLINE' is successful")
+}
+
+func TestGetTableStats(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableStats("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, (*res)["OFFLINE"].CreationTime, "20240411T224913Z", "Expected table creationtime to be 20240411T224913Z")
 }

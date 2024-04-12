@@ -57,7 +57,20 @@ func main() {
 	// demoTenantFunctionality(client)
 	// demoInstanceFunctionality(client)
 	// demoHealthCheckFunctionality(client)
-	demoSchemaFieldSpecsFunctionality(client)
+	// demoSchemaFieldSpecsFunctionality(client)
+	// demoTableExternalViewFunctionality(client)
+	// demoTableIdealStateFunctionality(client)
+	// demoTableIndexesFunctionality(client)
+	// demoTableInstancesFunctionality(client)
+	// demoTableLiveBrokersFunctionality(client)
+	// demoAllLiveBrokersFunctionality(client)
+	// demoTableMetadataFunctionality(client)
+	// demoRebuildBrokerResourceFromHelixTags(client)
+	// demoGetTableSchemaFunctionality(client)
+	// demotGetTableSize(client)
+	// demoGetTableState(client)
+	// demoChangeTableState(client)
+	demoGetTableStats(client)
 
 }
 
@@ -963,6 +976,208 @@ func demoSchemaFieldSpecsFunctionality(client *pinot.PinotAPIClient) {
 	for fieldName, fieldType := range fieldSpecsResp.FieldTypes {
 		fmt.Println(fieldName, fieldType)
 	}
+
+}
+
+func demoTableExternalViewFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Table External View
+	tableExternalViewResp, err := client.GetTableExternalView("billing")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table External View:")
+	for tableName, tableInfo := range tableExternalViewResp.Offline {
+		fmt.Println(tableName, tableInfo)
+	}
+
+}
+
+func demoTableIdealStateFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Table Ideal State
+	tableIdealStateResp, err := client.GetTableIdealState("billing")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Ideal State:")
+	for tableName, tableInfo := range tableIdealStateResp.Offline {
+		fmt.Println(tableName, tableInfo)
+	}
+
+}
+
+func demoTableIndexesFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Table Indexes
+	tableIndexesResp, err := client.GetTableIndexes("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Indexes:")
+	fmt.Println(tableIndexesResp.TotalOnlineSegments)
+	for columnName, columnToIndex := range tableIndexesResp.ColumnToIndexesCount {
+		fmt.Println(columnName, columnToIndex)
+	}
+
+}
+
+func demoTableInstancesFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Table Instances
+	tableInstancesResp, err := client.GetTableInstances("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Instances:")
+	fmt.Println(tableInstancesResp.TableName)
+
+	fmt.Println("Brokers:")
+	for _, broker := range tableInstancesResp.Brokers {
+		fmt.Println(broker.TableType)
+		for _, instance := range broker.Instances {
+			fmt.Println(instance)
+		}
+	}
+
+	fmt.Println("Servers:")
+	for _, server := range tableInstancesResp.Servers {
+		fmt.Println(server.TableType)
+		for _, instance := range server.Instances {
+			fmt.Println(instance)
+		}
+	}
+
+}
+
+func demoTableLiveBrokersFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Table Live Brokers
+	tableLiveBrokersResp, err := client.GetTableLiveBrokers("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Live Brokers:")
+	fmt.Println(tableLiveBrokersResp)
+
+}
+
+func demoAllLiveBrokersFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get All Live Brokers
+	allLiveBrokersResp, err := client.GetAllTableLiveBrokers()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading All Live Brokers:")
+	fmt.Println((*allLiveBrokersResp)["airlineStats_OFFLINE"])
+
+}
+
+func demoTableMetadataFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Table Metadata
+	tableMetadataResp, err := client.GetTableMetadata("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Metadata:")
+	fmt.Println(tableMetadataResp.TableName)
+	fmt.Println(tableMetadataResp.DiskSizeInBytes)
+	fmt.Println(tableMetadataResp.NumSegments)
+	fmt.Println(tableMetadataResp.NumRows)
+	fmt.Println(tableMetadataResp.ColumnLengthMap)
+	fmt.Println(tableMetadataResp.ColumnCardinalityMap)
+	fmt.Println(tableMetadataResp.MaxNumMultiValuesMap)
+	fmt.Println(tableMetadataResp.ColumnIndexSizeMap)
+	fmt.Println(tableMetadataResp.UpsertPartitionToServerPrimaryKeyCountMap)
+
+}
+
+func demoRebuildBrokerResourceFromHelixTags(client *pinot.PinotAPIClient) {
+
+	rebuildBrokerResourceFromHelixTagsResp, err := client.RebuildBrokerResourceFromHelixTags("airlineStats_OFFLINE")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Rebuilding Broker Resource From Helix Tags:")
+	fmt.Println(rebuildBrokerResourceFromHelixTagsResp.Status)
+
+}
+
+func demoGetTableSchemaFunctionality(client *pinot.PinotAPIClient) {
+
+	tableSchemaResp, err := client.GetTableSchema("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Schema:")
+	fmt.Println(tableSchemaResp.SchemaName)
+	fmt.Println(tableSchemaResp.DimensionFieldSpecs)
+	fmt.Println(tableSchemaResp.MetricFieldSpecs)
+	fmt.Println(tableSchemaResp.DateTimeFieldSpecs)
+
+}
+
+func demotGetTableSize(client *pinot.PinotAPIClient) {
+
+	tableSizeResp, err := client.GetTableSize("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Size:")
+	fmt.Println(tableSizeResp.TableName)
+	fmt.Println(tableSizeResp.ReportedSizeInBytes)
+	fmt.Println(tableSizeResp.EstimatedSizeInBytes)
+	fmt.Println(tableSizeResp.ReportedSizePerReplicaInBytes)
+	fmt.Println(tableSizeResp.OfflineSegments)
+	fmt.Println(tableSizeResp.RealtimeSegments)
+
+}
+
+func demoGetTableState(client *pinot.PinotAPIClient) {
+
+	tableStateResp, err := client.GetTableState("airlineStats", "OFFLINE")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table State:")
+	fmt.Println(tableStateResp.State)
+
+}
+
+func demoChangeTableState(client *pinot.PinotAPIClient) {
+
+	tableStateResp, err := client.ChangeTableState("airlineStats", "OFFLINE", "disable")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Changing Table State:")
+	fmt.Println(tableStateResp.Status)
+
+}
+
+func demoGetTableStats(client *pinot.PinotAPIClient) {
+
+	tableStatsResp, err := client.GetTableStats("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Stats:")
+	fmt.Println((*tableStatsResp)["OFFLINE"].CreationTime)
 
 }
 
