@@ -50,12 +50,13 @@ func main() {
 	// demoSchemaFunctionality(client)
 	// demoSchemaFromBytesFunctionality(client)
 	// demoTableFunctionality(client)
-	demoGetTableFunctionality(client)
+	// demoGetTableFunctionality(client)
 	// demoUserFunctionality(client)
 	// demoSegmentFunctionality(client)
 	// demoClusterFunctionality(client)
 	// demoTenantFunctionality(client)
 	// demoInstanceFunctionality(client)
+	demoHealthCheckFunctionality(client)
 
 }
 
@@ -927,6 +928,26 @@ func demoInstanceFunctionality(client *pinot.PinotAPIClient) {
 	}
 
 	fmt.Println(deleteInstanceResp.Status)
+}
+
+func demoHealthCheckFunctionality(client *pinot.PinotAPIClient) {
+
+	healthCheckResp, err := client.CheckPinotControllerAdminHealth()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Admin Health Check:")
+	fmt.Println(healthCheckResp.Response)
+
+	healthCheckResp, err = client.CheckPinotControllerHealth()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Controller Health Check:")
+	fmt.Println(healthCheckResp.Response)
+
 }
 
 func getOrDefault(defaultOption string, envKeys ...string) string {
