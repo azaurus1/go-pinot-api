@@ -66,7 +66,8 @@ func main() {
 	// demoAllLiveBrokersFunctionality(client)
 	// demoTableMetadataFunctionality(client)
 	// demoRebuildBrokerResourceFromHelixTags(client)
-	demoGetTableSchemaFunctionality(client)
+	// demoGetTableSchemaFunctionality(client)
+	demotGetTableSize(client)
 
 }
 
@@ -1121,6 +1122,23 @@ func demoGetTableSchemaFunctionality(client *pinot.PinotAPIClient) {
 	fmt.Println(tableSchemaResp.DimensionFieldSpecs)
 	fmt.Println(tableSchemaResp.MetricFieldSpecs)
 	fmt.Println(tableSchemaResp.DateTimeFieldSpecs)
+
+}
+
+func demotGetTableSize(client *pinot.PinotAPIClient) {
+
+	tableSizeResp, err := client.GetTableSize("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Size:")
+	fmt.Println(tableSizeResp.TableName)
+	fmt.Println(tableSizeResp.ReportedSizeInBytes)
+	fmt.Println(tableSizeResp.EstimatedSizeInBytes)
+	fmt.Println(tableSizeResp.ReportedSizePerReplicaInBytes)
+	fmt.Println(tableSizeResp.OfflineSegments)
+	fmt.Println(tableSizeResp.RealtimeSegments)
 
 }
 

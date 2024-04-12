@@ -45,6 +45,7 @@ const (
 	RouteTablesTestMetadata                           = "/tables/test/metadata"
 	RouteTablesTestRebuildBrokerResourceFromHelixTags = "/tables/test/rebuildBrokerResourceFromHelixTags"
 	RouteTablesTestSchema                             = "/tables/test/schema"
+	RouteTablesTestSize                               = "/tables/test/size"
 	RoutePinotControllerAdmin                         = "/pinot-controller/admin"
 	RouteHealth                                       = "/health"
 )
@@ -2373,6 +2374,365 @@ func handleGetTableSchema(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleGetTableSize(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"tableName": "test",
+		"reportedSizeInBytes": 4723495,
+		"estimatedSizeInBytes": 4723495,
+		"reportedSizePerReplicaInBytes": 4723495,
+		"offlineSegments": {
+		  "reportedSizeInBytes": 4723495,
+		  "estimatedSizeInBytes": 4723495,
+		  "missingSegments": 0,
+		  "reportedSizePerReplicaInBytes": 4723495,
+		  "segments": {
+			"test_OFFLINE_16071_16071_0": {
+			  "reportedSizeInBytes": 148141,
+			  "estimatedSizeInBytes": 148141,
+			  "maxReportedSizePerReplicaInBytes": 148141,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16071_16071_0",
+				  "diskSizeInBytes": 148141
+				}
+			  }
+			},
+			"test_OFFLINE_16072_16072_0": {
+			  "reportedSizeInBytes": 170479,
+			  "estimatedSizeInBytes": 170479,
+			  "maxReportedSizePerReplicaInBytes": 170479,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16072_16072_0",
+				  "diskSizeInBytes": 170479
+				}
+			  }
+			},
+			"test_OFFLINE_16074_16074_0": {
+			  "reportedSizeInBytes": 152313,
+			  "estimatedSizeInBytes": 152313,
+			  "maxReportedSizePerReplicaInBytes": 152313,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16074_16074_0",
+				  "diskSizeInBytes": 152313
+				}
+			  }
+			},
+			"test_OFFLINE_16081_16081_0": {
+			  "reportedSizeInBytes": 143424,
+			  "estimatedSizeInBytes": 143424,
+			  "maxReportedSizePerReplicaInBytes": 143424,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16081_16081_0",
+				  "diskSizeInBytes": 143424
+				}
+			  }
+			},
+			"test_OFFLINE_16073_16073_0": {
+			  "reportedSizeInBytes": 172148,
+			  "estimatedSizeInBytes": 172148,
+			  "maxReportedSizePerReplicaInBytes": 172148,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16073_16073_0",
+				  "diskSizeInBytes": 172148
+				}
+			  }
+			},
+			"test_OFFLINE_16083_16083_0": {
+			  "reportedSizeInBytes": 146487,
+			  "estimatedSizeInBytes": 146487,
+			  "maxReportedSizePerReplicaInBytes": 146487,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16083_16083_0",
+				  "diskSizeInBytes": 146487
+				}
+			  }
+			},
+			"test_OFFLINE_16082_16082_0": {
+			  "reportedSizeInBytes": 144331,
+			  "estimatedSizeInBytes": 144331,
+			  "maxReportedSizePerReplicaInBytes": 144331,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16082_16082_0",
+				  "diskSizeInBytes": 144331
+				}
+			  }
+			},
+			"test_OFFLINE_16077_16077_0": {
+			  "reportedSizeInBytes": 147533,
+			  "estimatedSizeInBytes": 147533,
+			  "maxReportedSizePerReplicaInBytes": 147533,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16077_16077_0",
+				  "diskSizeInBytes": 147533
+				}
+			  }
+			},
+			"test_OFFLINE_16076_16076_0": {
+			  "reportedSizeInBytes": 160686,
+			  "estimatedSizeInBytes": 160686,
+			  "maxReportedSizePerReplicaInBytes": 160686,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16076_16076_0",
+				  "diskSizeInBytes": 160686
+				}
+			  }
+			},
+			"test_OFFLINE_16085_16085_0": {
+			  "reportedSizeInBytes": 155212,
+			  "estimatedSizeInBytes": 155212,
+			  "maxReportedSizePerReplicaInBytes": 155212,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16085_16085_0",
+				  "diskSizeInBytes": 155212
+				}
+			  }
+			},
+			"test_OFFLINE_16092_16092_0": {
+			  "reportedSizeInBytes": 146841,
+			  "estimatedSizeInBytes": 146841,
+			  "maxReportedSizePerReplicaInBytes": 146841,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16092_16092_0",
+				  "diskSizeInBytes": 146841
+				}
+			  }
+			},
+			"test_OFFLINE_16093_16093_0": {
+			  "reportedSizeInBytes": 152480,
+			  "estimatedSizeInBytes": 152480,
+			  "maxReportedSizePerReplicaInBytes": 152480,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16093_16093_0",
+				  "diskSizeInBytes": 152480
+				}
+			  }
+			},
+			"test_OFFLINE_16075_16075_0": {
+			  "reportedSizeInBytes": 173926,
+			  "estimatedSizeInBytes": 173926,
+			  "maxReportedSizePerReplicaInBytes": 173926,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16075_16075_0",
+				  "diskSizeInBytes": 173926
+				}
+			  }
+			},
+			"test_OFFLINE_16084_16084_0": {
+			  "reportedSizeInBytes": 151416,
+			  "estimatedSizeInBytes": 151416,
+			  "maxReportedSizePerReplicaInBytes": 151416,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16084_16084_0",
+				  "diskSizeInBytes": 151416
+				}
+			  }
+			},
+			"test_OFFLINE_16089_16089_0": {
+			  "reportedSizeInBytes": 140200,
+			  "estimatedSizeInBytes": 140200,
+			  "maxReportedSizePerReplicaInBytes": 140200,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16089_16089_0",
+				  "diskSizeInBytes": 140200
+				}
+			  }
+			},
+			"test_OFFLINE_16101_16101_0": {
+			  "reportedSizeInBytes": 161946,
+			  "estimatedSizeInBytes": 161946,
+			  "maxReportedSizePerReplicaInBytes": 161946,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16101_16101_0",
+				  "diskSizeInBytes": 161946
+				}
+			  }
+			},
+			"test_OFFLINE_16096_16096_0": {
+			  "reportedSizeInBytes": 157100,
+			  "estimatedSizeInBytes": 157100,
+			  "maxReportedSizePerReplicaInBytes": 157100,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16096_16096_0",
+				  "diskSizeInBytes": 157100
+				}
+			  }
+			},
+			"test_OFFLINE_16088_16088_0": {
+			  "reportedSizeInBytes": 135803,
+			  "estimatedSizeInBytes": 135803,
+			  "maxReportedSizePerReplicaInBytes": 135803,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16088_16088_0",
+				  "diskSizeInBytes": 135803
+				}
+			  }
+			},
+			"test_OFFLINE_16094_16094_0": {
+			  "reportedSizeInBytes": 159093,
+			  "estimatedSizeInBytes": 159093,
+			  "maxReportedSizePerReplicaInBytes": 159093,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16094_16094_0",
+				  "diskSizeInBytes": 159093
+				}
+			  }
+			},
+			"test_OFFLINE_16091_16091_0": {
+			  "reportedSizeInBytes": 148804,
+			  "estimatedSizeInBytes": 148804,
+			  "maxReportedSizePerReplicaInBytes": 148804,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16091_16091_0",
+				  "diskSizeInBytes": 148804
+				}
+			  }
+			},
+			"test_OFFLINE_16086_16086_0": {
+			  "reportedSizeInBytes": 152318,
+			  "estimatedSizeInBytes": 152318,
+			  "maxReportedSizePerReplicaInBytes": 152318,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16086_16086_0",
+				  "diskSizeInBytes": 152318
+				}
+			  }
+			},
+			"test_OFFLINE_16087_16087_0": {
+			  "reportedSizeInBytes": 146948,
+			  "estimatedSizeInBytes": 146948,
+			  "maxReportedSizePerReplicaInBytes": 146948,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16087_16087_0",
+				  "diskSizeInBytes": 146948
+				}
+			  }
+			},
+			"test_OFFLINE_16090_16090_0": {
+			  "reportedSizeInBytes": 147078,
+			  "estimatedSizeInBytes": 147078,
+			  "maxReportedSizePerReplicaInBytes": 147078,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16090_16090_0",
+				  "diskSizeInBytes": 147078
+				}
+			  }
+			},
+			"test_OFFLINE_16095_16095_0": {
+			  "reportedSizeInBytes": 133078,
+			  "estimatedSizeInBytes": 133078,
+			  "maxReportedSizePerReplicaInBytes": 133078,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16095_16095_0",
+				  "diskSizeInBytes": 133078
+				}
+			  }
+			},
+			"test_OFFLINE_16078_16078_0": {
+			  "reportedSizeInBytes": 154535,
+			  "estimatedSizeInBytes": 154535,
+			  "maxReportedSizePerReplicaInBytes": 154535,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16078_16078_0",
+				  "diskSizeInBytes": 154535
+				}
+			  }
+			},
+			"test_OFFLINE_16079_16079_0": {
+			  "reportedSizeInBytes": 160246,
+			  "estimatedSizeInBytes": 160246,
+			  "maxReportedSizePerReplicaInBytes": 160246,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16079_16079_0",
+				  "diskSizeInBytes": 160246
+				}
+			  }
+			},
+			"test_OFFLINE_16080_16080_0": {
+			  "reportedSizeInBytes": 159886,
+			  "estimatedSizeInBytes": 159886,
+			  "maxReportedSizePerReplicaInBytes": 159886,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16080_16080_0",
+				  "diskSizeInBytes": 159886
+				}
+			  }
+			},
+			"test_OFFLINE_16099_16099_0": {
+			  "reportedSizeInBytes": 151587,
+			  "estimatedSizeInBytes": 151587,
+			  "maxReportedSizePerReplicaInBytes": 151587,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16099_16099_0",
+				  "diskSizeInBytes": 151587
+				}
+			  }
+			},
+			"test_OFFLINE_16098_16098_0": {
+			  "reportedSizeInBytes": 147585,
+			  "estimatedSizeInBytes": 147585,
+			  "maxReportedSizePerReplicaInBytes": 147585,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16098_16098_0",
+				  "diskSizeInBytes": 147585
+				}
+			  }
+			},
+			"test_OFFLINE_16097_16097_0": {
+			  "reportedSizeInBytes": 143544,
+			  "estimatedSizeInBytes": 143544,
+			  "maxReportedSizePerReplicaInBytes": 143544,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16097_16097_0",
+				  "diskSizeInBytes": 143544
+				}
+			  }
+			},
+			"test_OFFLINE_16100_16100_0": {
+			  "reportedSizeInBytes": 158327,
+			  "estimatedSizeInBytes": 158327,
+			  "maxReportedSizePerReplicaInBytes": 158327,
+			  "serverInfo": {
+				"Server_172.17.0.3_7050": {
+				  "segmentName": "test_OFFLINE_16100_16100_0",
+				  "diskSizeInBytes": 158327
+				}
+			  }
+			}
+		  }
+		},
+		"realtimeSegments": null
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -2670,6 +3030,15 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetTableSchema(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestSize, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableSize(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -3836,4 +4205,16 @@ func TestGetTableSchema(t *testing.T) {
 	}
 
 	assert.Equal(t, res.SchemaName, "test", "Expected schema name to be test")
+}
+
+func TestGetTableSize(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableSize("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.TableName, "test", "Expected table name to be test")
 }
