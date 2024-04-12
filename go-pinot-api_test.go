@@ -33,6 +33,7 @@ const (
 	RouteV2Segments           = "/v2/segments"
 	RouteSchemas              = "/schemas"
 	RouteSchemasTest          = "/schemas/test"
+	RouteSchemasFieldSpec     = "/schemas/fieldSpec"
 	RouteTables               = "/tables"
 	RouteTablesTest           = "/tables/test"
 	RoutePinotControllerAdmin = "/pinot-controller/admin"
@@ -438,6 +439,237 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "OK")
 }
 
+func handleGetFieldSpecs(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `
+	{
+		"fieldTypes": {
+		  "METRIC": {
+			"allowedDataTypes": {
+			  "LONG": {
+				"nullDefault": 0
+			  },
+			  "BIG_DECIMAL": {
+				"nullDefault": 0
+			  },
+			  "DOUBLE": {
+				"nullDefault": 0
+			  },
+			  "FLOAT": {
+				"nullDefault": 0
+			  },
+			  "BYTES": {
+				"nullDefault": ""
+			  },
+			  "INT": {
+				"nullDefault": 0
+			  }
+			}
+		  },
+		  "DATE_TIME": {
+			"allowedDataTypes": {
+			  "LONG": {
+				"nullDefault": -9223372036854776000
+			  },
+			  "JSON": {
+				"nullDefault": "null"
+			  },
+			  "BIG_DECIMAL": {
+				"nullDefault": 0
+			  },
+			  "BOOLEAN": {
+				"nullDefault": 0
+			  },
+			  "STRING": {
+				"nullDefault": "null"
+			  },
+			  "DOUBLE": {
+				"nullDefault": "-Infinity"
+			  },
+			  "TIMESTAMP": {
+				"nullDefault": 0
+			  },
+			  "FLOAT": {
+				"nullDefault": "-Infinity"
+			  },
+			  "BYTES": {
+				"nullDefault": ""
+			  },
+			  "INT": {
+				"nullDefault": -2147483648
+			  }
+			}
+		  },
+		  "DIMENSION": {
+			"allowedDataTypes": {
+			  "LONG": {
+				"nullDefault": -9223372036854776000
+			  },
+			  "JSON": {
+				"nullDefault": "null"
+			  },
+			  "BIG_DECIMAL": {
+				"nullDefault": 0
+			  },
+			  "BOOLEAN": {
+				"nullDefault": 0
+			  },
+			  "STRING": {
+				"nullDefault": "null"
+			  },
+			  "DOUBLE": {
+				"nullDefault": "-Infinity"
+			  },
+			  "TIMESTAMP": {
+				"nullDefault": 0
+			  },
+			  "FLOAT": {
+				"nullDefault": "-Infinity"
+			  },
+			  "BYTES": {
+				"nullDefault": ""
+			  },
+			  "INT": {
+				"nullDefault": -2147483648
+			  }
+			}
+		  },
+		  "COMPLEX": {
+			"allowedDataTypes": {
+			  "STRUCT": {
+				"nullDefault": null
+			  },
+			  "MAP": {
+				"nullDefault": null
+			  },
+			  "LIST": {
+				"nullDefault": null
+			  }
+			}
+		  },
+		  "TIME": {
+			"allowedDataTypes": {
+			  "LONG": {
+				"nullDefault": -9223372036854776000
+			  },
+			  "JSON": {
+				"nullDefault": "null"
+			  },
+			  "BIG_DECIMAL": {
+				"nullDefault": 0
+			  },
+			  "BOOLEAN": {
+				"nullDefault": 0
+			  },
+			  "STRING": {
+				"nullDefault": "null"
+			  },
+			  "DOUBLE": {
+				"nullDefault": "-Infinity"
+			  },
+			  "TIMESTAMP": {
+				"nullDefault": 0
+			  },
+			  "FLOAT": {
+				"nullDefault": "-Infinity"
+			  },
+			  "BYTES": {
+				"nullDefault": ""
+			  },
+			  "INT": {
+				"nullDefault": -2147483648
+			  }
+			}
+		  }
+		},
+		"dataTypes": {
+		  "LONG": {
+			"storedType": "LONG",
+			"size": 8,
+			"sortable": true,
+			"numeric": true
+		  },
+		  "JSON": {
+			"storedType": "STRING",
+			"size": -1,
+			"sortable": false,
+			"numeric": false
+		  },
+		  "STRUCT": {
+			"storedType": "STRUCT",
+			"size": -1,
+			"sortable": false,
+			"numeric": false
+		  },
+		  "BOOLEAN": {
+			"storedType": "INT",
+			"size": 4,
+			"sortable": true,
+			"numeric": false
+		  },
+		  "STRING": {
+			"storedType": "STRING",
+			"size": -1,
+			"sortable": true,
+			"numeric": false
+		  },
+		  "TIMESTAMP": {
+			"storedType": "LONG",
+			"size": 8,
+			"sortable": true,
+			"numeric": false
+		  },
+		  "FLOAT": {
+			"storedType": "FLOAT",
+			"size": 4,
+			"sortable": true,
+			"numeric": true
+		  },
+		  "UNKNOWN": {
+			"storedType": "UNKNOWN",
+			"size": -1,
+			"sortable": true,
+			"numeric": false
+		  },
+		  "MAP": {
+			"storedType": "MAP",
+			"size": -1,
+			"sortable": false,
+			"numeric": false
+		  },
+		  "LIST": {
+			"storedType": "LIST",
+			"size": -1,
+			"sortable": false,
+			"numeric": false
+		  },
+		  "BIG_DECIMAL": {
+			"storedType": "BIG_DECIMAL",
+			"size": -1,
+			"sortable": true,
+			"numeric": true
+		  },
+		  "DOUBLE": {
+			"storedType": "DOUBLE",
+			"size": 8,
+			"sortable": true,
+			"numeric": true
+		  },
+		  "BYTES": {
+			"storedType": "BYTES",
+			"size": -1,
+			"sortable": false,
+			"numeric": false
+		  },
+		  "INT": {
+			"storedType": "INT",
+			"size": 4,
+			"sortable": true,
+			"numeric": true
+		  }
+		}
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -645,6 +877,15 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleHealth(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteSchemasFieldSpec, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetFieldSpecs(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -1679,4 +1920,17 @@ func TestPinotHealth(t *testing.T) {
 	}
 
 	assert.Equal(t, res.Response, "OK", "Expected response to be OK")
+}
+
+func TestGetFieldSpecs(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetSchemaFieldSpecs()
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, (res.FieldTypes["METRIC"].AllowedDataTypes["LONG"].NullDefault), float64(0), "Expected METRIC field type to equal 0")
+	assert.Equal(t, (res.DataTypes["LONG"].StoredType), "LONG", "Expected LONG data type to equal LONG")
 }

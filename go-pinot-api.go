@@ -599,6 +599,12 @@ func (c *PinotAPIClient) DeleteSchema(schemaName string) (*model.UserActionRespo
 	return &result, err
 }
 
+func (c *PinotAPIClient) GetSchemaFieldSpecs() (*model.GetSchemaFieldSpecsResponse, error) {
+	var result model.GetSchemaFieldSpecsResponse
+	err := c.FetchData(fmt.Sprintf("/schemas/fieldSpec"), &result)
+	return &result, err
+}
+
 // Segments
 // TODO: Implement Create, Get, GetMetadata, Delete
 // func (c *PinotAPIClient) CreateSegment(body []byte) (*model.UserActionResponse, error) {
