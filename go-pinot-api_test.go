@@ -34,6 +34,7 @@ const (
 	RouteSegmentTestReset                             = "/segments/test_OFFLINE/test_OFFLINE_16071_16071_0/reset"
 	RouteSegmentTestTiers                             = "/segments/test/tiers"
 	RouteSegmentTestCRC                               = "/segments/test/crc"
+	RouteSegmentTestMetadata                          = "/segments/test/metadata"
 	RouteV2Segments                                   = "/v2/segments"
 	RouteSchemas                                      = "/schemas"
 	RouteSchemasTest                                  = "/schemas/test"
@@ -2917,6 +2918,50 @@ func handleGetSegmentCRC(w http.ResponseWriter, r *http.Request) {
 		}`)
 }
 
+func handleGetSegmentMetadata(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"test_OFFLINE_16071_16071_0": {
+		  "segmentName": "test_OFFLINE_16071_16071_0",
+		  "schemaName": null,
+		  "crc": 482564261,
+		  "creationTimeMillis": 1712959630094,
+		  "creationTimeReadable": "2024-04-12T22:07:10:094 UTC",
+		  "timeColumn": "DaysSinceEpoch",
+		  "timeUnit": "DAYS",
+		  "timeGranularitySec": 86400,
+		  "startTimeMillis": 1388534400000,
+		  "startTimeReadable": "2014-01-01T00:00:00.000Z",
+		  "endTimeMillis": 1388534400000,
+		  "endTimeReadable": "2014-01-01T00:00:00.000Z",
+		  "segmentVersion": "v3",
+		  "creatorName": null,
+		  "totalDocs": 289,
+		  "custom": {
+			"input.data.file.uri": "file:/opt/pinot/examples/batch/test/rawdata/2014/01/01/test_data_2014-01-01.avro"
+		  },
+		  "startOffset": null,
+		  "endOffset": null,
+		  "columns": [],
+		  "indexes": {},
+		  "star-tree-index": [
+			{
+			  "dimension-columns": [
+				"AirlineID",
+				"Origin",
+				"Dest"
+			  ],
+			  "metric-aggregations": [
+				"count__*",
+				"max__ArrDelay"
+			  ],
+			  "max-leaf-records": 10,
+			  "dimension-columns-skipped": []
+			}
+		  ]
+		}
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -3279,6 +3324,15 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetSegmentCRC(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteSegmentTestMetadata, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetSegmentMetadata(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -4541,4 +4595,16 @@ func TestGetSegmentCRC(t *testing.T) {
 	}
 
 	assert.Equal(t, (*res)["test_OFFLINE_16071_16071_0"], "482564261", "Expected CRC to be 482564261")
+}
+
+func TestGetSegmentMetadata(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetSegmentMetadata("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, (*res)["test_OFFLINE_16071_16071_0"].SegmentName, "test_OFFLINE_16071_16071_0", "Expected segment name to be test_OFFLINE_16071_16071_0")
 }
