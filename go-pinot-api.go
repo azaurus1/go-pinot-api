@@ -426,6 +426,13 @@ func (c *PinotAPIClient) GetTableExternalView(tableName string) (*model.GetTable
 	return &result, err
 }
 
+func (c *PinotAPIClient) GetTableIdealState(tableName string) (*model.GetTableIdealStateResponse, error) {
+	var result model.GetTableIdealStateResponse
+	endpoint := fmt.Sprintf("/tables/%s/idealstate", tableName)
+	err := c.FetchData(endpoint, &result)
+	return &result, err
+}
+
 // GetSchemas returns a list of schemas
 func (c *PinotAPIClient) GetSchemas() (*model.GetSchemaResponse, error) {
 	var result model.GetSchemaResponse

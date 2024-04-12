@@ -58,7 +58,8 @@ func main() {
 	// demoInstanceFunctionality(client)
 	// demoHealthCheckFunctionality(client)
 	// demoSchemaFieldSpecsFunctionality(client)
-	demoTableExternalViewFunctionality(client)
+	// demoTableExternalViewFunctionality(client)
+	demoTableIdealStateFunctionality(client)
 
 }
 
@@ -977,6 +978,21 @@ func demoTableExternalViewFunctionality(client *pinot.PinotAPIClient) {
 
 	fmt.Println("Reading Table External View:")
 	for tableName, tableInfo := range tableExternalViewResp.Offline {
+		fmt.Println(tableName, tableInfo)
+	}
+
+}
+
+func demoTableIdealStateFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Table Ideal State
+	tableIdealStateResp, err := client.GetTableIdealState("billing")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Ideal State:")
+	for tableName, tableInfo := range tableIdealStateResp.Offline {
 		fmt.Println(tableName, tableInfo)
 	}
 

@@ -37,6 +37,7 @@ const (
 	RouteTables                 = "/tables"
 	RouteTablesTest             = "/tables/test"
 	RouteTablesTestExternalView = "/tables/test/externalview"
+	RouteTablesTestIdealState   = "/tables/test/idealstate"
 	RoutePinotControllerAdmin   = "/pinot-controller/admin"
 	RouteHealth                 = "/health"
 )
@@ -682,6 +683,17 @@ func handleTableExternalView(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleTableIdealState(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"OFFLINE": {
+		  "test_OFFLINE_0": {
+			"Server_172.17.0.3_7050": "ONLINE"
+		  }
+		},
+		"REALTIME": null
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -907,6 +919,15 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetFieldSpecs(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestIdealState, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleTableIdealState(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -1961,6 +1982,18 @@ func TestGetTableExternalView(t *testing.T) {
 	client := createPinotClient(server)
 
 	res, err := client.GetTableExternalView("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Offline["test_OFFLINE_0"]["Server_172.17.0.3_7050"], "ONLINE", "Expected Server_172.17.0.3_7050 to be ONLINE")
+}
+
+func TestGetTableIdealState(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableIdealState("test")
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
