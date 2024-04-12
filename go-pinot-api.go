@@ -419,6 +419,13 @@ func (c *PinotAPIClient) CreateTableFromFile(tableConfigFile string) (*model.Cre
 	return c.CreateTable(tableConfigBytes)
 }
 
+func (c *PinotAPIClient) GetTableExternalView(tableName string) (*model.GetTableExternalViewResponse, error) {
+	var result model.GetTableExternalViewResponse
+	endpoint := fmt.Sprintf("/tables/%s/externalview", tableName)
+	err := c.FetchData(endpoint, &result)
+	return &result, err
+}
+
 // GetSchemas returns a list of schemas
 func (c *PinotAPIClient) GetSchemas() (*model.GetSchemaResponse, error) {
 	var result model.GetSchemaResponse

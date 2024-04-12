@@ -57,7 +57,8 @@ func main() {
 	// demoTenantFunctionality(client)
 	// demoInstanceFunctionality(client)
 	// demoHealthCheckFunctionality(client)
-	demoSchemaFieldSpecsFunctionality(client)
+	// demoSchemaFieldSpecsFunctionality(client)
+	demoTableExternalViewFunctionality(client)
 
 }
 
@@ -962,6 +963,21 @@ func demoSchemaFieldSpecsFunctionality(client *pinot.PinotAPIClient) {
 	fmt.Println("Reading Field Specs:")
 	for fieldName, fieldType := range fieldSpecsResp.FieldTypes {
 		fmt.Println(fieldName, fieldType)
+	}
+
+}
+
+func demoTableExternalViewFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Table External View
+	tableExternalViewResp, err := client.GetTableExternalView("billing")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table External View:")
+	for tableName, tableInfo := range tableExternalViewResp.Offline {
+		fmt.Println(tableName, tableInfo)
 	}
 
 }

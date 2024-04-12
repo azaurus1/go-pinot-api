@@ -16,28 +16,29 @@ import (
 )
 
 const (
-	RouteUsers                = "/users"
-	RouteUser                 = "/users/test"
-	RouteInstances            = "/instances"
-	RouteInstance             = "/instances/Minion_172.19.0.2_9514"
-	RouteClusterInfo          = "/cluster/info"
-	RouteClusterConfigs       = "/cluster/configs"
-	RouteClusterConfigsDelete = "/cluster/configs/allowParticipantAutoJoin"
-	RouteTenants              = "/tenants"
-	RouteTenantsInstances     = "/tenants/DefaultTenant"
-	RouteTenantsTables        = "/tenants/DefaultTenant/tables"
-	RouteTenantsMetadata      = "/tenants/DefaultTenant/metadata"
-	RouteSegmentsTest         = "/segments/test"
-	RouteSegmentsTestReload   = "/segments/test/reload"
-	RouteSegmentTestReload    = "/segments/test/test_1/reload"
-	RouteV2Segments           = "/v2/segments"
-	RouteSchemas              = "/schemas"
-	RouteSchemasTest          = "/schemas/test"
-	RouteSchemasFieldSpec     = "/schemas/fieldSpec"
-	RouteTables               = "/tables"
-	RouteTablesTest           = "/tables/test"
-	RoutePinotControllerAdmin = "/pinot-controller/admin"
-	RouteHealth               = "/health"
+	RouteUsers                  = "/users"
+	RouteUser                   = "/users/test"
+	RouteInstances              = "/instances"
+	RouteInstance               = "/instances/Minion_172.19.0.2_9514"
+	RouteClusterInfo            = "/cluster/info"
+	RouteClusterConfigs         = "/cluster/configs"
+	RouteClusterConfigsDelete   = "/cluster/configs/allowParticipantAutoJoin"
+	RouteTenants                = "/tenants"
+	RouteTenantsInstances       = "/tenants/DefaultTenant"
+	RouteTenantsTables          = "/tenants/DefaultTenant/tables"
+	RouteTenantsMetadata        = "/tenants/DefaultTenant/metadata"
+	RouteSegmentsTest           = "/segments/test"
+	RouteSegmentsTestReload     = "/segments/test/reload"
+	RouteSegmentTestReload      = "/segments/test/test_1/reload"
+	RouteV2Segments             = "/v2/segments"
+	RouteSchemas                = "/schemas"
+	RouteSchemasTest            = "/schemas/test"
+	RouteSchemasFieldSpec       = "/schemas/fieldSpec"
+	RouteTables                 = "/tables"
+	RouteTablesTest             = "/tables/test"
+	RouteTablesTestExternalView = "/tables/test/externalview"
+	RoutePinotControllerAdmin   = "/pinot-controller/admin"
+	RouteHealth                 = "/health"
 )
 
 func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -670,6 +671,17 @@ func handleGetFieldSpecs(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleTableExternalView(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"OFFLINE": {
+		  "test_OFFLINE_0": {
+			"Server_172.17.0.3_7050": "ONLINE"
+		  }
+		},
+		"REALTIME": null
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -859,6 +871,15 @@ func createMockControllerServer() *httptest.Server {
 			handleUpdateTable(w, r)
 		case "DELETE":
 			handleDeleteTable(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestExternalView, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleTableExternalView(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -1933,4 +1954,16 @@ func TestGetFieldSpecs(t *testing.T) {
 
 	assert.Equal(t, (res.FieldTypes["METRIC"].AllowedDataTypes["LONG"].NullDefault), float64(0), "Expected METRIC field type to equal 0")
 	assert.Equal(t, (res.DataTypes["LONG"].StoredType), "LONG", "Expected LONG data type to equal LONG")
+}
+
+func TestGetTableExternalView(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableExternalView("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Offline["test_OFFLINE_0"]["Server_172.17.0.3_7050"], "ONLINE", "Expected Server_172.17.0.3_7050 to be ONLINE")
 }
