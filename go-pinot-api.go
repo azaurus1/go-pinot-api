@@ -266,12 +266,20 @@ func (c *PinotAPIClient) UpdateObject(endpoint string, queryParams map[string]st
 
 	c.encodeParams(fullURL, queryParams)
 
-	req, err := http.NewRequest(http.MethodPut, fullURL.String(), bytes.NewBuffer(body))
+	var req *http.Request
+	var err error
+
+	if body == nil {
+		c.log.Debug("body is nil")
+		req, err = http.NewRequest(http.MethodPut, fullURL.String(), nil)
+	} else {
+		req, err = http.NewRequest(http.MethodPut, fullURL.String(), bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+	}
+
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 
 	c.log.Debug(fmt.Sprintf("attempting PUT %s", fullURL.String()))
 
@@ -492,6 +500,18 @@ func (c *PinotAPIClient) GetTableState(tableName string, tableType string) (*mod
 	var result model.GetTableStateResponse
 	endpoint := fmt.Sprintf("/tables/%s/state?type=%s", tableName, tableType)
 	err := c.FetchData(endpoint, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) ChangeTableState(tableName string, tableType string, state string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	queryParams := make(map[string]string)
+	queryParams["state"] = state
+	queryParams["type"] = tableType
+
+	endpoint := fmt.Sprintf("/tables/%s/state", tableName)
+
+	err := c.UpdateObject(endpoint, queryParams, nil, &result)
 	return &result, err
 }
 

@@ -2740,6 +2740,12 @@ func handleGetTableState(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleChangeTableState(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"status": "Request to enable table 'test_OFFLINE' is successful"
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -3055,6 +3061,8 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetTableState(w, r)
+		case "PUT":
+			handleChangeTableState(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -4245,4 +4253,16 @@ func TestGetTableState(t *testing.T) {
 	}
 
 	assert.Equal(t, res.State, "enabled", "Expected table state to be enabled")
+}
+
+func TestChangeTableState(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.ChangeTableState("test", "OFFLINE", "enable")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "Request to enable table 'test_OFFLINE' is successful", "Expected Request to enable table 'test_OFFLINE' is successful")
 }

@@ -68,7 +68,8 @@ func main() {
 	// demoRebuildBrokerResourceFromHelixTags(client)
 	// demoGetTableSchemaFunctionality(client)
 	// demotGetTableSize(client)
-	demoGetTableState(client)
+	// demoGetTableState(client)
+	demoChangeTableState(client)
 
 }
 
@@ -1152,6 +1153,18 @@ func demoGetTableState(client *pinot.PinotAPIClient) {
 
 	fmt.Println("Reading Table State:")
 	fmt.Println(tableStateResp.State)
+
+}
+
+func demoChangeTableState(client *pinot.PinotAPIClient) {
+
+	tableStateResp, err := client.ChangeTableState("airlineStats", "OFFLINE", "disable")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Changing Table State:")
+	fmt.Println(tableStateResp.Status)
 
 }
 
