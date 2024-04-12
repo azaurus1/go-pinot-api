@@ -46,6 +46,7 @@ const (
 	RouteTablesTestRebuildBrokerResourceFromHelixTags = "/tables/test/rebuildBrokerResourceFromHelixTags"
 	RouteTablesTestSchema                             = "/tables/test/schema"
 	RouteTablesTestSize                               = "/tables/test/size"
+	RouteTablesTestState                              = "/tables/test/state"
 	RoutePinotControllerAdmin                         = "/pinot-controller/admin"
 	RouteHealth                                       = "/health"
 )
@@ -2733,6 +2734,12 @@ func handleGetTableSize(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleGetTableState(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"state": "enabled"
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -3039,6 +3046,15 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetTableSize(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestState, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableState(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -4217,4 +4233,16 @@ func TestGetTableSize(t *testing.T) {
 	}
 
 	assert.Equal(t, res.TableName, "test", "Expected table name to be test")
+}
+
+func TestGetTableState(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableState("test", "OFFLINE")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.State, "enabled", "Expected table state to be enabled")
 }

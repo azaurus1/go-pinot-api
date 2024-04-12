@@ -67,7 +67,8 @@ func main() {
 	// demoTableMetadataFunctionality(client)
 	// demoRebuildBrokerResourceFromHelixTags(client)
 	// demoGetTableSchemaFunctionality(client)
-	demotGetTableSize(client)
+	// demotGetTableSize(client)
+	demoGetTableState(client)
 
 }
 
@@ -1139,6 +1140,18 @@ func demotGetTableSize(client *pinot.PinotAPIClient) {
 	fmt.Println(tableSizeResp.ReportedSizePerReplicaInBytes)
 	fmt.Println(tableSizeResp.OfflineSegments)
 	fmt.Println(tableSizeResp.RealtimeSegments)
+
+}
+
+func demoGetTableState(client *pinot.PinotAPIClient) {
+
+	tableStateResp, err := client.GetTableState("airlineStats", "OFFLINE")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table State:")
+	fmt.Println(tableStateResp.State)
 
 }
 
