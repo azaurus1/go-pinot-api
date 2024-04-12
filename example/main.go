@@ -56,7 +56,8 @@ func main() {
 	// demoClusterFunctionality(client)
 	// demoTenantFunctionality(client)
 	// demoInstanceFunctionality(client)
-	demoHealthCheckFunctionality(client)
+	// demoHealthCheckFunctionality(client)
+	demoSchemaFieldSpecsFunctionality(client)
 
 }
 
@@ -947,6 +948,21 @@ func demoHealthCheckFunctionality(client *pinot.PinotAPIClient) {
 
 	fmt.Println("Controller Health Check:")
 	fmt.Println(healthCheckResp.Response)
+
+}
+
+func demoSchemaFieldSpecsFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Schema Field Specs
+	fieldSpecsResp, err := client.GetSchemaFieldSpecs()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Field Specs:")
+	for fieldName, fieldType := range fieldSpecsResp.FieldTypes {
+		fmt.Println(fieldName, fieldType)
+	}
 
 }
 
