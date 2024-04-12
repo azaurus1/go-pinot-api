@@ -44,6 +44,7 @@ const (
 	RouteTablesTestLiveBrokers                        = "/tables/test/livebrokers"
 	RouteTablesTestMetadata                           = "/tables/test/metadata"
 	RouteTablesTestRebuildBrokerResourceFromHelixTags = "/tables/test/rebuildBrokerResourceFromHelixTags"
+	RouteTablesTestSchema                             = "/tables/test/schema"
 	RoutePinotControllerAdmin                         = "/pinot-controller/admin"
 	RouteHealth                                       = "/health"
 )
@@ -1941,6 +1942,437 @@ func handleTableRebuildBrokerResourceFromHelixTags(w http.ResponseWriter, r *htt
 	  }`)
 }
 
+func handleGetTableSchema(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"schemaName": "test",
+		"enableColumnBasedNullHandling": false,
+		"dimensionFieldSpecs": [
+		  {
+			"name": "ActualElapsedTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "AirTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "AirlineID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "ArrDel15",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "ArrDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "ArrDelayMinutes",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "ArrTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "ArrTimeBlk",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "ArrivalDelayGroups",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "CRSArrTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "CRSDepTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "CRSElapsedTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "CancellationCode",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "Cancelled",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Carrier",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "CarrierDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DayOfWeek",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DayofMonth",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DepDel15",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DepDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DepDelayMinutes",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DepTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DepTimeBlk",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "DepartureDelayGroups",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Dest",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "DestAirportID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DestAirportSeqID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DestCityMarketID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DestCityName",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "DestState",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "DestStateFips",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DestStateName",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "DestWac",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Distance",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DistanceGroup",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DivActualElapsedTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DivAirportIDs",
+			"dataType": "INT",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivAirportLandings",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DivAirportSeqIDs",
+			"dataType": "INT",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivAirports",
+			"dataType": "STRING",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivArrDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DivDistance",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DivLongestGTimes",
+			"dataType": "INT",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivReachedDest",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "DivTailNums",
+			"dataType": "STRING",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivTotalGTimes",
+			"dataType": "INT",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivWheelsOffs",
+			"dataType": "INT",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "DivWheelsOns",
+			"dataType": "INT",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "Diverted",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "FirstDepTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "FlightDate",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "FlightNum",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Flights",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "LateAircraftDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "LongestAddGTime",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Month",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "NASDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Origin",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginAirportID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginAirportSeqID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginCityMarketID",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginCityName",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginState",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginStateFips",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginStateName",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "OriginWac",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Quarter",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "RandomAirports",
+			"dataType": "STRING",
+			"singleValueField": false,
+			"notNull": false
+		  },
+		  {
+			"name": "SecurityDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "TailNum",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "TaxiIn",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "TaxiOut",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "Year",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "WheelsOn",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "WheelsOff",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "WeatherDelay",
+			"dataType": "INT",
+			"notNull": false
+		  },
+		  {
+			"name": "UniqueCarrier",
+			"dataType": "STRING",
+			"notNull": false
+		  },
+		  {
+			"name": "TotalAddGTime",
+			"dataType": "INT",
+			"notNull": false
+		  }
+		],
+		"dateTimeFieldSpecs": [
+		  {
+			"name": "DaysSinceEpoch",
+			"dataType": "INT",
+			"notNull": false,
+			"format": "1:DAYS:EPOCH",
+			"granularity": "1:DAYS"
+		  },
+		  {
+			"name": "ts",
+			"dataType": "TIMESTAMP",
+			"notNull": false,
+			"format": "1:MILLISECONDS:TIMESTAMP",
+			"granularity": "1:SECONDS"
+		  },
+		  {
+			"name": "tsRaw",
+			"dataType": "TIMESTAMP",
+			"notNull": false,
+			"format": "1:MILLISECONDS:TIMESTAMP",
+			"granularity": "1:SECONDS"
+		  }
+		]
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -2229,6 +2661,15 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "POST":
 			handleTableRebuildBrokerResourceFromHelixTags(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestSchema, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableSchema(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -3383,4 +3824,16 @@ func TestRebuildBrokerResourceFromHelixTags(t *testing.T) {
 	}
 
 	assert.Equal(t, res.Status, "Broker resource is not rebuilt because ideal state is the same for table: test_OFFLINE", "Expected response to be Broker resource is not rebuilt because ideal state is the same for table: test_OFFLINE")
+}
+
+func TestGetTableSchema(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableSchema("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.SchemaName, "test", "Expected schema name to be test")
 }

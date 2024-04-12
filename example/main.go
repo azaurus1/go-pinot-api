@@ -65,7 +65,8 @@ func main() {
 	// demoTableLiveBrokersFunctionality(client)
 	// demoAllLiveBrokersFunctionality(client)
 	// demoTableMetadataFunctionality(client)
-	demoRebuildBrokerResourceFromHelixTags(client)
+	// demoRebuildBrokerResourceFromHelixTags(client)
+	demoGetTableSchemaFunctionality(client)
 
 }
 
@@ -1105,6 +1106,21 @@ func demoRebuildBrokerResourceFromHelixTags(client *pinot.PinotAPIClient) {
 
 	fmt.Println("Rebuilding Broker Resource From Helix Tags:")
 	fmt.Println(rebuildBrokerResourceFromHelixTagsResp.Status)
+
+}
+
+func demoGetTableSchemaFunctionality(client *pinot.PinotAPIClient) {
+
+	tableSchemaResp, err := client.GetTableSchema("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Schema:")
+	fmt.Println(tableSchemaResp.SchemaName)
+	fmt.Println(tableSchemaResp.DimensionFieldSpecs)
+	fmt.Println(tableSchemaResp.MetricFieldSpecs)
+	fmt.Println(tableSchemaResp.DateTimeFieldSpecs)
 
 }
 
