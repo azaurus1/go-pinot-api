@@ -60,7 +60,8 @@ func main() {
 	// demoSchemaFieldSpecsFunctionality(client)
 	// demoTableExternalViewFunctionality(client)
 	// demoTableIdealStateFunctionality(client)
-	demoTableIndexesFunctionality(client)
+	// demoTableIndexesFunctionality(client)
+	demoTableInstancesFunctionality(client)
 
 }
 
@@ -1011,6 +1012,35 @@ func demoTableIndexesFunctionality(client *pinot.PinotAPIClient) {
 	fmt.Println(tableIndexesResp.TotalOnlineSegments)
 	for columnName, columnToIndex := range tableIndexesResp.ColumnToIndexesCount {
 		fmt.Println(columnName, columnToIndex)
+	}
+
+}
+
+func demoTableInstancesFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Table Instances
+	tableInstancesResp, err := client.GetTableInstances("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Instances:")
+	fmt.Println(tableInstancesResp.TableName)
+
+	fmt.Println("Brokers:")
+	for _, broker := range tableInstancesResp.Brokers {
+		fmt.Println(broker.TableType)
+		for _, instance := range broker.Instances {
+			fmt.Println(instance)
+		}
+	}
+
+	fmt.Println("Servers:")
+	for _, server := range tableInstancesResp.Servers {
+		fmt.Println(server.TableType)
+		for _, instance := range server.Instances {
+			fmt.Println(instance)
+		}
 	}
 
 }

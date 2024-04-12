@@ -39,6 +39,7 @@ const (
 	RouteTablesTestExternalView = "/tables/test/externalview"
 	RouteTablesTestIdealState   = "/tables/test/idealstate"
 	RouteTablesTestIndexes      = "/tables/test/indexes"
+	RouteTablesTestInstances    = "/tables/test/instances"
 	RoutePinotControllerAdmin   = "/pinot-controller/admin"
 	RouteHealth                 = "/health"
 )
@@ -1834,6 +1835,21 @@ func handleTableIndexes(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleGetTableInstances(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"tableName": "test",
+		"brokers": [
+		  {
+			"tableType": "offline",
+			"instances": [
+			  "Broker_172.17.0.3_8000"
+			]
+		  }
+		],
+		"server": []
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -2077,6 +2093,15 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleTableIndexes(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestInstances, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableInstances(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -3161,4 +3186,17 @@ func TestGetTableIndexes(t *testing.T) {
 
 	assert.Equal(t, res.TotalOnlineSegments, 31, "Expected 31 indexes in the response")
 	assert.Equal(t, res.ColumnToIndexesCount["Quarter"].ForwardIndex, 31, "Expected ForwardIndex to be set to 31 in the response")
+}
+
+func TestGetTableInstances(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableInstances("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Brokers[0].TableType, "offline", "Expected broker_0 tableType to be offline")
+	assert.Equal(t, res.Brokers[0].Instances[0], "Broker_172.17.0.3_8000", "Expected broker_0 instance_0 to be Broker_172.17.0.3_8000")
 }

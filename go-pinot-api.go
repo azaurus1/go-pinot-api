@@ -440,6 +440,13 @@ func (c *PinotAPIClient) GetTableIndexes(tableName string) (*model.GetTableIndex
 	return &result, err
 }
 
+func (c *PinotAPIClient) GetTableInstances(tableName string) (*model.GetTableInstancesResponse, error) {
+	var result model.GetTableInstancesResponse
+	endpoint := fmt.Sprintf("/tables/%s/instances", tableName)
+	err := c.FetchData(endpoint, &result)
+	return &result, err
+}
+
 // GetSchemas returns a list of schemas
 func (c *PinotAPIClient) GetSchemas() (*model.GetSchemaResponse, error) {
 	var result model.GetSchemaResponse
