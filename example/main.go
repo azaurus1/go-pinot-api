@@ -59,7 +59,8 @@ func main() {
 	// demoHealthCheckFunctionality(client)
 	// demoSchemaFieldSpecsFunctionality(client)
 	// demoTableExternalViewFunctionality(client)
-	demoTableIdealStateFunctionality(client)
+	// demoTableIdealStateFunctionality(client)
+	demoTableIndexesFunctionality(client)
 
 }
 
@@ -994,6 +995,22 @@ func demoTableIdealStateFunctionality(client *pinot.PinotAPIClient) {
 	fmt.Println("Reading Table Ideal State:")
 	for tableName, tableInfo := range tableIdealStateResp.Offline {
 		fmt.Println(tableName, tableInfo)
+	}
+
+}
+
+func demoTableIndexesFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Table Indexes
+	tableIndexesResp, err := client.GetTableIndexes("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Indexes:")
+	fmt.Println(tableIndexesResp.TotalOnlineSegments)
+	for columnName, columnToIndex := range tableIndexesResp.ColumnToIndexesCount {
+		fmt.Println(columnName, columnToIndex)
 	}
 
 }
