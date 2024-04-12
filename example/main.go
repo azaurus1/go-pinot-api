@@ -75,7 +75,8 @@ func main() {
 	// demoResetTableSegment(client)
 	// demoGetSegmentTiers(client)
 	// demoGetSegmentCRC(client)
-	demoGetSegmentMetadata(client)
+	// demoGetSegmentMetadata(client)
+	demoGetSegmentZKMetadata(client)
 
 }
 
@@ -1246,6 +1247,18 @@ func demoGetSegmentCRC(client *pinot.PinotAPIClient) {
 
 	fmt.Println("Reading Segment CRC:")
 	fmt.Println((*segmentCRCResp)["airlineStats_OFFLINE_16071_16071_0"])
+
+}
+
+func demoGetSegmentZKMetadata(client *pinot.PinotAPIClient) {
+
+	segmentZKMetadataResp, err := client.GetSegmentZKMetadata("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Segment ZK Metadata:")
+	fmt.Println((*segmentZKMetadataResp)["airlineStats_OFFLINE_16071_16071_0"].SegmentTier)
 
 }
 

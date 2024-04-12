@@ -35,6 +35,7 @@ const (
 	RouteSegmentTestTiers                             = "/segments/test/tiers"
 	RouteSegmentTestCRC                               = "/segments/test/crc"
 	RouteSegmentTestMetadata                          = "/segments/test/metadata"
+	RouteSegmentTestZKMetadata                        = "/segments/test/zkmetadata"
 	RouteV2Segments                                   = "/v2/segments"
 	RouteSchemas                                      = "/schemas"
 	RouteSchemasTest                                  = "/schemas/test"
@@ -2962,6 +2963,507 @@ func handleGetSegmentMetadata(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleGetSegmentZKMetadata(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"test_OFFLINE_16071_16071_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/01/test_data_2014-01-01.avro\"}",
+		  "segment.crc": "482564261",
+		  "segment.creation.time": "1712959630094",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16071_16071_0",
+		  "segment.end.time": "1388534400000",
+		  "segment.end.time.raw": "16071",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959634279",
+		  "segment.size.in.bytes": "42891",
+		  "segment.start.time": "1388534400000",
+		  "segment.start.time.raw": "16071",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "289"
+		},
+		"test_OFFLINE_16072_16072_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/02/test_data_2014-01-02.avro\"}",
+		  "segment.crc": "3986423949",
+		  "segment.creation.time": "1712959631530",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16072_16072_0",
+		  "segment.end.time": "1388620800000",
+		  "segment.end.time.raw": "16072",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633532",
+		  "segment.size.in.bytes": "52923",
+		  "segment.start.time": "1388620800000",
+		  "segment.start.time.raw": "16072",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "403"
+		},
+		"test_OFFLINE_16074_16074_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/04/test_data_2014-01-04.avro\"}",
+		  "segment.crc": "4177199599",
+		  "segment.creation.time": "1712959630805",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16074_16074_0",
+		  "segment.end.time": "1388793600000",
+		  "segment.end.time.raw": "16074",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959634116",
+		  "segment.size.in.bytes": "44861",
+		  "segment.start.time": "1388793600000",
+		  "segment.start.time.raw": "16074",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "307"
+		},
+		"test_OFFLINE_16081_16081_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/11/test_data_2014-01-11.avro\"}",
+		  "segment.crc": "495808453",
+		  "segment.creation.time": "1712959627840",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16081_16081_0",
+		  "segment.end.time": "1389398400000",
+		  "segment.end.time.raw": "16081",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633475",
+		  "segment.size.in.bytes": "41192",
+		  "segment.start.time": "1389398400000",
+		  "segment.start.time.raw": "16081",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "269"
+		},
+		"test_OFFLINE_16073_16073_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/03/test_data_2014-01-03.avro\"}",
+		  "segment.crc": "309899836",
+		  "segment.creation.time": "1712959631479",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16073_16073_0",
+		  "segment.end.time": "1388707200000",
+		  "segment.end.time.raw": "16073",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959634220",
+		  "segment.size.in.bytes": "53001",
+		  "segment.start.time": "1388707200000",
+		  "segment.start.time.raw": "16073",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "409"
+		},
+		"test_OFFLINE_16083_16083_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/13/test_data_2014-01-13.avro\"}",
+		  "segment.crc": "1790391560",
+		  "segment.creation.time": "1712959629335",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16083_16083_0",
+		  "segment.end.time": "1389571200000",
+		  "segment.end.time.raw": "16083",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633968",
+		  "segment.size.in.bytes": "41990",
+		  "segment.start.time": "1389571200000",
+		  "segment.start.time.raw": "16083",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "296"
+		},
+		"test_OFFLINE_16082_16082_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/12/test_data_2014-01-12.avro\"}",
+		  "segment.crc": "57004400",
+		  "segment.creation.time": "1712959627840",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16082_16082_0",
+		  "segment.end.time": "1389484800000",
+		  "segment.end.time.raw": "16082",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633242",
+		  "segment.size.in.bytes": "40903",
+		  "segment.start.time": "1389484800000",
+		  "segment.start.time.raw": "16082",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "276"
+		},
+		"test_OFFLINE_16077_16077_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/07/test_data_2014-01-07.avro\"}",
+		  "segment.crc": "364779966",
+		  "segment.creation.time": "1712959632109",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16077_16077_0",
+		  "segment.end.time": "1389052800000",
+		  "segment.end.time.raw": "16077",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633714",
+		  "segment.size.in.bytes": "42385",
+		  "segment.start.time": "1389052800000",
+		  "segment.start.time.raw": "16077",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "292"
+		},
+		"test_OFFLINE_16076_16076_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/06/test_data_2014-01-06.avro\"}",
+		  "segment.crc": "3743684004",
+		  "segment.creation.time": "1712959632659",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16076_16076_0",
+		  "segment.end.time": "1388966400000",
+		  "segment.end.time.raw": "16076",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959634402",
+		  "segment.size.in.bytes": "47661",
+		  "segment.start.time": "1388966400000",
+		  "segment.start.time.raw": "16076",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "354"
+		},
+		"test_OFFLINE_16085_16085_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/15/test_data_2014-01-15.avro\"}",
+		  "segment.crc": "3867636168",
+		  "segment.creation.time": "1712959628661",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16085_16085_0",
+		  "segment.end.time": "1389744000000",
+		  "segment.end.time.raw": "16085",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633860",
+		  "segment.size.in.bytes": "45489",
+		  "segment.start.time": "1389744000000",
+		  "segment.start.time.raw": "16085",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "313"
+		},
+		"test_OFFLINE_16092_16092_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/22/test_data_2014-01-22.avro\"}",
+		  "segment.crc": "4154855295",
+		  "segment.creation.time": "1712959630109",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16092_16092_0",
+		  "segment.end.time": "1390348800000",
+		  "segment.end.time.raw": "16092",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959634168",
+		  "segment.size.in.bytes": "42338",
+		  "segment.start.time": "1390348800000",
+		  "segment.start.time.raw": "16092",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "299"
+		},
+		"test_OFFLINE_16093_16093_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/23/test_data_2014-01-23.avro\"}",
+		  "segment.crc": "1378973134",
+		  "segment.creation.time": "1712959630018",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16093_16093_0",
+		  "segment.end.time": "1390435200000",
+		  "segment.end.time.raw": "16093",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959632981",
+		  "segment.size.in.bytes": "44611",
+		  "segment.start.time": "1390435200000",
+		  "segment.start.time.raw": "16093",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "317"
+		},
+		"test_OFFLINE_16075_16075_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/05/test_data_2014-01-05.avro\"}",
+		  "segment.crc": "741719127",
+		  "segment.creation.time": "1712959630815",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16075_16075_0",
+		  "segment.end.time": "1388880000000",
+		  "segment.end.time.raw": "16075",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633105",
+		  "segment.size.in.bytes": "53597",
+		  "segment.start.time": "1388880000000",
+		  "segment.start.time.raw": "16075",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "422"
+		},
+		"test_OFFLINE_16084_16084_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/14/test_data_2014-01-14.avro\"}",
+		  "segment.crc": "2605366701",
+		  "segment.creation.time": "1712959628630",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16084_16084_0",
+		  "segment.end.time": "1389657600000",
+		  "segment.end.time.raw": "16084",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633187",
+		  "segment.size.in.bytes": "44153",
+		  "segment.start.time": "1389657600000",
+		  "segment.start.time.raw": "16084",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "311"
+		},
+		"test_OFFLINE_16089_16089_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/19/test_data_2014-01-19.avro\"}",
+		  "segment.crc": "4009665487",
+		  "segment.creation.time": "1712959629398",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16089_16089_0",
+		  "segment.end.time": "1390089600000",
+		  "segment.end.time.raw": "16089",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633917",
+		  "segment.size.in.bytes": "39098",
+		  "segment.start.time": "1390089600000",
+		  "segment.start.time.raw": "16089",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "270"
+		},
+		"test_OFFLINE_16101_16101_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/31/test_data_2014-01-31.avro\"}",
+		  "segment.crc": "419771670",
+		  "segment.creation.time": "1712959628661",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16101_16101_0",
+		  "segment.end.time": "1391126400000",
+		  "segment.end.time.raw": "16101",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959634061",
+		  "segment.size.in.bytes": "48214",
+		  "segment.start.time": "1391126400000",
+		  "segment.start.time.raw": "16101",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "354"
+		},
+		"test_OFFLINE_16096_16096_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/26/test_data_2014-01-26.avro\"}",
+		  "segment.crc": "3460358172",
+		  "segment.creation.time": "1712959631369",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16096_16096_0",
+		  "segment.end.time": "1390694400000",
+		  "segment.end.time.raw": "16096",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959634448",
+		  "segment.size.in.bytes": "46020",
+		  "segment.start.time": "1390694400000",
+		  "segment.start.time.raw": "16096",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "319"
+		},
+		"test_OFFLINE_16088_16088_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/18/test_data_2014-01-18.avro\"}",
+		  "segment.crc": "4242534650",
+		  "segment.creation.time": "1712959629405",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16088_16088_0",
+		  "segment.end.time": "1390003200000",
+		  "segment.end.time.raw": "16088",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633036",
+		  "segment.size.in.bytes": "37585",
+		  "segment.start.time": "1390003200000",
+		  "segment.start.time.raw": "16088",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "241"
+		},
+		"test_OFFLINE_16094_16094_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/24/test_data_2014-01-24.avro\"}",
+		  "segment.crc": "1672798655",
+		  "segment.creation.time": "1712959632014",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16094_16094_0",
+		  "segment.end.time": "1390521600000",
+		  "segment.end.time.raw": "16094",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633761",
+		  "segment.size.in.bytes": "47351",
+		  "segment.start.time": "1390521600000",
+		  "segment.start.time.raw": "16094",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "343"
+		},
+		"test_OFFLINE_16086_16086_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/16/test_data_2014-01-16.avro\"}",
+		  "segment.crc": "3031425019",
+		  "segment.creation.time": "1712959628648",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16086_16086_0",
+		  "segment.end.time": "1389830400000",
+		  "segment.end.time.raw": "16086",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959632877",
+		  "segment.size.in.bytes": "44501",
+		  "segment.start.time": "1389830400000",
+		  "segment.start.time.raw": "16086",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "310"
+		},
+		"test_OFFLINE_16091_16091_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/21/test_data_2014-01-21.avro\"}",
+		  "segment.crc": "3784653403",
+		  "segment.creation.time": "1712959630110",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16091_16091_0",
+		  "segment.end.time": "1390262400000",
+		  "segment.end.time.raw": "16091",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633307",
+		  "segment.size.in.bytes": "43519",
+		  "segment.start.time": "1390262400000",
+		  "segment.start.time.raw": "16091",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "305"
+		},
+		"test_OFFLINE_16087_16087_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/17/test_data_2014-01-17.avro\"}",
+		  "segment.crc": "1844055370",
+		  "segment.creation.time": "1712959629392",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16087_16087_0",
+		  "segment.end.time": "1389916800000",
+		  "segment.end.time.raw": "16087",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633811",
+		  "segment.size.in.bytes": "41760",
+		  "segment.start.time": "1389916800000",
+		  "segment.start.time.raw": "16087",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "285"
+		},
+		"test_OFFLINE_16090_16090_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/20/test_data_2014-01-20.avro\"}",
+		  "segment.crc": "172631782",
+		  "segment.creation.time": "1712959630687",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16090_16090_0",
+		  "segment.end.time": "1390176000000",
+		  "segment.end.time.raw": "16090",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633621",
+		  "segment.size.in.bytes": "41745",
+		  "segment.start.time": "1390176000000",
+		  "segment.start.time.raw": "16090",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "284"
+		},
+		"test_OFFLINE_16095_16095_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/25/test_data_2014-01-25.avro\"}",
+		  "segment.crc": "703136980",
+		  "segment.creation.time": "1712959631464",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16095_16095_0",
+		  "segment.end.time": "1390608000000",
+		  "segment.end.time.raw": "16095",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959632927",
+		  "segment.size.in.bytes": "36620",
+		  "segment.start.time": "1390608000000",
+		  "segment.start.time.raw": "16095",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "228"
+		},
+		"test_OFFLINE_16078_16078_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/08/test_data_2014-01-08.avro\"}",
+		  "segment.crc": "288894494",
+		  "segment.creation.time": "1712959632093",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16078_16078_0",
+		  "segment.end.time": "1389139200000",
+		  "segment.end.time.raw": "16078",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959634494",
+		  "segment.size.in.bytes": "45501",
+		  "segment.start.time": "1389139200000",
+		  "segment.start.time.raw": "16078",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "316"
+		},
+		"test_OFFLINE_16079_16079_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/09/test_data_2014-01-09.avro\"}",
+		  "segment.crc": "1632533089",
+		  "segment.creation.time": "1712959632091",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16079_16079_0",
+		  "segment.end.time": "1389225600000",
+		  "segment.end.time.raw": "16079",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959632802",
+		  "segment.size.in.bytes": "47633",
+		  "segment.start.time": "1389225600000",
+		  "segment.start.time.raw": "16079",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "340"
+		},
+		"test_OFFLINE_16080_16080_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/10/test_data_2014-01-10.avro\"}",
+		  "segment.crc": "1239681968",
+		  "segment.creation.time": "1712959627840",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16080_16080_0",
+		  "segment.end.time": "1389312000000",
+		  "segment.end.time.raw": "16080",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959634339",
+		  "segment.size.in.bytes": "47558",
+		  "segment.start.time": "1389312000000",
+		  "segment.start.time.raw": "16080",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "338"
+		},
+		"test_OFFLINE_16099_16099_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/29/test_data_2014-01-29.avro\"}",
+		  "segment.crc": "2927926686",
+		  "segment.creation.time": "1712959632581",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16099_16099_0",
+		  "segment.end.time": "1390953600000",
+		  "segment.end.time.raw": "16099",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633355",
+		  "segment.size.in.bytes": "44358",
+		  "segment.start.time": "1390953600000",
+		  "segment.start.time.raw": "16099",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "322"
+		},
+		"test_OFFLINE_16098_16098_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/28/test_data_2014-01-28.avro\"}",
+		  "segment.crc": "1485827397",
+		  "segment.creation.time": "1712959632638",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16098_16098_0",
+		  "segment.end.time": "1390867200000",
+		  "segment.end.time.raw": "16098",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959634015",
+		  "segment.size.in.bytes": "42365",
+		  "segment.start.time": "1390867200000",
+		  "segment.start.time.raw": "16098",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "305"
+		},
+		"test_OFFLINE_16097_16097_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/27/test_data_2014-01-27.avro\"}",
+		  "segment.crc": "2704557750",
+		  "segment.creation.time": "1712959630813",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16097_16097_0",
+		  "segment.end.time": "1390780800000",
+		  "segment.end.time.raw": "16097",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633665",
+		  "segment.size.in.bytes": "41213",
+		  "segment.start.time": "1390780800000",
+		  "segment.start.time.raw": "16097",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "296"
+		},
+		"test_OFFLINE_16100_16100_0": {
+		  "custom.map": "{\"input.data.file.uri\":\"file:/opt/pinot/examples/batch/test/rawdata/2014/01/30/test_data_2014-01-30.avro\"}",
+		  "segment.crc": "1583641183",
+		  "segment.creation.time": "1712959627840",
+		  "segment.download.url": "http://172.17.0.3:9000/segments/test/test_OFFLINE_16100_16100_0",
+		  "segment.end.time": "1391040000000",
+		  "segment.end.time.raw": "16100",
+		  "segment.index.version": "v3",
+		  "segment.push.time": "1712959633412",
+		  "segment.size.in.bytes": "46910",
+		  "segment.start.time": "1391040000000",
+		  "segment.start.time.raw": "16100",
+		  "segment.tier": "coldTier",
+		  "segment.time.unit": "MILLISECONDS",
+		  "segment.total.docs": "333"
+		}
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -3333,6 +3835,15 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetSegmentMetadata(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteSegmentTestZKMetadata, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetSegmentZKMetadata(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -4607,4 +5118,16 @@ func TestGetSegmentMetadata(t *testing.T) {
 	}
 
 	assert.Equal(t, (*res)["test_OFFLINE_16071_16071_0"].SegmentName, "test_OFFLINE_16071_16071_0", "Expected segment name to be test_OFFLINE_16071_16071_0")
+}
+
+func TestGetSegmentZKMetadata(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetSegmentZKMetadata("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, (*res)["test_OFFLINE_16071_16071_0"].SegmentTier, "coldTier", "Expected segment tier to be coldTier")
 }

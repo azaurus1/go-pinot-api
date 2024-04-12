@@ -776,6 +776,12 @@ func (c *PinotAPIClient) GetSegmentMetadata(tableName string) (*model.GetSegment
 	return &result, err
 }
 
+func (c *PinotAPIClient) GetSegmentZKMetadata(tableName string) (*model.GetSegmentZKMetadataResponse, error) {
+	var result model.GetSegmentZKMetadataResponse
+	err := c.FetchData(fmt.Sprintf("/segments/%s/zkmetadata", tableName), &result)
+	return &result, err
+}
+
 // Cluster
 
 func (c *PinotAPIClient) GetClusterInfo() (*model.GetClusterResponse, error) {
