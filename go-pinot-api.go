@@ -515,6 +515,13 @@ func (c *PinotAPIClient) ChangeTableState(tableName string, tableType string, st
 	return &result, err
 }
 
+func (c *PinotAPIClient) GetTableStats(tableName string) (*model.GetTableStatsResponse, error) {
+	var result model.GetTableStatsResponse
+	endpoint := fmt.Sprintf("/tables/%s/stats", tableName)
+	err := c.FetchData(endpoint, &result)
+	return &result, err
+}
+
 // GetSchemas returns a list of schemas
 func (c *PinotAPIClient) GetSchemas() (*model.GetSchemaResponse, error) {
 	var result model.GetSchemaResponse

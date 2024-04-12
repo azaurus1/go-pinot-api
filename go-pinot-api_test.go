@@ -47,6 +47,7 @@ const (
 	RouteTablesTestSchema                             = "/tables/test/schema"
 	RouteTablesTestSize                               = "/tables/test/size"
 	RouteTablesTestState                              = "/tables/test/state"
+	RouteTablesTestStats                              = "/tables/test/stats"
 	RoutePinotControllerAdmin                         = "/pinot-controller/admin"
 	RouteHealth                                       = "/health"
 )
@@ -2746,6 +2747,14 @@ func handleChangeTableState(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleGetTableStats(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"OFFLINE": {
+		  "creationTime": "20240411T224913Z"
+		}
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -3063,6 +3072,15 @@ func createMockControllerServer() *httptest.Server {
 			handleGetTableState(w, r)
 		case "PUT":
 			handleChangeTableState(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestStats, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableStats(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -4265,4 +4283,16 @@ func TestChangeTableState(t *testing.T) {
 	}
 
 	assert.Equal(t, res.Status, "Request to enable table 'test_OFFLINE' is successful", "Expected Request to enable table 'test_OFFLINE' is successful")
+}
+
+func TestGetTableStats(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableStats("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, (*res)["OFFLINE"].CreationTime, "20240411T224913Z", "Expected table creationtime to be 20240411T224913Z")
 }

@@ -69,7 +69,8 @@ func main() {
 	// demoGetTableSchemaFunctionality(client)
 	// demotGetTableSize(client)
 	// demoGetTableState(client)
-	demoChangeTableState(client)
+	// demoChangeTableState(client)
+	demoGetTableStats(client)
 
 }
 
@@ -1165,6 +1166,18 @@ func demoChangeTableState(client *pinot.PinotAPIClient) {
 
 	fmt.Println("Changing Table State:")
 	fmt.Println(tableStateResp.Status)
+
+}
+
+func demoGetTableStats(client *pinot.PinotAPIClient) {
+
+	tableStatsResp, err := client.GetTableStats("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Stats:")
+	fmt.Println((*tableStatsResp)["OFFLINE"].CreationTime)
 
 }
 
