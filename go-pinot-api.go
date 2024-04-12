@@ -730,7 +730,7 @@ func (c *PinotAPIClient) GetSegments(tableName string) (model.GetSegmentsRespons
 
 // func (c *PinotAPIClient) DeleteSegment(tableName string, segmentName string) (*model.UserActionResponse, error) {
 // 	var result model.UserActionResponse
-// 	err := c.DeleteObject(fmt.Sprintf("/segments/%s/%s", tableName, segmentName), nil, &result)
+// 	err := c.DeleteObject(fmt.Sprintf("/segments/%s/choose", tableName, segmentName), nil, &result)
 // 	return &result, err
 // }
 
@@ -761,6 +761,12 @@ func (c *PinotAPIClient) ResetTableSegment(tableName string, segmentName string)
 func (c *PinotAPIClient) GetSegmentTiers(tableName string, tableType string) (*model.GetSegmentTiersResponse, error) {
 	var result model.GetSegmentTiersResponse
 	err := c.FetchData(fmt.Sprintf("/segments/%s/tiers?type=%s", tableName, tableType), &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) GetSegmentCRC(tableName string) (*model.GetSegmentCRCResponse, error) {
+	var result model.GetSegmentCRCResponse
+	err := c.FetchData(fmt.Sprintf("/segments/%s/crc", tableName), &result)
 	return &result, err
 }
 

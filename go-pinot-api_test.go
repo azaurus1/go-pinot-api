@@ -33,6 +33,7 @@ const (
 	RouteSegmentTestResetAll                          = "/segments/test_OFFLINE/reset"
 	RouteSegmentTestReset                             = "/segments/test_OFFLINE/test_OFFLINE_16071_16071_0/reset"
 	RouteSegmentTestTiers                             = "/segments/test/tiers"
+	RouteSegmentTestCRC                               = "/segments/test/crc"
 	RouteV2Segments                                   = "/v2/segments"
 	RouteSchemas                                      = "/schemas"
 	RouteSchemasTest                                  = "/schemas/test"
@@ -2902,6 +2903,20 @@ func handleGetSegmentTiers(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleGetSegmentCRC(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"test_OFFLINE_16071_16071_0": "482564261",
+		"test_OFFLINE_16072_16072_0": "3986423949",
+		"test_OFFLINE_16073_16073_0": "309899836",
+		"test_OFFLINE_16074_16074_0": "4177199599",
+		"test_OFFLINE_16075_16075_0": "741719127",
+		"test_OFFLINE_16076_16076_0": "3743684004",
+		"test_OFFLINE_16077_16077_0": "364779966",
+		"test_OFFLINE_16078_16078_0": "288894494",
+		"test_OFFLINE_16079_16079_0": "1632533089"
+		}`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -3255,6 +3270,15 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetSegmentTiers(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteSegmentTestCRC, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetSegmentCRC(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -4505,4 +4529,16 @@ func TestGetSegmentTiers(t *testing.T) {
 	}
 
 	assert.Equal(t, res.SegmentTiers["test_OFFLINE_16071_16071_0"]["targetTier"], "coldTier", "Expected tier to be coldTier")
+}
+
+func TestGetSegmentCRC(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetSegmentCRC("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, (*res)["test_OFFLINE_16071_16071_0"], "482564261", "Expected CRC to be 482564261")
 }
