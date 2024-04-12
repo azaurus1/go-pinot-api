@@ -467,6 +467,13 @@ func (c *PinotAPIClient) GetTableMetadata(tableName string) (*model.GetTableMeta
 	return &result, err
 }
 
+func (c *PinotAPIClient) RebuildBrokerResourceFromHelixTags(tableName string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	endpoint := fmt.Sprintf("/tables/%s/rebuildBrokerResourceFromHelixTags", tableName)
+	err := c.CreateObject(endpoint, nil, &result)
+	return &result, err
+}
+
 // GetSchemas returns a list of schemas
 func (c *PinotAPIClient) GetSchemas() (*model.GetSchemaResponse, error) {
 	var result model.GetSchemaResponse

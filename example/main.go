@@ -64,7 +64,8 @@ func main() {
 	// demoTableInstancesFunctionality(client)
 	// demoTableLiveBrokersFunctionality(client)
 	// demoAllLiveBrokersFunctionality(client)
-	demoTableMetadataFunctionality(client)
+	// demoTableMetadataFunctionality(client)
+	demoRebuildBrokerResourceFromHelixTags(client)
 
 }
 
@@ -1092,6 +1093,18 @@ func demoTableMetadataFunctionality(client *pinot.PinotAPIClient) {
 	fmt.Println(tableMetadataResp.MaxNumMultiValuesMap)
 	fmt.Println(tableMetadataResp.ColumnIndexSizeMap)
 	fmt.Println(tableMetadataResp.UpsertPartitionToServerPrimaryKeyCountMap)
+
+}
+
+func demoRebuildBrokerResourceFromHelixTags(client *pinot.PinotAPIClient) {
+
+	rebuildBrokerResourceFromHelixTagsResp, err := client.RebuildBrokerResourceFromHelixTags("airlineStats_OFFLINE")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Rebuilding Broker Resource From Helix Tags:")
+	fmt.Println(rebuildBrokerResourceFromHelixTagsResp.Status)
 
 }
 

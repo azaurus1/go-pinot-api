@@ -16,35 +16,36 @@ import (
 )
 
 const (
-	RouteUsers                  = "/users"
-	RouteUser                   = "/users/test"
-	RouteInstances              = "/instances"
-	RouteInstance               = "/instances/Minion_172.19.0.2_9514"
-	RouteClusterInfo            = "/cluster/info"
-	RouteClusterConfigs         = "/cluster/configs"
-	RouteClusterConfigsDelete   = "/cluster/configs/allowParticipantAutoJoin"
-	RouteTenants                = "/tenants"
-	RouteTenantsInstances       = "/tenants/DefaultTenant"
-	RouteTenantsTables          = "/tenants/DefaultTenant/tables"
-	RouteTenantsMetadata        = "/tenants/DefaultTenant/metadata"
-	RouteSegmentsTest           = "/segments/test"
-	RouteSegmentsTestReload     = "/segments/test/reload"
-	RouteSegmentTestReload      = "/segments/test/test_1/reload"
-	RouteV2Segments             = "/v2/segments"
-	RouteSchemas                = "/schemas"
-	RouteSchemasTest            = "/schemas/test"
-	RouteSchemasFieldSpec       = "/schemas/fieldSpec"
-	RouteTables                 = "/tables"
-	RouteTablesTest             = "/tables/test"
-	RouteTablesTestExternalView = "/tables/test/externalview"
-	RouteTablesTestIdealState   = "/tables/test/idealstate"
-	RouteTablesTestIndexes      = "/tables/test/indexes"
-	RouteTablesTestInstances    = "/tables/test/instances"
-	RouteTablesLiveBrokers      = "/tables/livebrokers"
-	RouteTablesTestLiveBrokers  = "/tables/test/livebrokers"
-	RouteTablesTestMetadata     = "/tables/test/metadata"
-	RoutePinotControllerAdmin   = "/pinot-controller/admin"
-	RouteHealth                 = "/health"
+	RouteUsers                                        = "/users"
+	RouteUser                                         = "/users/test"
+	RouteInstances                                    = "/instances"
+	RouteInstance                                     = "/instances/Minion_172.19.0.2_9514"
+	RouteClusterInfo                                  = "/cluster/info"
+	RouteClusterConfigs                               = "/cluster/configs"
+	RouteClusterConfigsDelete                         = "/cluster/configs/allowParticipantAutoJoin"
+	RouteTenants                                      = "/tenants"
+	RouteTenantsInstances                             = "/tenants/DefaultTenant"
+	RouteTenantsTables                                = "/tenants/DefaultTenant/tables"
+	RouteTenantsMetadata                              = "/tenants/DefaultTenant/metadata"
+	RouteSegmentsTest                                 = "/segments/test"
+	RouteSegmentsTestReload                           = "/segments/test/reload"
+	RouteSegmentTestReload                            = "/segments/test/test_1/reload"
+	RouteV2Segments                                   = "/v2/segments"
+	RouteSchemas                                      = "/schemas"
+	RouteSchemasTest                                  = "/schemas/test"
+	RouteSchemasFieldSpec                             = "/schemas/fieldSpec"
+	RouteTables                                       = "/tables"
+	RouteTablesTest                                   = "/tables/test"
+	RouteTablesTestExternalView                       = "/tables/test/externalview"
+	RouteTablesTestIdealState                         = "/tables/test/idealstate"
+	RouteTablesTestIndexes                            = "/tables/test/indexes"
+	RouteTablesTestInstances                          = "/tables/test/instances"
+	RouteTablesLiveBrokers                            = "/tables/livebrokers"
+	RouteTablesTestLiveBrokers                        = "/tables/test/livebrokers"
+	RouteTablesTestMetadata                           = "/tables/test/metadata"
+	RouteTablesTestRebuildBrokerResourceFromHelixTags = "/tables/test/rebuildBrokerResourceFromHelixTags"
+	RoutePinotControllerAdmin                         = "/pinot-controller/admin"
+	RouteHealth                                       = "/health"
 )
 
 func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -1934,6 +1935,12 @@ func handleGetTableTestMetadata(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleTableRebuildBrokerResourceFromHelixTags(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"status": "Broker resource is not rebuilt because ideal state is the same for table: test_OFFLINE"
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -2213,6 +2220,15 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetTableTestMetadata(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestRebuildBrokerResourceFromHelixTags, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "POST":
+			handleTableRebuildBrokerResourceFromHelixTags(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -3355,4 +3371,16 @@ func TestGetTableMetadata(t *testing.T) {
 	}
 
 	assert.Equal(t, res.TableName, "test_OFFLINE", "Expected table name to be test_OFFLINE")
+}
+
+func TestRebuildBrokerResourceFromHelixTags(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.RebuildBrokerResourceFromHelixTags("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "Broker resource is not rebuilt because ideal state is the same for table: test_OFFLINE", "Expected response to be Broker resource is not rebuilt because ideal state is the same for table: test_OFFLINE")
 }
