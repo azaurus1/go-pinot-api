@@ -460,6 +460,13 @@ func (c *PinotAPIClient) GetTableLiveBrokers(tableName string) (*[]string, error
 	return &result, err
 }
 
+func (c *PinotAPIClient) GetTableMetadata(tableName string) (*model.GetTableMetadataResponse, error) {
+	var result model.GetTableMetadataResponse
+	endpoint := fmt.Sprintf("/tables/%s/metadata", tableName)
+	err := c.FetchData(endpoint, &result)
+	return &result, err
+}
+
 // GetSchemas returns a list of schemas
 func (c *PinotAPIClient) GetSchemas() (*model.GetSchemaResponse, error) {
 	var result model.GetSchemaResponse

@@ -62,8 +62,9 @@ func main() {
 	// demoTableIdealStateFunctionality(client)
 	// demoTableIndexesFunctionality(client)
 	// demoTableInstancesFunctionality(client)
-	demoTableLiveBrokersFunctionality(client)
-	demoAllLiveBrokersFunctionality(client)
+	// demoTableLiveBrokersFunctionality(client)
+	// demoAllLiveBrokersFunctionality(client)
+	demoTableMetadataFunctionality(client)
 
 }
 
@@ -1070,6 +1071,27 @@ func demoAllLiveBrokersFunctionality(client *pinot.PinotAPIClient) {
 
 	fmt.Println("Reading All Live Brokers:")
 	fmt.Println((*allLiveBrokersResp)["airlineStats_OFFLINE"])
+
+}
+
+func demoTableMetadataFunctionality(client *pinot.PinotAPIClient) {
+
+	// Get Table Metadata
+	tableMetadataResp, err := client.GetTableMetadata("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Table Metadata:")
+	fmt.Println(tableMetadataResp.TableName)
+	fmt.Println(tableMetadataResp.DiskSizeInBytes)
+	fmt.Println(tableMetadataResp.NumSegments)
+	fmt.Println(tableMetadataResp.NumRows)
+	fmt.Println(tableMetadataResp.ColumnLengthMap)
+	fmt.Println(tableMetadataResp.ColumnCardinalityMap)
+	fmt.Println(tableMetadataResp.MaxNumMultiValuesMap)
+	fmt.Println(tableMetadataResp.ColumnIndexSizeMap)
+	fmt.Println(tableMetadataResp.UpsertPartitionToServerPrimaryKeyCountMap)
 
 }
 

@@ -42,6 +42,7 @@ const (
 	RouteTablesTestInstances    = "/tables/test/instances"
 	RouteTablesLiveBrokers      = "/tables/livebrokers"
 	RouteTablesTestLiveBrokers  = "/tables/test/livebrokers"
+	RouteTablesTestMetadata     = "/tables/test/metadata"
 	RoutePinotControllerAdmin   = "/pinot-controller/admin"
 	RouteHealth                 = "/health"
 )
@@ -1919,6 +1920,20 @@ func handleGetTableTestLiveBrokers(w http.ResponseWriter, r *http.Request) {
 	  ]`)
 }
 
+func handleGetTableTestMetadata(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"tableName": "test_OFFLINE",
+		"diskSizeInBytes": 72068,
+		"numSegments": 1,
+		"numRows": 694,
+		"columnLengthMap": {},
+		"columnCardinalityMap": {},
+		"maxNumMultiValuesMap": {},
+		"columnIndexSizeMap": {},
+		"upsertPartitionToServerPrimaryKeyCountMap": {}
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -2189,6 +2204,15 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetTableTestLiveBrokers(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteTablesTestMetadata, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "GET":
+			handleGetTableTestMetadata(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -3319,4 +3343,16 @@ func TestGetTableTestLiveBrokers(t *testing.T) {
 
 	assert.Equal(t, (*res)[0], "Broker_172.17.0.3_8000", "Expected test broker_0 to be Broker_172.17.0.3_8000")
 
+}
+
+func TestGetTableMetadata(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.GetTableMetadata("test")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.TableName, "test_OFFLINE", "Expected table name to be test_OFFLINE")
 }
