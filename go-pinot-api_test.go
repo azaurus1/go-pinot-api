@@ -30,6 +30,8 @@ const (
 	RouteSegmentsTest                                 = "/segments/test"
 	RouteSegmentsTestReload                           = "/segments/test/reload"
 	RouteSegmentTestReload                            = "/segments/test/test_1/reload"
+	RouteSegmentTestResetAll                          = "/segments/test_OFFLINE/reset"
+	RouteSegmentTestReset                             = "/segments/test_OFFLINE/test_OFFLINE_16071_16071_0/reset"
 	RouteV2Segments                                   = "/v2/segments"
 	RouteSchemas                                      = "/schemas"
 	RouteSchemasTest                                  = "/schemas/test"
@@ -2755,6 +2757,18 @@ func handleGetTableStats(w http.ResponseWriter, r *http.Request) {
 	  }`)
 }
 
+func handleResetTableSegment(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"status": "Successfully reset segment: test_OFFLINE_16071_16071_0 of table: test_OFFLINE"
+	  }`)
+}
+
+func handleResetTableSegments(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `{
+		"status": "Successfully reset segments of table: test_OFFLINE"
+	  }`)
+}
+
 func createMockControllerServer() *httptest.Server {
 
 	mux := http.NewServeMux()
@@ -3081,6 +3095,24 @@ func createMockControllerServer() *httptest.Server {
 		switch r.Method {
 		case "GET":
 			handleGetTableStats(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteSegmentTestReset, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "POST":
+			handleResetTableSegment(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	}))
+
+	mux.HandleFunc(RouteSegmentTestResetAll, authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case "POST":
+			handleResetTableSegments(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -4295,4 +4327,28 @@ func TestGetTableStats(t *testing.T) {
 	}
 
 	assert.Equal(t, (*res)["OFFLINE"].CreationTime, "20240411T224913Z", "Expected table creationtime to be 20240411T224913Z")
+}
+
+func TestResetTableSegment(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.ResetTableSegment("test_OFFLINE", "test_OFFLINE_16071_16071_0")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "Successfully reset segment: test_OFFLINE_16071_16071_0 of table: test_OFFLINE", "Expected response to be Successfully reset segment: test_OFFLINE_16071_16071_0 of table: test_OFFLINE")
+}
+
+func TestResetAllTableSegments(t *testing.T) {
+	server := createMockControllerServer()
+	client := createPinotClient(server)
+
+	res, err := client.ResetTableSegments("test_OFFLINE")
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
+
+	assert.Equal(t, res.Status, "Successfully reset segments of table: test_OFFLINE", "Expected response to be Successfully reset segments of table: test_OFFLINE")
 }

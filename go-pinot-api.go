@@ -746,6 +746,18 @@ func (c *PinotAPIClient) ReloadSegment(tableName string, segmentName string) (*m
 	return &result, err
 }
 
+func (c *PinotAPIClient) ResetTableSegments(tableNameWithType string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject(fmt.Sprintf("/segments/%s/reset", tableNameWithType), nil, &result) // you must provide type in the tableName here e.g. airlineStats_OFFLINE
+	return &result, err
+}
+
+func (c *PinotAPIClient) ResetTableSegment(tableName string, segmentName string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject(fmt.Sprintf("/segments/%s/%s/reset", tableName, segmentName), nil, &result)
+	return &result, err
+}
+
 // Cluster
 
 func (c *PinotAPIClient) GetClusterInfo() (*model.GetClusterResponse, error) {

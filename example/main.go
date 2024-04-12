@@ -70,7 +70,9 @@ func main() {
 	// demotGetTableSize(client)
 	// demoGetTableState(client)
 	// demoChangeTableState(client)
-	demoGetTableStats(client)
+	// demoGetTableStats(client)
+	// demoResetTableSegments(client)
+	demoResetTableSegment(client)
 
 }
 
@@ -1178,6 +1180,30 @@ func demoGetTableStats(client *pinot.PinotAPIClient) {
 
 	fmt.Println("Reading Table Stats:")
 	fmt.Println((*tableStatsResp)["OFFLINE"].CreationTime)
+
+}
+
+func demoResetTableSegments(client *pinot.PinotAPIClient) {
+
+	reloadTableSegmentsResp, err := client.ResetTableSegments("airlineStats_OFFLINE")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reloading airlineStats Table Segments:")
+	fmt.Println(reloadTableSegmentsResp.Status)
+
+}
+
+func demoResetTableSegment(client *pinot.PinotAPIClient) {
+
+	reloadTableSegmentResp, err := client.ResetTableSegment("airlineStats_OFFLINE", "airlineStats_OFFLINE_16071_16071_0")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reloading airlineStats Table Segment:")
+	fmt.Println(reloadTableSegmentResp.Status)
 
 }
 
