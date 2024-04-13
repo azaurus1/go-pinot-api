@@ -730,7 +730,7 @@ func (c *PinotAPIClient) GetSegments(tableName string) (model.GetSegmentsRespons
 
 // func (c *PinotAPIClient) DeleteSegment(tableName string, segmentName string) (*model.UserActionResponse, error) {
 // 	var result model.UserActionResponse
-// 	err := c.DeleteObject(fmt.Sprintf("/segments/%s/%s", tableName, segmentName), nil, &result)
+// 	err := c.DeleteObject(fmt.Sprintf("/segments/%s/choose", tableName, segmentName), nil, &result)
 // 	return &result, err
 // }
 
@@ -743,6 +743,42 @@ func (c *PinotAPIClient) ReloadTableSegments(tableName string) (*model.UserActio
 func (c *PinotAPIClient) ReloadSegment(tableName string, segmentName string) (*model.UserActionResponse, error) {
 	var result model.UserActionResponse
 	err := c.CreateObject(fmt.Sprintf("/segments/%s/%s/reload", tableName, segmentName), nil, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) ResetTableSegments(tableNameWithType string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject(fmt.Sprintf("/segments/%s/reset", tableNameWithType), nil, &result) // you must provide type in the tableName here e.g. airlineStats_OFFLINE
+	return &result, err
+}
+
+func (c *PinotAPIClient) ResetTableSegment(tableName string, segmentName string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject(fmt.Sprintf("/segments/%s/%s/reset", tableName, segmentName), nil, &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) GetSegmentTiers(tableName string, tableType string) (*model.GetSegmentTiersResponse, error) {
+	var result model.GetSegmentTiersResponse
+	err := c.FetchData(fmt.Sprintf("/segments/%s/tiers?type=%s", tableName, tableType), &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) GetSegmentCRC(tableName string) (*model.GetSegmentCRCResponse, error) {
+	var result model.GetSegmentCRCResponse
+	err := c.FetchData(fmt.Sprintf("/segments/%s/crc", tableName), &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) GetSegmentMetadata(tableName string) (*model.GetSegmentMetadataResponse, error) {
+	var result model.GetSegmentMetadataResponse
+	err := c.FetchData(fmt.Sprintf("/segments/%s/metadata", tableName), &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) GetSegmentZKMetadata(tableName string) (*model.GetSegmentZKMetadataResponse, error) {
+	var result model.GetSegmentZKMetadataResponse
+	err := c.FetchData(fmt.Sprintf("/segments/%s/zkmetadata", tableName), &result)
 	return &result, err
 }
 

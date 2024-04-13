@@ -70,7 +70,13 @@ func main() {
 	// demotGetTableSize(client)
 	// demoGetTableState(client)
 	// demoChangeTableState(client)
-	demoGetTableStats(client)
+	// demoGetTableStats(client)
+	// demoResetTableSegments(client)
+	// demoResetTableSegment(client)
+	// demoGetSegmentTiers(client)
+	// demoGetSegmentCRC(client)
+	// demoGetSegmentMetadata(client)
+	demoGetSegmentZKMetadata(client)
 
 }
 
@@ -1178,6 +1184,81 @@ func demoGetTableStats(client *pinot.PinotAPIClient) {
 
 	fmt.Println("Reading Table Stats:")
 	fmt.Println((*tableStatsResp)["OFFLINE"].CreationTime)
+
+}
+
+func demoResetTableSegments(client *pinot.PinotAPIClient) {
+
+	reloadTableSegmentsResp, err := client.ResetTableSegments("airlineStats_OFFLINE")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reloading airlineStats Table Segments:")
+	fmt.Println(reloadTableSegmentsResp.Status)
+
+}
+
+func demoResetTableSegment(client *pinot.PinotAPIClient) {
+
+	reloadTableSegmentResp, err := client.ResetTableSegment("airlineStats_OFFLINE", "airlineStats_OFFLINE_16071_16071_0")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reloading airlineStats Table Segment:")
+	fmt.Println(reloadTableSegmentResp.Status)
+
+}
+
+func demoGetSegmentTiers(client *pinot.PinotAPIClient) {
+
+	segmentTiersResp, err := client.GetSegmentTiers("airlineStats", "OFFLINE")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Segment Tiers:")
+	fmt.Println(segmentTiersResp.SegmentTiers)
+
+}
+
+func demoGetSegmentMetadata(client *pinot.PinotAPIClient) {
+
+	segmentMetadataResp, err := client.GetSegmentMetadata("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Segment Metadata:")
+	fmt.Println((*segmentMetadataResp)["airlineStats_OFFLINE_16071_16071_0"].SegmentName)
+	fmt.Println((*segmentMetadataResp)["airlineStats_OFFLINE_16071_16071_0"].SchemaName)
+	fmt.Println((*segmentMetadataResp)["airlineStats_OFFLINE_16071_16071_0"].CRC)
+	fmt.Println((*segmentMetadataResp)["airlineStats_OFFLINE_16071_16071_0"].CreationTimeMillis)
+
+}
+
+func demoGetSegmentCRC(client *pinot.PinotAPIClient) {
+
+	segmentCRCResp, err := client.GetSegmentCRC("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Segment CRC:")
+	fmt.Println((*segmentCRCResp)["airlineStats_OFFLINE_16071_16071_0"])
+
+}
+
+func demoGetSegmentZKMetadata(client *pinot.PinotAPIClient) {
+
+	segmentZKMetadataResp, err := client.GetSegmentZKMetadata("airlineStats")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading Segment ZK Metadata:")
+	fmt.Println((*segmentZKMetadataResp)["airlineStats_OFFLINE_16071_16071_0"].SegmentTier)
 
 }
 
