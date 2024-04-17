@@ -166,6 +166,10 @@ type TierConfig struct {
 	ServerTag           string `json:"serverTag"`
 }
 
+type Task struct {
+	TaskConfigMap map[string]string `json:"taskConfigMap"`
+}
+
 type Table struct {
 	TableName        string                `json:"tableName"`
 	TableType        string                `json:"tableType"`
@@ -182,6 +186,7 @@ type Table struct {
 	Quota            *QuotaConfig          `json:"quota,omitempty"`
 	UpsertConfig     *UpsertConfig         `json:"upsertConfig,omitempty"`
 	DedupConfig      *DedupConfig          `json:"dedupConfig,omitempty"`
+	Task             *Task                 `json:"task,omitempty"`
 }
 
 func (t *Table) IsEmpty() bool {
