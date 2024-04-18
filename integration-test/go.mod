@@ -8,7 +8,7 @@ require (
 	github.com/hamba/avro/v2 v2.20.1
 	github.com/stretchr/testify v1.9.0
 	github.com/testcontainers/testcontainers-go v0.30.0
-	github.com/testcontainers/testcontainers-go/modules/kafka v0.29.1
+	github.com/testcontainers/testcontainers-go/modules/kafka v0.30.0
 	github.com/testcontainers/testcontainers-go/modules/redpanda v0.29.1
 	github.com/twmb/franz-go v1.16.1
 	github.com/twmb/franz-go/pkg/kadm v1.11.0
