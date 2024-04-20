@@ -27,6 +27,7 @@
 ![API Coverage][APICoverage-shield]
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/7537f7893f2c4a05b706d166e1763344)](https://app.codacy.com/gh/azaurus1/go-pinot-api/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/7537f7893f2c4a05b706d166e1763344)](https://app.codacy.com/gh/azaurus1/go-pinot-api/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
+[![Go Report Card](https://goreportcard.com/badge/github.com/azaurus1/go-pinot-api)](https://goreportcard.com/report/github.com/azaurus1/go-pinot-api)
 
 
 
