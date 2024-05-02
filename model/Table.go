@@ -121,10 +121,10 @@ type UpsertConfig struct {
 	ComparisonColumns            string            `json:"comparisonColumn,omitempty"`
 	DeleteRecordColumn           string            `json:"deleteRecordColumn,omitempty"`
 	DeletedKeysTTL               float64           `json:"deletedKeysTTL,omitempty"`
+	MetadataTTL                  float64           `json:"metadataTTL,omitempty"`
 	HashFunction                 string            `json:"hashFunction,omitempty"`
 	EnableSnapshot               *bool             `json:"enableSnapshot,omitempty"`
 	EnablePreLoad                *bool             `json:"enablePreLoad,omitempty"`
-	UpsertTTL                    string            `json:"upsertTTL,omitempty"`
 	DropOutOfOrderRecord         *bool             `json:"dropOutOfOrderRecord,omitempty"`
 	OutOfOrderRecordColumn       string            `json:"outOfOrderRecordColumn,omitempty"`
 	MetadataManagerClass         string            `json:"metadataManagerClass,omitempty"`
