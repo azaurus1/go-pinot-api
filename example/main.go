@@ -76,7 +76,9 @@ func main() {
 	// demoGetSegmentTiers(client)
 	// demoGetSegmentCRC(client)
 	// demoGetSegmentMetadata(client)
-	demoGetSegmentZKMetadata(client)
+	// demoGetSegmentZKMetadata(client)
+	// demoUpdateSegmentZKTimeInterval(client)
+	demoCreateUserWithACL(client)
 
 }
 
@@ -1262,6 +1264,18 @@ func demoGetSegmentZKMetadata(client *pinot.PinotAPIClient) {
 
 }
 
+func demoUpdateSegmentZKTimeInterval(client *pinot.PinotAPIClient) {
+
+	updateSegmentZKTimeIntervalResp, err := client.UpdateSegmentZKTimeInterval("airlineStats_OFFLINE")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Updating Segment ZK Interval Time:")
+	fmt.Println(updateSegmentZKTimeIntervalResp.Status)
+
+}
+
 func getOrDefault(defaultOption string, envKeys ...string) string {
 
 	for _, envKey := range envKeys {
@@ -1271,5 +1285,49 @@ func getOrDefault(defaultOption string, envKeys ...string) string {
 	}
 
 	return defaultOption
+
+}
+
+func demoCreateUserWithACL(client *pinot.PinotAPIClient) {
+
+	user := pinotModel.User{
+		Username:    "liam_with_permissions",
+		Password:    "password",
+		Component:   "BROKER",
+		Role:        "admin",
+		Permissions: &[]string{"READ"},
+		Tables:      &[]string{"my_table_Offline"},
+	}
+
+	userBytes, err := json.Marshal(user)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	// Create User
+	createResp, err := client.CreateUser(userBytes)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(createResp.Status)
+
+	// Read User
+	getUserResp, err := client.GetUser(user.Username, user.Component)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading User:")
+	fmt.Println(getUserResp.Permissions)
+
+	// Read User
+	getUserResp, err = client.GetUser("liam_with_admin", "BROKER")
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println("Reading User:")
+	fmt.Println(getUserResp.Permissions)
 
 }
