@@ -129,12 +129,21 @@ func (c *PinotAPIClient) CreateObject(endpoint string, body []byte, result any) 
 
 	fullURL := prepareRequestURL(c, endpoint)
 
-	req, err := http.NewRequest(http.MethodPost, fullURL.String(), bytes.NewBuffer(body))
+	var req *http.Request
+	var err error
+
+	if body == nil {
+		c.log.Debug("body is nil")
+		req, err = http.NewRequest(http.MethodPost, fullURL.String(), nil)
+		req.Header.Set("Content-Type", "application/json")
+	} else {
+		req, err = http.NewRequest(http.MethodPost, fullURL.String(), bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+	}
+
 	if err != nil {
 		return fmt.Errorf("client: could not create request: %w", err)
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 
 	c.log.Debug(fmt.Sprintf("attempting POST %s", fullURL))
 
@@ -779,6 +788,12 @@ func (c *PinotAPIClient) GetSegmentMetadata(tableName string) (*model.GetSegment
 func (c *PinotAPIClient) GetSegmentZKMetadata(tableName string) (*model.GetSegmentZKMetadataResponse, error) {
 	var result model.GetSegmentZKMetadataResponse
 	err := c.FetchData(fmt.Sprintf("/segments/%s/zkmetadata", tableName), &result)
+	return &result, err
+}
+
+func (c *PinotAPIClient) UpdateSegmentZKTimeInterval(tableNameWithType string) (*model.UserActionResponse, error) {
+	var result model.UserActionResponse
+	err := c.CreateObject(fmt.Sprintf("/segments/%s/updateZkTimeInterval", tableNameWithType), nil, &result)
 	return &result, err
 }
 
