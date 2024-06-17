@@ -124,7 +124,6 @@ type UpsertConfig struct {
 	HashFunction                 string            `json:"hashFunction,omitempty"`
 	EnableSnapshot               *bool             `json:"enableSnapshot,omitempty"`
 	EnablePreLoad                *bool             `json:"enablePreLoad,omitempty"`
-	UpsertTTL                    string            `json:"upsertTTL,omitempty"`
 	DropOutOfOrderRecord         *bool             `json:"dropOutOfOrderRecord,omitempty"`
 	OutOfOrderRecordColumn       string            `json:"outOfOrderRecordColumn,omitempty"`
 	MetadataManagerClass         string            `json:"metadataManagerClass,omitempty"`
