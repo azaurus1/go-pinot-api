@@ -3938,10 +3938,12 @@ func TestCreateUser(t *testing.T) {
 	client := createPinotClient(server)
 
 	user := model.User{
-		Username:  "testUser",
-		Password:  "test",
-		Component: "BROKER",
-		Role:      "ADMIN",
+		Username:    "testUser",
+		Password:    "test",
+		Component:   "BROKER",
+		Role:        "ADMIN",
+		Permissions: &[]string{"READ"},
+		Tables:      &[]string{"my_table_OFFLINE"},
 	}
 
 	userBytes, err := json.Marshal(user)
