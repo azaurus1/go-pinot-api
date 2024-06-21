@@ -120,11 +120,11 @@ type UpsertConfig struct {
 	DefaultPartialUpsertStrategy string            `json:"defaultPartialUpsertStrategy,omitempty"`
 	ComparisonColumns            string            `json:"comparisonColumn,omitempty"`
 	DeleteRecordColumn           string            `json:"deleteRecordColumn,omitempty"`
+	MetadataTTL                  int64             `json:"metadataTTL,omitempty"`
 	DeletedKeysTTL               float64           `json:"deletedKeysTTL,omitempty"`
 	HashFunction                 string            `json:"hashFunction,omitempty"`
 	EnableSnapshot               *bool             `json:"enableSnapshot,omitempty"`
 	EnablePreLoad                *bool             `json:"enablePreLoad,omitempty"`
-	UpsertTTL                    string            `json:"upsertTTL,omitempty"`
 	DropOutOfOrderRecord         *bool             `json:"dropOutOfOrderRecord,omitempty"`
 	OutOfOrderRecordColumn       string            `json:"outOfOrderRecordColumn,omitempty"`
 	MetadataManagerClass         string            `json:"metadataManagerClass,omitempty"`
