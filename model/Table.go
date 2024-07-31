@@ -167,7 +167,7 @@ type TierConfig struct {
 }
 
 type Task struct {
-	TaskConfigMap map[string]string `json:"taskConfigMap"`
+	TaskTypesConfigMap map[string]string `json:"taskTypeConfigsMap"`
 }
 
 type Table struct {
