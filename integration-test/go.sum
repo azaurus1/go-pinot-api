@@ -169,8 +169,8 @@ github.com/twmb/franz-go/pkg/kadm v1.11.0 h1:FfeWJ0qadntFpAcQt8JzNXW4dijjytZNLrz
 github.com/twmb/franz-go/pkg/kadm v1.11.0/go.mod h1:qrhkdH+SWS3ivmbqOgHbpgVHamhaKcjH0UM+uOp0M1A=
 github.com/twmb/franz-go/pkg/kmsg v1.7.0 h1:a457IbvezYfA5UkiBvyV3zj0Is3y1i8EJgqjJYoij2E=
 github.com/twmb/franz-go/pkg/kmsg v1.7.0/go.mod h1:se9Mjdt0Nwzc9lnjJ0HyDtLyBnaBDAd7pCje47OhSyw=
-github.com/twmb/franz-go/pkg/sr v0.0.0-20240221021454-52a9ebaedf47 h1:Y+HKacgGQdNUJ1FZtJXLNe+ku1+2b8H/HoasCZYtL2s=
-github.com/twmb/franz-go/pkg/sr v0.0.0-20240221021454-52a9ebaedf47/go.mod h1:egX+kicq83hpztv3PRCXKLNO132Ol9JTAJOCRZcqUxI=
+github.com/twmb/franz-go/pkg/sr v1.0.1 h1:hf3eRFDUWSfmR7JQCS/3JiqZEQwqbiDSS/DooewMHCE=
+github.com/twmb/franz-go/pkg/sr v1.0.1/go.mod h1:aUFRRLI5WYKpKzmWDztzZFecx5eOkCNuuamd91jUV5c=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yusufpapurcu/wmi v1.2.4 h1:zFUKzehAFReQwLys1b/iSMl+JQGSCSjtVqQn9bBrPo0=
