@@ -166,8 +166,10 @@ type TierConfig struct {
 	ServerTag           string `json:"serverTag"`
 }
 
+// map[string]map[string]string is like 
+// {"field": {"inner_nested_fied": "value"}}
 type Task struct {
-	TaskTypeConfigsMap map[string]string `json:"taskTypeConfigsMap"`
+	TaskTypeConfigsMap map[string]map[string]string `json:"taskTypeConfigsMap"`
 }
 
 type Table struct {
@@ -190,6 +192,5 @@ type Table struct {
 }
 
 func (t *Table) IsEmpty() bool {
-
-	return t.TableName == "" && t.TableType == "" && t.SegmentsConfig.TimeType == "" && t.Tenants.Broker == "" && t.Tenants.Server == "" && t.TableIndexConfig.LoadMode == "" && t.TableIndexConfig.ColumnMinMaxValueGeneratorMode == "" && t.TableIndexConfig.NoDictionarySizeRatioThreshold == 0 && t.TableIndexConfig.SegmentNameGeneratorType == "" && t.TableIndexConfig.OptimizeDictionary == false && t.TableIndexConfig.OptimizeDictionaryForMetrics == false && t.TableIndexConfig.NoDictionaryColumns == nil && t.TableIndexConfig.OnHeapDictionaryColumns == nil && t.TableIndexConfig.VarLengthDictionaryColumns == nil && t.TableIndexConfig.BloomFilterColumns == nil && t.TableIndexConfig.RangeIndexVersion == 0 && t.TableIndexConfig.CreateInvertedIndexDuringSegmentGeneration == false && t.TableIndexConfig.SortedColumn == nil && t.TableIndexConfig.StarTreeIndexConfigs == nil && t.TableIndexConfig.EnableDefaultStarTree == false && t.TableIndexConfig.EnableDynamicStarTreeCreation == false && t.TableIndexConfig.AggregateMetrics == false && t.TableIndexConfig.RangeIndexColumns == nil && t.TableIndexConfig.InvertedIndexColumns == nil && t.TableIndexConfig.SegmentPartitionConfig == nil && t.Metadata == nil && t.FieldConfigList == nil && t.IngestionConfig == nil && t.TierConfigs == nil && t.IsDimTable == false && t.Query == nil && t.Routing == nil && t.Quota == nil && t.UpsertConfig == nil && t.DedupConfig == nil
+	return t.TableName == "" && t.TableType == "" && t.SegmentsConfig.TimeType == "" && t.Tenants.Broker == "" && t.Tenants.Server == "" && t.TableIndexConfig.LoadMode == "" && t.TableIndexConfig.ColumnMinMaxValueGeneratorMode == "" && t.TableIndexConfig.NoDictionarySizeRatioThreshold == 0 && t.TableIndexConfig.SegmentNameGeneratorType == "" && !t.TableIndexConfig.OptimizeDictionary && !t.TableIndexConfig.OptimizeDictionaryForMetrics && t.TableIndexConfig.NoDictionaryColumns == nil && t.TableIndexConfig.OnHeapDictionaryColumns == nil && t.TableIndexConfig.VarLengthDictionaryColumns == nil && t.TableIndexConfig.BloomFilterColumns == nil && t.TableIndexConfig.RangeIndexVersion == 0 && !t.TableIndexConfig.CreateInvertedIndexDuringSegmentGeneration && t.TableIndexConfig.SortedColumn == nil && t.TableIndexConfig.StarTreeIndexConfigs == nil && !t.TableIndexConfig.EnableDefaultStarTree && !t.TableIndexConfig.EnableDynamicStarTreeCreation && !t.TableIndexConfig.AggregateMetrics && t.TableIndexConfig.RangeIndexColumns == nil && t.TableIndexConfig.InvertedIndexColumns == nil && t.TableIndexConfig.SegmentPartitionConfig == nil && t.Metadata == nil && t.FieldConfigList == nil && t.IngestionConfig == nil && t.TierConfigs == nil && !t.IsDimTable && t.Query == nil && t.Routing == nil && t.Quota == nil && t.UpsertConfig == nil && t.DedupConfig == nil
 }
