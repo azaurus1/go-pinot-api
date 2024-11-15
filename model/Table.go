@@ -166,7 +166,7 @@ type TierConfig struct {
 	ServerTag           string `json:"serverTag"`
 }
 
-// map[string]map[string]string is like 
+// map[string]map[string]string is like
 // {"field": {"inner_nested_fied": "value"}}
 type Task struct {
 	TaskTypeConfigsMap map[string]map[string]string `json:"taskTypeConfigsMap"`
