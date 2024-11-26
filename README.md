@@ -221,9 +221,11 @@ Project Link: [https://github.com/azaurus1/go-pinot-api](https://github.com/azau
 
 
 <!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* Many thanks to [Hagen H (Hendoxc)](https://github.com/hendoxc)
+## Acknowledgments:
+Many thanks to:
+- [Hagen H](https://github.com/hendoxc)
+- [Gabriel Custódio](https://github.com/gbrlcustodio)
+- [João Leber](https://github.com/jleber)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
