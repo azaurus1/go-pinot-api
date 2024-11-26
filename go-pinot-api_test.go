@@ -403,7 +403,7 @@ func handleGetTableConfig(w http.ResponseWriter, r *http.Request) {
 				"dropOutOfOrderRecord":false,
 				"hashFunction":"NONE",
 				"defaultPartialUpsertStrategy":"OVERWRITE",
-				"metadataTTL":84600,
+				"metadataTTL":84600.0,
 				"deletedKeysTTL":0.0,
 				"enablePreload":false,
 				"enableSnapshot":true
