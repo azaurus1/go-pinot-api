@@ -14,6 +14,7 @@ type TableSegmentsConfig struct {
 	PeerSegmentDownloadScheme      string `json:"peerSegmentDownloadScheme,omitempty"`
 	CompletionMode                 string `json:"completionMode,omitempty"`
 	DeletedSegmentsRetentionPeriod string `json:"deletedSegmentsRetentionPeriod,omitempty"`
+	SchemaName                     string `json:"schemaName,omitempty"`
 }
 
 type TableTenant struct {
