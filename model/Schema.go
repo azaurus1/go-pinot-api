@@ -3,12 +3,13 @@ package model
 import "encoding/json"
 
 type FieldSpec struct {
-	Name             string `json:"name"`
-	DataType         string `json:"dataType"`
-	Format           string `json:"format,omitempty"`
-	Granularity      string `json:"granularity,omitempty"`
-	NotNull          *bool  `json:"notNull,omitempty"`
-	SingleValueField *bool  `json:"singleValueField,omitempty"`
+	Name              string `json:"name"`
+	DataType          string `json:"dataType"`
+	Format            string `json:"format,omitempty"`
+	Granularity       string `json:"granularity,omitempty"`
+	NotNull           *bool  `json:"notNull,omitempty"`
+	SingleValueField  *bool  `json:"singleValueField,omitempty"`
+	TransformFunction string `json:"transformFunction,omitempty"`
 }
 
 type Schema struct {
