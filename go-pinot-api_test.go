@@ -4584,7 +4584,7 @@ func TestCreateTable(t *testing.T) {
 			},
 		},
 		IngestionConfig: &model.TableIngestionConfig{
-			SegmentTimeValueCheck: true,
+			SegmentTimeValueCheck: boolPtr(true),
 			TransformConfigs: []model.TransformConfig{
 				{
 					ColumnName:        "timestamp",
@@ -4654,7 +4654,7 @@ func TestUpdateTable(t *testing.T) {
 			},
 		},
 		IngestionConfig: &model.TableIngestionConfig{
-			SegmentTimeValueCheck: true,
+			SegmentTimeValueCheck: boolPtr(true),
 			TransformConfigs: []model.TransformConfig{
 				{
 					ColumnName:        "timestamp",

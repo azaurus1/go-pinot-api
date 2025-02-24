@@ -1,20 +1,25 @@
 package model
 
 type TableSegmentsConfig struct {
-	TimeType                       string `json:"timeType"`
-	Replication                    string `json:"replication"`
-	ReplicasPerPartition           string `json:"replicasPerPartition,omitempty"`
-	TimeColumnName                 string `json:"timeColumnName"`
-	SegmentAssignmentStrategy      string `json:"segmentAssignmentStrategy,omitempty"`
-	SegmentPushType                string `json:"segmentPushType,omitempty"`
-	MinimizeDataMovement           bool   `json:"minimizeDataMovement"`
-	RetentionTimeUnit              string `json:"retentionTimeUnit,omitempty"`
-	RetentionTimeValue             string `json:"retentionTimeValue,omitempty"`
-	CrypterClassName               string `json:"crypterClassName,omitempty"`
-	PeerSegmentDownloadScheme      string `json:"peerSegmentDownloadScheme,omitempty"`
-	CompletionMode                 string `json:"completionMode,omitempty"`
-	DeletedSegmentsRetentionPeriod string `json:"deletedSegmentsRetentionPeriod,omitempty"`
-	SchemaName                     string `json:"schemaName,omitempty"`
+	TimeType                       string            `json:"timeType"`
+	Replication                    string            `json:"replication"`
+	ReplicasPerPartition           string            `json:"replicasPerPartition,omitempty"`
+	TimeColumnName                 string            `json:"timeColumnName"`
+	SegmentAssignmentStrategy      string            `json:"segmentAssignmentStrategy,omitempty"`
+	SegmentPushType                string            `json:"segmentPushType,omitempty"`
+	MinimizeDataMovement           bool              `json:"minimizeDataMovement"`
+	RetentionTimeUnit              string            `json:"retentionTimeUnit,omitempty"`
+	RetentionTimeValue             string            `json:"retentionTimeValue,omitempty"`
+	CrypterClassName               string            `json:"crypterClassName,omitempty"`
+	PeerSegmentDownloadScheme      string            `json:"peerSegmentDownloadScheme,omitempty"`
+	CompletionMode                 string            `json:"completionMode,omitempty"`
+	DeletedSegmentsRetentionPeriod string            `json:"deletedSegmentsRetentionPeriod,omitempty"`
+	SchemaName                     string            `json:"schemaName,omitempty"`
+	CompletionConfig               *CompletionConfig `json:"completionConfig,omitempty"`
+}
+
+type CompletionConfig struct {
+	CompletionMode string `json:"completionMode"`
 }
 
 type TableTenant struct {
@@ -147,7 +152,7 @@ type FilterConfig struct {
 }
 
 type TableIngestionConfig struct {
-	SegmentTimeValueCheck bool                   `json:"segmentTimeValueCheck,omitempty"`
+	SegmentTimeValueCheck *bool                  `json:"segmentTimeValueCheck,omitempty"`
 	TransformConfigs      []TransformConfig      `json:"transformConfigs,omitempty"`
 	FilterConfig          *FilterConfig          `json:"filterConfig,omitempty"`
 	ContinueOnError       bool                   `json:"continueOnError,omitempty"`
@@ -156,7 +161,120 @@ type TableIngestionConfig struct {
 }
 
 type StreamIngestionConfig struct {
-	StreamConfigMaps []map[string]string `json:"streamConfigMaps"`
+	StreamConfigMaps                 []StreamConfig `json:"streamConfigMaps"`
+	ColumnMajorSegmentBuilderEnabled *bool          `json:"columnMajorSegmentBuilderEnabled,omitempty"`
+	TrackFilteredMessageOffsets      *bool          `json:"trackFilteredMessageOffsets,omitempty"`
+}
+
+type StreamConfig struct {
+	AccessKey                                                        string `json:"accessKey,omitempty"`
+	AuthenticationType                                               string `json:"authentication.type,omitempty"`
+	KeySerializer                                                    string `json:"key.serializer,omitempty"`
+	MaxRecordsToFetch                                                string `json:"maxRecordsToFetch,omitempty"`
+	RealtimeSegmentCommitTimeoutSeconds                              string `json:"realtime.segment.commit.timeoutSeconds,omitempty"`
+	RealtimeSegmentFlushAutotuneInitialRows                          string `json:"realtime.segment.flush.autotune.initialRows,omitempty"`
+	RealtimeSegmentFlushDesiredSize                                  string `json:"realtime.segment.flush.desired.size,omitempty"`
+	RealtimeSegmentFlushThresholdRows                                string `json:"realtime.segment.flush.threshold.rows,omitempty"`
+	RealtimeSegmentFlushThresholdTime                                string `json:"realtime.segment.flush.threshold.time,omitempty"`
+	RealtimeSegmentFlushThresholdSegmentRows                         string `json:"realtime.segment.flush.threshold.segment.rows,omitempty"`
+	RealtimeSegmentFlushThresholdSegmentSize                         string `json:"realtime.segment.flush.threshold.segment.size,omitempty"`
+	RealtimeSegmentFlushThresholdSegmentTime                         string `json:"realtime.segment.flush.threshold.segment.time,omitempty"`
+	RealtimeSegmentServerUploadToDeepStore                           string `json:"realtime.segment.serverUploadToDeepStore,omitempty"`
+	Region                                                           string `json:"region,omitempty"`
+	SaslJaasConfig                                                   string `json:"sasl.jaas.config,omitempty"`
+	SaslMechanism                                                    string `json:"sasl.mechanism,omitempty"`
+	SecretKey                                                        string `json:"secretKey,omitempty"`
+	SecurityProtocol                                                 string `json:"security.protocol,omitempty"`
+	ShardIteratorType                                                string `json:"shardIteratorType,omitempty"`
+	StreamType                                                       string `json:"streamType,omitempty"`
+	SslKeyPassword                                                   string `json:"ssl.key.password,omitempty"`
+	SslKeystoreLocation                                              string `json:"ssl.keystore.location,omitempty"`
+	SslKeystorePassword                                              string `json:"ssl.keystore.password,omitempty"`
+	SslKeystoreType                                                  string `json:"ssl.keystore.type,omitempty"`
+	SslTruststoreLocation                                            string `json:"ssl.truststore.location,omitempty"`
+	SslTruststorePassword                                            string `json:"ssl.truststore.password,omitempty"`
+	SslTruststoreType                                                string `json:"ssl.truststore.type,omitempty"`
+	StreamKafkaBrokerList                                            string `json:"stream.kafka.broker.list,omitempty"`
+	StreamKafkaBufferSize                                            string `json:"stream.kafka.buffer.size,omitempty"`
+	StreamKafkaConsumerFactoryClassName                              string `json:"stream.kafka.consumer.factory.class.name,omitempty"`
+	StreamKafkaConsumerPropAutoOffsetReset                           string `json:"stream.kafka.consumer.prop.auto.offset.reset,omitempty"`
+	StreamKafkaConsumerType                                          string `json:"stream.kafka.consumer.type,omitempty"`
+	StreamKafkaFetchTimeoutMillis                                    string `json:"stream.kafka.fetch.timeout.millis,omitempty"`
+	StreamKafkaConnectionTimeoutMillis                               string `json:"stream.kafka.connection.timeout.millis,omitempty"`
+	StreamKafkaDecoderClassName                                      string `json:"stream.kafka.decoder.class.name,omitempty"`
+	StreamKafkaDecoderPropBasicAuthCredentialsSource                 string `json:"stream.kafka.decoder.prop.basic.auth.credentials.source,omitempty"`
+	StreamKafkaDecoderPropDescriptorFile                             string `json:"stream.kafka.decoder.prop.descriptorFile,omitempty"`
+	StreamKafkaDecoderPropProtoClassName                             string `json:"stream.kafka.decoder.prop.protoClassName,omitempty"`
+	StreamKafkaDecoderPropFormat                                     string `json:"stream.kafka.decoder.prop.format,omitempty"`
+	StreamKafkaDecoderPropSchemaRegistryBasicAuthUserInfo            string `json:"stream.kafka.decoder.prop.schema.registry.basic.auth.user.info,omitempty"`
+	StreamKafkaDecoderPropSchemaRegistryBasicAuthCredentialsSource   string `json:"stream.kafka.decoder.prop.schema.registry.basic.auth.credentials.source,omitempty"`
+	StreamKafkaDecoderPropSchemaRegistryRestUrl                      string `json:"stream.kafka.decoder.prop.schema.registry.rest.url,omitempty"`
+	StreamKafkaDecoderPropSchemaRegistrySchemaName                   string `json:"stream.kafka.decoder.prop.schema.registry.schema.name,omitempty"`
+	StreamKafkaDecoderPropSchemaRegistrySslKeystoreLocation          string `json:"stream.kafka.decoder.prop.schema.registry.ssl.keystore.location,omitempty"`
+	StreamKafkaDecoderPropSchemaRegistrySslKeystorePassword          string `json:"stream.kafka.decoder.prop.schema.registry.ssl.keystore.password,omitempty"`
+	StreamKafkaDecoderPropSchemaRegistrySslKeystoreType              string `json:"stream.kafka.decoder.prop.schema.registry.ssl.keystore.type,omitempty"`
+	StreamKafkaDecoderPropSchemaRegistrySslTruststoreLocation        string `json:"stream.kafka.decoder.prop.schema.registry.ssl.truststore.location,omitempty"`
+	StreamKafkaDecoderPropSchemaRegistrySslTruststorePassword        string `json:"stream.kafka.decoder.prop.schema.registry.ssl.truststore.password,omitempty"`
+	StreamKafkaDecoderPropSchemaRegistrySslTruststoreType            string `json:"stream.kafka.decoder.prop.schema.registry.ssl.truststore.type,omitempty"`
+	StreamKafkaDecoderPropSchemaRegistrySslProtocol                  string `json:"stream.kafka.decoder.prop.schema.registry.ssl.protocol,omitempty"`
+	StreamKafkaFetcherMinBytes                                       string `json:"stream.kafka.fetcher.minBytes,omitempty"`
+	StreamKafkaFetcherSize                                           string `json:"stream.kafka.fetcher.size,omitempty"`
+	StreamKafkaHlcGroupId                                            string `json:"stream.kafka.hlc.group.id,omitempty"`
+	StreamKafkaIdleTimeoutMillis                                     string `json:"stream.kafka.idle.timeout.millis,omitempty"`
+	StreamKafkaIsolationLevel                                        string `json:"stream.kafka.isolation.level,omitempty"`
+	StreamKafkaMetadataPopulate                                      string `json:"stream.kafka.metadata.populate,omitempty"`
+	StreamKafkaSchemaRegistryUrl                                     string `json:"stream.kafka.schema.registry.url,omitempty"`
+	StreamKafkaSocketTimeout                                         string `json:"stream.kafka.socket.timeout,omitempty"`
+	StreamKafkaSslCertificateType                                    string `json:"stream.kafka.ssl.certificate.type,omitempty"`
+	StreamKafkaSslClientCertificate                                  string `json:"stream.kafka.ssl.client.certificate,omitempty"`
+	StreamKafkaSslClientKey                                          string `json:"stream.kafka.ssl.client.key,omitempty"`
+	StreamKafkaSslClientKeyAlgorithm                                 string `json:"stream.kafka.ssl.client.key.algorithm,omitempty"`
+	StreamKafkaSslServerCertificate                                  string `json:"stream.kafka.ssl.server.certificate,omitempty"`
+	StreamKafkaTopicName                                             string `json:"stream.kafka.topic.name,omitempty"`
+	StreamKafkaZkBrokerUrl                                           string `json:"stream.kafka.zk.broker.url,omitempty"`
+	StreamKinesisConsumerFactoryClassName                            string `json:"stream.kinesis.consumer.factory.class.name,omitempty"`
+	StreamKinesisConsumerType                                        string `json:"stream.kinesis.consumer.type,omitempty"`
+	StreamKinesisDecoderClassName                                    string `json:"stream.kinesis.decoder.class.name,omitempty"`
+	StreamKinesisFetchTimeoutMillis                                  string `json:"stream.kinesis.fetch.timeout.millis,omitempty"`
+	StreamKinesisDecoderPropSchemaRegistryBasicAuthUserInfo          string `json:"stream.kinesis.decoder.prop.schema.registry.basic.auth.user.info,omitempty"`
+	StreamKinesisDecoderPropSchemaRegistryBasicAuthCredentialsSource string `json:"stream.kinesis.decoder.prop.schema.registry.basic.auth.credentials.source,omitempty"`
+	StreamKinesisDecoderPropSchemaRegistryRestUrl                    string `json:"stream.kinesis.decoder.prop.schema.registry.rest.url,omitempty"`
+	StreamKinesisDecoderPropSchemaRegistrySchemaName                 string `json:"stream.kinesis.decoder.prop.schema.registry.schema.name,omitempty"`
+	StreamKinesisDecoderPropSchemaRegistrySslKeystoreLocation        string `json:"stream.kinesis.decoder.prop.schema.registry.ssl.keystore.location,omitempty"`
+	StreamKinesisDecoderPropSchemaRegistrySslKeystorePassword        string `json:"stream.kinesis.decoder.prop.schema.registry.ssl.keystore.password,omitempty"`
+	StreamKinesisDecoderPropSchemaRegistrySslKeystoreType            string `json:"stream.kinesis.decoder.prop.schema.registry.ssl.keystore.type,omitempty"`
+	StreamKinesisDecoderPropSchemaRegistrySslTruststoreLocation      string `json:"stream.kinesis.decoder.prop.schema.registry.ssl.truststore.location,omitempty"`
+	StreamKinesisDecoderPropSchemaRegistrySslTruststorePassword      string `json:"stream.kinesis.decoder.prop.schema.registry.ssl.truststore.password,omitempty"`
+	StreamKinesisDecoderPropSchemaRegistrySslTruststoreType          string `json:"stream.kinesis.decoder.prop.schema.registry.ssl.truststore.type,omitempty"`
+	StreamKinesisDecoderPropSchemaRegistrySslProtocol                string `json:"stream.kinesis.decoder.prop.schema.registry.ssl.protocol,omitempty"`
+	StreamKinesisTopicName                                           string `json:"stream.kinesis.topic.name,omitempty"`
+	StreamPulsarAudience                                             string `json:"stream.pulsar.audience,omitempty"`
+	StreamPulsarAuthenticationToken                                  string `json:"stream.pulsar.authenticationToken,omitempty"`
+	StreamPulsarBootstrapServers                                     string `json:"stream.pulsar.bootstrap.servers,omitempty"`
+	StreamPulsarCredsFilePath                                        string `json:"stream.pulsar.credsFilePath,omitempty"`
+	StreamPulsarConsumerFactoryClassName                             string `json:"stream.pulsar.consumer.factory.class.name,omitempty"`
+	StreamPulsarConsumerPropAutoOffsetReset                          string `json:"stream.pulsar.consumer.prop.auto.offset.reset,omitempty"`
+	StreamPulsarConsumerType                                         string `json:"stream.pulsar.consumer.type,omitempty"`
+	StreamPulsarDecoderClassName                                     string `json:"stream.pulsar.decoder.class.name,omitempty"`
+	StreamPulsarFetchTimeoutMillis                                   string `json:"stream.pulsar.fetch.timeout.millis,omitempty"`
+	StreamPulsarIssuerUrl                                            string `json:"stream.pulsar.issuerUrl,omitempty"`
+	StreamPulsarMetadataPopulate                                     string `json:"stream.pulsar.metadata.populate,omitempty"`
+	StreamPulsarMetadataFields                                       string `json:"stream.pulsar.metadata.fields,omitempty"`
+	StreamPulsarDecoderPropSchemaRegistryBasicAuthUserInfo           string `json:"stream.pulsar.decoder.prop.schema.registry.basic.auth.user.info,omitempty"`
+	StreamPulsarDecoderPropSchemaRegistryBasicAuthCredentialsSource  string `json:"stream.pulsar.decoder.prop.schema.registry.basic.auth.credentials.source,omitempty"`
+	StreamPulsarDecoderPropSchemaRegistryRestUrl                     string `json:"stream.pulsar.decoder.prop.schema.registry.rest.url,omitempty"`
+	StreamPulsarDecoderPropSchemaRegistrySchemaName                  string `json:"stream.pulsar.decoder.prop.schema.registry.schema.name,omitempty"`
+	StreamPulsarDecoderPropSchemaRegistrySslKeystoreLocation         string `json:"stream.pulsar.decoder.prop.schema.registry.ssl.keystore.location,omitempty"`
+	StreamPulsarDecoderPropSchemaRegistrySslKeystorePassword         string `json:"stream.pulsar.decoder.prop.schema.registry.ssl.keystore.password,omitempty"`
+	StreamPulsarDecoderPropSchemaRegistrySslKeystoreType             string `json:"stream.pulsar.decoder.prop.schema.registry.ssl.keystore.type,omitempty"`
+	StreamPulsarDecoderPropSchemaRegistrySslTruststoreLocation       string `json:"stream.pulsar.decoder.prop.schema.registry.ssl.truststore.location,omitempty"`
+	StreamPulsarDecoderPropSchemaRegistrySslTruststorePassword       string `json:"stream.pulsar.decoder.prop.schema.registry.ssl.truststore.password,omitempty"`
+	StreamPulsarDecoderPropSchemaRegistrySslTruststoreType           string `json:"stream.pulsar.decoder.prop.schema.registry.ssl.truststore.type,omitempty"`
+	StreamPulsarDecoderPropSchemaRegistrySslProtocol                 string `json:"stream.pulsar.decoder.prop.schema.registry.ssl.protocol,omitempty"`
+	StreamPulsarTlsTrustCertsFilePath                                string `json:"stream.pulsar.tlsTrustCertsFilePath,omitempty"`
+	StreamPulsarTopicName                                            string `json:"stream.pulsar.topic.name,omitempty"`
+	TopicConsumptionRateLimit                                        string `json:"topic.consumption.rate.limit,omitempty"`
+	ValueSerializer                                                  string `json:"value.serializer,omitempty"`
 }
 
 type TierConfig struct {
