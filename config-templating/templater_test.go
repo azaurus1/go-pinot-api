@@ -2,10 +2,11 @@ package config_templating
 
 import (
 	"encoding/json"
-	"github.com/azaurus1/go-pinot-api/model"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
+
+	"github.com/azaurus1/go-pinot-api/model"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTemplater(t *testing.T) {
@@ -63,13 +64,13 @@ func TestTemplater(t *testing.T) {
 		assert.Equal(t, params.PinotSegmentsReplication, templatedConfig.SegmentsConfig.Replication)
 		assert.Equal(t, params.PinotTenantBroker, templatedConfig.Tenants.Broker)
 		assert.Equal(t, params.PinotTenantServer, templatedConfig.Tenants.Server)
-		assert.Equal(t, params.KafkaBrokers, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.broker.list"])
-		assert.Equal(t, params.KafkaTopic, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.topic.name"])
-		assert.Equal(t, params.SchemaRegistryUrl, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.decoder.prop.schema.registry.rest.url"])
-		assert.Equal(t, params.SchemaRegistryUsername+":"+params.SchemaRegistryPassword, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.decoder.prop.schema.registry.basic.auth.user.info"])
-		assert.Equal(t, params.KafkaSecurityProtocol, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["security.protocol"])
-		assert.Equal(t, params.KafkaSaslMechanism, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["sasl.mechanism"])
-		assert.Equal(t, "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\""+params.KafkaSaslUsername+"\" \n password=\""+params.KafkaSaslPassword+"\";", templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["sasl.jaas.config"])
+		assert.Equal(t, params.KafkaBrokers, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].StreamKafkaBrokerList)
+		assert.Equal(t, params.KafkaTopic, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].StreamKafkaTopicName)
+		assert.Equal(t, params.SchemaRegistryUrl, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].StreamKafkaDecoderPropSchemaRegistryRestUrl)
+		assert.Equal(t, params.SchemaRegistryUsername+":"+params.SchemaRegistryPassword, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].StreamKafkaDecoderPropSchemaRegistryBasicAuthUserInfo)
+		assert.Equal(t, params.KafkaSecurityProtocol, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].SecurityProtocol)
+		assert.Equal(t, params.KafkaSaslMechanism, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].SaslMechanism)
+		assert.Equal(t, "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\""+params.KafkaSaslUsername+"\" \n password=\""+params.KafkaSaslPassword+"\";", templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].SaslJaasConfig)
 
 	})
 
@@ -100,13 +101,13 @@ func TestTemplater(t *testing.T) {
 		assert.Equal(t, params.PinotSegmentsReplication, templatedConfig.SegmentsConfig.Replication)
 		assert.Equal(t, params.PinotTenantBroker, templatedConfig.Tenants.Broker)
 		assert.Equal(t, params.PinotTenantServer, templatedConfig.Tenants.Server)
-		assert.Equal(t, params.KafkaBrokers, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.broker.list"])
-		assert.Equal(t, params.KafkaTopic, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.topic.name"])
-		assert.Equal(t, params.SchemaRegistryUrl, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.decoder.prop.schema.registry.rest.url"])
-		assert.Equal(t, params.SchemaRegistryUsername+":"+params.SchemaRegistryPassword, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["stream.kafka.decoder.prop.schema.registry.basic.auth.user.info"])
-		assert.Equal(t, params.KafkaSecurityProtocol, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["security.protocol"])
-		assert.Equal(t, params.KafkaSaslMechanism, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["sasl.mechanism"])
-		assert.Equal(t, "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\""+params.KafkaSaslUsername+"\" \n password=\""+params.KafkaSaslPassword+"\";", templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0]["sasl.jaas.config"])
+		assert.Equal(t, params.KafkaBrokers, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].StreamKafkaBrokerList)
+		assert.Equal(t, params.KafkaTopic, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].StreamKafkaTopicName)
+		assert.Equal(t, params.SchemaRegistryUrl, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].StreamKafkaDecoderPropSchemaRegistryRestUrl)
+		assert.Equal(t, params.SchemaRegistryUsername+":"+params.SchemaRegistryPassword, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].StreamKafkaDecoderPropSchemaRegistryBasicAuthUserInfo)
+		assert.Equal(t, params.KafkaSecurityProtocol, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].SecurityProtocol)
+		assert.Equal(t, params.KafkaSaslMechanism, templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].SaslMechanism)
+		assert.Equal(t, "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\""+params.KafkaSaslUsername+"\" \n password=\""+params.KafkaSaslPassword+"\";", templatedConfig.IngestionConfig.StreamIngestionConfig.StreamConfigMaps[0].SaslJaasConfig)
 
 	})
 
@@ -125,18 +126,19 @@ func dummyTableConfig() model.Table {
 		},
 		IngestionConfig: &model.TableIngestionConfig{
 			StreamIngestionConfig: &model.StreamIngestionConfig{
-				StreamConfigMaps: []map[string]string{{
-					"stream.kafka.topic.name":                                                 "{{ .KafkaTopic }}",
-					"stream.kafka.broker.list":                                                "{{ .KafkaBrokers }}",
-					"stream.kafka.decoder.prop.schema.registry.rest.url":                      "{{ .SchemaRegistryUrl }}",
-					"stream.kafka.decoder.prop.schema.registry.basic.auth.credentials.source": "USER_INFO",
-					"stream.kafka.decoder.prop.schema.registry.basic.auth.user.info":          "{{ .SchemaRegistryUsername }}:{{ .SchemaRegistryPassword }}",
-					"stream.kafka.decoder.prop.format":                                        "AVRO",
-					"authentication.type":                                                     "SASL",
-					"security.protocol":                                                       "{{ .KafkaSecurityProtocol }}",
-					"sasl.mechanism":                                                          "{{ .KafkaSaslMechanism }}",
-					"sasl.jaas.config":                                                        "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\"{{ .KafkaSaslUsername }}\" \n password=\"{{ .KafkaSaslPassword }}\";",
-				},
+				StreamConfigMaps: []model.StreamConfig{
+					{
+						StreamKafkaTopicName:                                           "{{ .KafkaTopic }}",
+						StreamKafkaBrokerList:                                          "{{ .KafkaBrokers }}",
+						StreamKafkaDecoderPropSchemaRegistryRestUrl:                    "{{ .SchemaRegistryUrl }}",
+						StreamKafkaDecoderPropSchemaRegistryBasicAuthCredentialsSource: "USER_INFO",
+						StreamKafkaDecoderPropSchemaRegistryBasicAuthUserInfo:          "{{ .SchemaRegistryUsername }}:{{ .SchemaRegistryPassword }}",
+						StreamKafkaDecoderPropFormat:                                   "AVRO",
+						AuthenticationType:                                             "SASL",
+						SecurityProtocol:                                               "{{ .KafkaSecurityProtocol }}",
+						SaslMechanism:                                                  "{{ .KafkaSaslMechanism }}",
+						SaslJaasConfig:                                                 "org.apache.kafka.common.security.plain.PlainLoginModule required \n username=\"{{ .KafkaSaslUsername }}\" \n password=\"{{ .KafkaSaslPassword }}\";",
+					},
 				},
 			},
 		},
