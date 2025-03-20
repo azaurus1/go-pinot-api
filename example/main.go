@@ -185,7 +185,7 @@ func demoTableFunctionality(client *pinot.PinotAPIClient) {
 					TransformFunction: "toEpochHours(millis)",
 				},
 			},
-			ContinueOnError:   true,
+			ContinueOnError:   boolPtr(true),
 			RowTimeValueCheck: true,
 		},
 		TierConfigs: []*pinotModel.TierConfig{
@@ -266,7 +266,7 @@ func demoTableFunctionality(client *pinot.PinotAPIClient) {
 					TransformFunction: "toEpochHours(millis)",
 				},
 			},
-			ContinueOnError:   true,
+			ContinueOnError:   boolPtr(true),
 			RowTimeValueCheck: true,
 		},
 		TierConfigs: []*pinotModel.TierConfig{
