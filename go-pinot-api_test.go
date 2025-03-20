@@ -4591,7 +4591,7 @@ func TestCreateTable(t *testing.T) {
 					TransformFunction: "toEpochHours(millis)",
 				},
 			},
-			ContinueOnError:   true,
+			ContinueOnError:   boolPtr(true),
 			RowTimeValueCheck: true,
 		},
 		TierConfigs: []*model.TierConfig{
@@ -4661,7 +4661,7 @@ func TestUpdateTable(t *testing.T) {
 					TransformFunction: "toEpochHours(millis)",
 				},
 			},
-			ContinueOnError:   true,
+			ContinueOnError:   boolPtr(true),
 			RowTimeValueCheck: true,
 		},
 		TierConfigs: []*model.TierConfig{
