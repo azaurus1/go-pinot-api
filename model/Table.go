@@ -23,8 +23,14 @@ type CompletionConfig struct {
 }
 
 type TableTenant struct {
-	Broker string `json:"broker"`
-	Server string `json:"server"`
+	Broker            string                   `json:"broker"`
+	Server            string                   `json:"server"`
+	TagOverrideConfig *TenantTagOverrideConfig `json:"tagOverrideConfig,omitempty"`
+}
+
+type TenantTagOverrideConfig struct {
+	RealtimeConsuming string `json:"realtimeConsuming,omitempty"`
+	RealtimeCompleted string `json:"realtimeCompleted,omitempty"`
 }
 
 type TableIndexConfig struct {
