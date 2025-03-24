@@ -299,23 +299,54 @@ type Task struct {
 	TaskTypeConfigsMap map[string]map[string]string `json:"taskTypeConfigsMap"`
 }
 
+type InstanceAssignmentConfigMap struct {
+	Consuming *InstanceAssignment `json:"CONSUMING,omitempty"`
+	Completed *InstanceAssignment `json:"COMPLETED,omitempty"`
+	Offline   *InstanceAssignment `json:"OFFLINE,omitempty"`
+}
+
+type InstanceAssignment struct {
+	TagPoolConfig               *TagPoolConfigInstanceAssignment         `json:"tagPoolConfig,omitempty"`
+	ReplicaGroupPartitionConfig *ReplicaGroupPartitionInstanceAssignment `json:"replicaGroupPartitionConfig,omitempty"`
+	PartitionSelector           string                                   `json:"partitionSelector,omitempty"`
+	MinimizeDataMovement        bool                                     `json:"minimizeDataMovement,omitempty"`
+}
+
+type TagPoolConfigInstanceAssignment struct {
+	Tag       string `json:"tag,omitempty"`
+	PoolBased bool   `json:"poolBased,omitempty"`
+	NumPools  int64  `json:"numPools,omitempty"`
+}
+
+type ReplicaGroupPartitionInstanceAssignment struct {
+	ReplicaGroupBased           bool   `json:"replicaGroupBased,omitempty"`
+	NumInstances                int64  `json:"numInstances,omitempty"`
+	NumReplicaGroups            int64  `json:"numReplicaGroups,omitempty"`
+	NumInstancesPerReplicaGroup int64  `json:"numInstancesPerReplicaGroup,omitempty"`
+	NumPartitions               int64  `json:"numPartitions,omitempty"`
+	NumInstancesPerPartitions   int64  `json:"numInstancesPerPartition,omitempty"`
+	PartitionColumn             string `json:"partitionColumn,omitempty"`
+	MinimizeDataMovement        bool   `json:"minimizeDataMovement,omitempty"`
+}
+
 type Table struct {
-	TableName        string                `json:"tableName"`
-	TableType        string                `json:"tableType"`
-	SegmentsConfig   TableSegmentsConfig   `json:"segmentsConfig"`
-	Tenants          TableTenant           `json:"tenants"`
-	TableIndexConfig TableIndexConfig      `json:"tableIndexConfig"`
-	Metadata         *TableMetadata        `json:"metadata"`
-	FieldConfigList  []FieldConfig         `json:"fieldConfigList,omitempty"`
-	IngestionConfig  *TableIngestionConfig `json:"ingestionConfig,omitempty"`
-	TierConfigs      []*TierConfig         `json:"tierConfigs,omitempty"`
-	IsDimTable       bool                  `json:"isDimTable"`
-	Query            *QueryConfig          `json:"query,omitempty"`
-	Routing          *RoutingConfig        `json:"routing,omitempty"`
-	Quota            *QuotaConfig          `json:"quota,omitempty"`
-	UpsertConfig     *UpsertConfig         `json:"upsertConfig,omitempty"`
-	DedupConfig      *DedupConfig          `json:"dedupConfig,omitempty"`
-	Task             *Task                 `json:"task,omitempty"`
+	TableName                   string                       `json:"tableName"`
+	TableType                   string                       `json:"tableType"`
+	SegmentsConfig              TableSegmentsConfig          `json:"segmentsConfig"`
+	Tenants                     TableTenant                  `json:"tenants"`
+	TableIndexConfig            TableIndexConfig             `json:"tableIndexConfig"`
+	Metadata                    *TableMetadata               `json:"metadata"`
+	FieldConfigList             []FieldConfig                `json:"fieldConfigList,omitempty"`
+	IngestionConfig             *TableIngestionConfig        `json:"ingestionConfig,omitempty"`
+	TierConfigs                 []*TierConfig                `json:"tierConfigs,omitempty"`
+	IsDimTable                  bool                         `json:"isDimTable"`
+	Query                       *QueryConfig                 `json:"query,omitempty"`
+	Routing                     *RoutingConfig               `json:"routing,omitempty"`
+	Quota                       *QuotaConfig                 `json:"quota,omitempty"`
+	UpsertConfig                *UpsertConfig                `json:"upsertConfig,omitempty"`
+	DedupConfig                 *DedupConfig                 `json:"dedupConfig,omitempty"`
+	Task                        *Task                        `json:"task,omitempty"`
+	InstanceAssignmentConfigMap *InstanceAssignmentConfigMap `json:"instanceAssignmentConfigMap,omitempty"`
 }
 
 func (t *Table) IsEmpty() bool {
