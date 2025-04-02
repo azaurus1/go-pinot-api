@@ -305,28 +305,44 @@ type InstanceAssignmentConfigMap struct {
 	Offline   *InstanceAssignment `json:"OFFLINE,omitempty"`
 }
 
+func (instance *InstanceAssignmentConfigMap) IsEmpty() bool {
+	return instance.Consuming == nil && instance.Completed == nil && instance.Offline == nil
+}
+
 type InstanceAssignment struct {
 	TagPoolConfig               *TagPoolConfigInstanceAssignment         `json:"tagPoolConfig,omitempty"`
 	ReplicaGroupPartitionConfig *ReplicaGroupPartitionInstanceAssignment `json:"replicaGroupPartitionConfig,omitempty"`
 	PartitionSelector           string                                   `json:"partitionSelector,omitempty"`
-	MinimizeDataMovement        bool                                     `json:"minimizeDataMovement,omitempty"`
+	MinimizeDataMovement        *bool                                    `json:"minimizeDataMovement,omitempty"`
+}
+
+func (instance *InstanceAssignment) IsEmpty() bool {
+	return instance.TagPoolConfig == nil && instance.ReplicaGroupPartitionConfig == nil && instance.PartitionSelector == "" && instance.MinimizeDataMovement == nil
 }
 
 type TagPoolConfigInstanceAssignment struct {
 	Tag       string `json:"tag,omitempty"`
-	PoolBased bool   `json:"poolBased,omitempty"`
+	PoolBased *bool  `json:"poolBased,omitempty"`
 	NumPools  int64  `json:"numPools,omitempty"`
 }
 
+func (tagPool *TagPoolConfigInstanceAssignment) IsEmpty() bool {
+	return tagPool.Tag == "" && tagPool.PoolBased == nil
+}
+
 type ReplicaGroupPartitionInstanceAssignment struct {
-	ReplicaGroupBased           bool   `json:"replicaGroupBased,omitempty"`
+	ReplicaGroupBased           *bool  `json:"replicaGroupBased,omitempty"`
 	NumInstances                int64  `json:"numInstances,omitempty"`
 	NumReplicaGroups            int64  `json:"numReplicaGroups,omitempty"`
 	NumInstancesPerReplicaGroup int64  `json:"numInstancesPerReplicaGroup,omitempty"`
 	NumPartitions               int64  `json:"numPartitions,omitempty"`
 	NumInstancesPerPartitions   int64  `json:"numInstancesPerPartition,omitempty"`
 	PartitionColumn             string `json:"partitionColumn,omitempty"`
-	MinimizeDataMovement        bool   `json:"minimizeDataMovement,omitempty"`
+	MinimizeDataMovement        *bool  `json:"minimizeDataMovement,omitempty"`
+}
+
+func (replicaGroup *ReplicaGroupPartitionInstanceAssignment) IsEmpty() bool {
+	return replicaGroup.ReplicaGroupBased == nil && replicaGroup.MinimizeDataMovement == nil && replicaGroup.PartitionColumn == ""
 }
 
 type Table struct {
