@@ -92,12 +92,71 @@ type TimestampConfig struct {
 	Granularities []string `json:"granularities"`
 }
 
-type FiendIndexInverted struct {
+type FieldIndexInverted struct {
 	Enabled string `json:"enabled"`
 }
 
+type FieldIndexBloom struct {
+	Fpp            string `json:"fpp,omitempty"`
+	MaxSizeInBytes string `json:"maxsizeinbytes,omitempty"`
+	LoadOnHeap     string `json:"loadonheap,omitempty"`
+}
+
+type FieldIndexForward struct {
+	CompressionCodec      string `json:"compressioncodec,omitempty"`
+	DeriveNumDocsPerChunk string `json:"derivenumdocsperchunk,omitempty"`
+	RawIndexWriterVersion string `json:"rawindexwriterversion,omitempty"`
+}
+
+type FieldIndexDictionary struct {
+	Disabled bool `json:"disabled,omitempty"`
+}
+
+type FieldIndexFst struct {
+	Enabled bool `json:"enabled,omitempty"`
+}
+
+type FieldIndexH3 struct {
+	Resolutions []int `json:"resolutions,omitempty"`
+}
+
+type FieldIndexJson struct {
+	MaxLevels               string `json:"maxlevels,omitempty"`
+	ExcludeArray            bool   `json:"excludearray,omitempty"`
+	DisableCrossArrayUnnest bool   `json:"disablecrossarrayunnest,omitempty"`
+	IncludePaths            string `json:"includepaths,omitempty"`
+	ExcludePaths            string `json:"excludepaths,omitempty"`
+	ExcludeFields           string `json:"excludefields,omitempty"`
+	IndexPaths              string `json:"indexpaths,omitempty"`
+}
+
+type FieldIndexRange struct {
+	Enabled bool `json:"enabled,omitempty"`
+}
+
+type FieldIndexText struct {
+	StopWordInclude []string `json:"stopwordinclude,omitempty"`
+	StopWordExclude []string `json:"stopwordexclude,omitempty"`
+}
+
+type FieldIndexVector struct {
+	VectorIndexType        string `json:"vectorindextype,omitempty"`
+	VectorDimension        string `json:"vectordimension,omitempty"`
+	VectorDistanceFunction string `json:"vectordistancefunction,omitempty"`
+	Version                string `json:"version,omitempty"`
+}
+
 type FieldIndexes struct {
-	Inverted *FiendIndexInverted `json:"inverted,omitempty"`
+	Inverted   *FieldIndexInverted   `json:"inverted,omitempty"`
+	Bloom      *FieldIndexBloom      `json:"bloom,omitempty"`
+	Forward    *FieldIndexForward    `json:"forward,omitempty"`
+	Dictionary *FieldIndexDictionary `json:"dictionary,omitempty"`
+	Fst        *FieldIndexFst        `json:"fst,omitempty"`
+	H3         *FieldIndexH3         `json:"h3,omitempty"`
+	Json       *FieldIndexJson       `json:"json,omitempty"`
+	Range      *FieldIndexRange      `json:"range,omitempty"`
+	Text       *FieldIndexText       `json:"text,omitempty"`
+	Vector     *FieldIndexVector     `json:"vector,omitempty"`
 }
 
 type FieldConfig struct {
