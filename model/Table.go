@@ -120,6 +120,10 @@ type FieldIndexH3 struct {
 	Resolutions []int `json:"resolutions,omitempty"`
 }
 
+type FieldIndexTimestamp struct {
+	Enabled bool `json:"enabled,omitempty"`
+}
+
 type FieldIndexJson struct {
 	MaxLevels               string `json:"maxlevels,omitempty"`
 	ExcludeArray            bool   `json:"excludearray,omitempty"`
@@ -157,13 +161,14 @@ type FieldIndexes struct {
 	Range      *FieldIndexRange      `json:"range,omitempty"`
 	Text       *FieldIndexText       `json:"text,omitempty"`
 	Vector     *FieldIndexVector     `json:"vector,omitempty"`
+	Timestamp  *FieldIndexTimestamp  `json:"timestamp,omitempty"`
 }
 
 type FieldConfig struct {
 	Name            string           `json:"name"`
 	EncodingType    string           `json:"encodingType"`
-	IndexType       string           `json:"indexType"`
-	IndexTypes      []string         `json:"indexTypes"`
+	IndexType       string           `json:"indexType,omitempty"`
+	IndexTypes      []string         `json:"indexTypes,omitempty"`
 	TimestampConfig *TimestampConfig `json:"timestampConfig,omitempty"`
 	Indexes         *FieldIndexes    `json:"indexes,omitempty"`
 }
