@@ -106,6 +106,8 @@ type FieldIndexForward struct {
 	CompressionCodec      string `json:"compressioncodec,omitempty"`
 	DeriveNumDocsPerChunk string `json:"derivenumdocsperchunk,omitempty"`
 	RawIndexWriterVersion string `json:"rawindexwriterversion,omitempty"`
+	TargetDocsPerChunk    string `json:"targetDocsPerChunk,omitempty"`
+	TargetMaxChunkSize    string `json:"targetMaxChunkSize,omitempty"`
 }
 
 type FieldIndexDictionary struct {
