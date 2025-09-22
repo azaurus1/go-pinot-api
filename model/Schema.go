@@ -10,6 +10,7 @@ type FieldSpec struct {
 	NotNull           *bool  `json:"notNull,omitempty"`
 	SingleValueField  *bool  `json:"singleValueField,omitempty"`
 	TransformFunction string `json:"transformFunction,omitempty"`
+	MaxLength         string `json:"maxLength,omitempty"`
 }
 
 type Schema struct {
